@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="40dip">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/grey900"
+        android:textSize="18sp"
+        android:layout_centerVertical="true"
+        android:drawablePadding="8dp"
+        android:id="@+id/tv_title"
+        android:text="@string/funny"
+        android:layout_marginLeft="@dimen/base_list_margin_left"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/grey900"
+        android:textSize="18sp"
+        android:layout_centerVertical="true"
+        android:drawablePadding="8dp"
+        android:layout_alignParentRight="true"
+        android:drawableRight="@mipmap/ic_more"
+        android:text="@string/more"
+        android:layout_marginRight="@dimen/base_list_margin_left"/>
+</RelativeLayout>
