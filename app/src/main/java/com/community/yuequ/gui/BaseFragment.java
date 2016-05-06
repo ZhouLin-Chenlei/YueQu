@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 
 import com.community.yuequ.util.Log;
 
+/**
+ * 基类
+ */
 public abstract class BaseFragment extends Fragment {
     private final static String TAG = BaseFragment.class.getSimpleName();
     private boolean isVisible = false;//当前Fragment是否可见
