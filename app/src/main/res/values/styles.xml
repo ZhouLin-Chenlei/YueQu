@@ -8,28 +8,17 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="YQAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="YQAppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:listDivider">@drawable/list_divider</item>
     </style>
 
-    <style name="base_listview_style" parent="@android:style/Widget.ListView">
-        <item name="android:fadingEdgeLength">0.0dip</item>
-        <item name="android:alwaysDrawnWithCache">true</item>
-        <item name="android:drawSelectorOnTop">false</item>
-        <item name="android:cacheColorHint">@color/transparent</item>
-        <item name="android:divider">@null</item>
-        <item name="android:dividerHeight">0.0dip</item>
-        <item name="android:listSelector">@null</item>
-    </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
 </resources>

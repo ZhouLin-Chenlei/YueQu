@@ -13,23 +13,34 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".gui.MainActivity"
-            android:theme="@style/YQAppTheme">
+            android:name=".gui.WelcomeActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_welcome"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".gui.ImageActivity"
-                  android:theme="@style/YQAppTheme">
+        <activity
+            android:name=".gui.MainActivity"
+            android:theme="@style/YQAppTheme">
+        </activity>
+        <activity
+            android:name=".gui.ImageActivity"
+            android:theme="@style/YQAppTheme">
         </activity>
         <activity
             android:name=".gui.VideoGroupActivity"
             android:label="@string/title_activity_video_group"
             android:theme="@style/YQAppTheme">
         </activity>
-        <activity android:name=".gui.VideoListActivity"
+        <activity
+            android:name=".gui.VideoListActivity"
+            android:theme="@style/YQAppTheme">
+        </activity>
+        <activity android:name=".gui.VideoDetailActivity"
                   android:theme="@style/YQAppTheme">
         </activity>
     </application>

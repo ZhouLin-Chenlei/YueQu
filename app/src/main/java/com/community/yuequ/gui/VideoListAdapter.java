@@ -1,6 +1,7 @@
 package com.community.yuequ.gui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,10 @@ import com.community.yuequ.R;
  * modou
  */
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.ViewHolder>{
+    private Context mContext;
+    public VideoListAdapter(Context  context){
+        this.mContext = context;
+    }
     @Override
     public VideoListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -24,6 +29,12 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.View
     @Override
     public void onBindViewHolder(VideoListAdapter.ViewHolder holder, int position) {
         holder.tv_name.setText("position:"+position);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mContext.startActivity(new Intent(mContext,VideoDetailActivity.class));
+            }
+        });
 
     }
 

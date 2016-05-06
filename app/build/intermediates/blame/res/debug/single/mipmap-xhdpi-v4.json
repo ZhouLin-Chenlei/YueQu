@@ -16,6 +16,10 @@
         "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\src\\main\\res\\mipmap-xhdpi\\tab_shipin_normal.png"
     },
     {
+        "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi-v4\\ic_arrow.png",
+        "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\src\\main\\res\\mipmap-xhdpi\\ic_arrow.png"
+    },
+    {
         "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi-v4\\ic_more.png",
         "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\src\\main\\res\\mipmap-xhdpi\\ic_more.png"
     },
@@ -44,12 +48,24 @@
         "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\src\\main\\res\\mipmap-xhdpi\\shadow_top.9.png"
     },
     {
+        "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi-v4\\ic_sub.png",
+        "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\src\\main\\res\\mipmap-xhdpi\\ic_sub.png"
+    },
+    {
+        "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi-v4\\ic_label.png",
+        "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\src\\main\\res\\mipmap-xhdpi\\ic_label.png"
+    },
+    {
         "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi-v4\\ic_launcher.png",
         "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.png"
     },
     {
         "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi-v4\\guide_play_b.png",
         "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\src\\main\\res\\mipmap-xhdpi\\guide_play_b.png"
+    },
+    {
+        "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi-v4\\index.jpg",
+        "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\src\\main\\res\\mipmap-xhdpi\\index.jpg"
     },
     {
         "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi-v4\\logo.png",

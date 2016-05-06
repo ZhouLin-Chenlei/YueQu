@@ -18,7 +18,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/base_list_margin_left"
             android:layout_marginRight="@dimen/base_list_margin_left"
-
+            android:drawableLeft="@mipmap/ic_sub"
+            android:gravity="center_vertical"
             android:drawablePadding="8dp"
             android:ellipsize="end"
             android:textColor="@color/grey900"

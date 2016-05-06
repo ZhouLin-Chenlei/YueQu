@@ -2,6 +2,7 @@ package com.community.yuequ.gui;
 
 import android.content.Context;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,22 +11,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.community.yuequ.R;
-import com.community.yuequ.modle.MediaWrapper;
+import com.community.yuequ.contorl.ImageManager;
+import com.community.yuequ.modle.VideoPrograma;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class YQVideoAdapter extends RecyclerView.Adapter<YQVideoAdapter.ViewHolder> {
     private YQVideoFragment mFragment;
-    private volatile ArrayList<MediaWrapper> mVideos = new ArrayList<>();
+    private List<VideoPrograma> mVideos;
 
 
-    public YQVideoAdapter(YQVideoFragment fragment) {
+    public YQVideoAdapter(YQVideoFragment fragment, List<VideoPrograma> programas) {
         super();
         mFragment = fragment;
-
-        for(int i = 0;i<100;i++){
-            mVideos.add(new MediaWrapper());
-        }
+        mVideos = programas;
 
     }
 
@@ -39,8 +38,15 @@ public class YQVideoAdapter extends RecyclerView.Adapter<YQVideoAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.ml_item_title.setText("Position:"+ position);
-        holder.ml_item_detail.setText("哈哈哈哈");
+        holder.ml_item_title.setText(mVideos.get(position).abs);
+        holder.ml_item_detail.setText("宽/高"+mVideos.get(position).thumbnail_width+"/"+mVideos.get(position).thumbnail_height);
+        ImageManager.getInstance().loadUrlImage(mFragment.getContext(),mVideos.get(position).thumbnail_url, holder.ml_item_image);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFragment.startActivity(new Intent(mFragment.getActivity(),VideoGroupActivity.class));
+            }
+        });
     }
 
     @Override

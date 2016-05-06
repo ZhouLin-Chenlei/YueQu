@@ -1,7 +1,5 @@
 package com.community.yuequ.gui;
 
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,20 +9,32 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.community.yuequ.R;
+import com.community.yuequ.modle.VideoPrograma;
+import com.community.yuequ.modle.VideoProgramaDao;
+import com.community.yuequ.modle.callback.VideoProgramaCallBack;
+import com.community.yuequ.util.Log;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.SwipeRefreshLayout;
+import com.zhy.http.okhttp.OkHttpUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Request;
 
 /**
  * 视频页
  */
-public class YQVideoFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
-
+public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener{
+    public static final String TAG = YQVideoFragment.class.getSimpleName();
     protected RecyclerView mRecyclerView;
     protected PageStatuLayout mStatuLayout;
     private YQVideoAdapter mVideoAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private LinearLayoutManager mLayoutManager;
-
+    private VideoProgramaDao mVideoPrograma;
+    private final List<VideoPrograma> mProgramas = new ArrayList<>();
 
     public YQVideoFragment() {
     }
@@ -34,18 +44,21 @@ public class YQVideoFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mVideoAdapter = new YQVideoAdapter(this);
+        mVideoAdapter = new YQVideoAdapter(this, mProgramas);
 
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_video, container, false);
-        mStatuLayout = new PageStatuLayout(v).hide();
-        mRecyclerView = (RecyclerView) v.findViewById(android.R.id.list);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeLayout);
 
+    @Override
+    protected int getLayoutId() {
+        return R.layout.fragment_video;
+    }
+
+    @Override
+    protected void initView() {
+        mStatuLayout = new PageStatuLayout(convertView).hide();
+        mRecyclerView = findView(android.R.id.list);
+        mSwipeRefreshLayout = findView(R.id.swipeLayout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.pink900);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -54,8 +67,40 @@ public class YQVideoFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         mRecyclerView.addOnScrollListener(mScrollListener);
         mRecyclerView.setAdapter(mVideoAdapter);
-        return v;
     }
+
+    String testUrl = "http://image.baidu.com/channel/listjson?fr=channel&tag1=美女&tag2=泳装&sorttype=0&pn=1&rn=100&ie=utf8&oe=utf-8&8339397110145592";
+    @Override
+    protected void initData() {
+        OkHttpUtils
+                .get()
+                .url(testUrl/*Contants.URL_RECOMMEND*/)
+                .tag(TAG)
+                .build()
+                .execute(new VideoProgramaCallBack() {
+                    @Override
+                    public void onError(Call call, Exception e) {
+                        getDataFail();
+                    }
+
+                    @Override
+                    public void onResponse(VideoProgramaDao response) {
+                        mVideoPrograma = response;
+                        if(mVideoPrograma.data==null||mVideoPrograma.data.isEmpty()){
+                            getDataEmpty();
+                        }else{
+                            getDataAdequate();
+                        }
+                    }
+
+                    @Override
+                    public void onBefore(Request request) {
+                        getDataBefore();
+                    }
+                });
+    }
+
+
 
     RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -72,46 +117,60 @@ public class YQVideoFragment extends Fragment implements SwipeRefreshLayout.OnRe
     };
 
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    private void completeRefresh() {
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+        if (mStatuLayout != null) {
+            mStatuLayout.setProgressBarVisibility(false);
+            if(mVideoAdapter.getItemCount()==0){
+                mStatuLayout.show().setText(getString(R.string.load_data_fail));
+            }else {
+                mStatuLayout.hide();
+            }
+        }
+    }
+
+
+    public void getDataBefore(){
+        if(mVideoAdapter.getItemCount()==0){
+            mStatuLayout.show().setProgressBarVisibility(true);
+        }else {
+
+        }
+    }
+    //数据为空
+    public void getDataEmpty() {
+        mProgramas.clear();
+        mVideoAdapter.notifyDataSetChanged();
+        completeRefresh();
+    }
+
+    //数据足够
+    public void getDataAdequate() {
+        mProgramas.clear();
+        mProgramas.addAll(mVideoPrograma.data);
+        mVideoAdapter.notifyDataSetChanged();
+        completeRefresh();
 
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
+    //加载失败
+    public void getDataFail() {
+        mVideoAdapter.notifyDataSetChanged();
+        completeRefresh();
 
     }
 
     @Override
     public void onRefresh() {
-        AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-
-        };
-        asyncTask.execute();
+        initData();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.i(TAG,"onDestroyView-----------");
+        OkHttpUtils.getInstance().cancelTag(TAG);
+    }
 }

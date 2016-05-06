@@ -18,6 +18,6 @@ public class ImageActivity extends AppCompatActivity {
 
         recycleView.setLayoutManager(new GridLayoutManager(this,2));
         recycleView.addItemDecoration(new DividerGridItemDecoration(this));
-        recycleView.setAdapter(new VideoListAdapter());
+        recycleView.setAdapter(new VideoListAdapter(this));
     }
 }

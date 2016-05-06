@@ -21,7 +21,7 @@ import com.community.yuequ.view.SwipeRefreshLayout;
 /**
  * 专题
  */
-public class ChannelFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener{
 
     protected RecyclerView mRecyclerView;
     protected PageStatuLayout mStatuLayout;
@@ -42,24 +42,6 @@ public class ChannelFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_video, container, false);
-        mStatuLayout = new PageStatuLayout(v).hide();
-        mRecyclerView = (RecyclerView) v.findViewById(android.R.id.list);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeLayout);
-
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.pink900);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-//        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-        mRecyclerView.addOnScrollListener(mScrollListener);
-        mRecyclerView.setAdapter(mAdapter);
-        return v;
-    }
-
     RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -76,8 +58,27 @@ public class ChannelFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    protected int getLayoutId() {
+        return R.layout.fragment_video;
+    }
+
+    @Override
+    protected void initView() {
+        mStatuLayout = new PageStatuLayout(convertView).hide();
+        mRecyclerView = findView(android.R.id.list);
+        mSwipeRefreshLayout = findView(R.id.swipeLayout);
+
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.pink900);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+//        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        mRecyclerView.addOnScrollListener(mScrollListener);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected void initData() {
 
     }
 

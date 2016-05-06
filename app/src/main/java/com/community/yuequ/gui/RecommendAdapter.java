@@ -282,11 +282,11 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
     static class HeadViewHolder extends RecyclerView.ViewHolder {
 
-        ConvenientBanner mBanner;
+        View headView;
 
         public HeadViewHolder(View view) {
             super(view);
-            mBanner = ((ConvenientBanner) view);
+            headView = view;
         }
     }
 }

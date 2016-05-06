@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }else if(position==2){
                 return new ChannelFragment();
             }else {
-                return new YQVideoFragment();
+                return new YQImageFragment();
             }
         }
 

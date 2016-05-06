@@ -96,6 +96,10 @@
         "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.3.0\\res\\layout\\notification_template_lines.xml"
     },
     {
+        "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\layout\\activity_welcome.xml",
+        "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\src\\main\\res\\layout\\activity_welcome.xml"
+    },
+    {
         "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\layout\\select_dialog_item_material.xml",
         "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.3.0\\res\\layout\\select_dialog_item_material.xml"
     },
@@ -232,16 +236,20 @@
         "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\exploded-aar\\com.android.support\\design\\23.3.0\\res\\layout\\design_navigation_item_separator.xml"
     },
     {
-        "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_alert_dialog_button_bar_material.xml",
-        "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.3.0\\res\\layout\\abc_alert_dialog_button_bar_material.xml"
+        "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\layout\\activity_video_detail.xml",
+        "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\src\\main\\res\\layout\\activity_video_detail.xml"
+    },
+    {
+        "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\layout\\design_navigation_item.xml",
+        "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\exploded-aar\\com.android.support\\design\\23.3.0\\res\\layout\\design_navigation_item.xml"
     },
     {
         "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_screen_simple_overlay_action_mode.xml",
         "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.3.0\\res\\layout\\abc_screen_simple_overlay_action_mode.xml"
     },
     {
-        "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\layout\\design_navigation_item.xml",
-        "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\exploded-aar\\com.android.support\\design\\23.3.0\\res\\layout\\design_navigation_item.xml"
+        "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\layout\\abc_alert_dialog_button_bar_material.xml",
+        "source": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\23.3.0\\res\\layout\\abc_alert_dialog_button_bar_material.xml"
     },
     {
         "merged": "F:\\AndroidStudioWorkSpace\\YueQu\\app\\build\\intermediates\\res\\merged\\debug\\layout\\banner_item.xml",

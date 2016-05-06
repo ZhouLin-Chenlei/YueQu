@@ -46,9 +46,13 @@ public class VideoGroupActivity extends AppCompatActivity implements View.OnClic
         mRecyclerView.addItemDecoration(new DividerGridItemDecoration(this));
 
         mRecyclerView.addOnScrollListener(mScrollListener);
-        mGroupAdapter = new VideoGroupAdapter();
+        mGroupAdapter = new VideoGroupAdapter(this);
         mRecyclerView.setAdapter(mGroupAdapter);
 
+        getdata();
+    }
+
+    private void getdata() {
 
     }
 

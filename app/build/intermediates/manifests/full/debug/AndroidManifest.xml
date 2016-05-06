@@ -19,13 +19,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.community.yuequ.gui.MainActivity"
-            android:theme="@style/YQAppTheme" >
+            android:name="com.community.yuequ.gui.WelcomeActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_welcome"
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.community.yuequ.gui.MainActivity"
+            android:theme="@style/YQAppTheme" >
         </activity>
         <activity
             android:name="com.community.yuequ.gui.ImageActivity"
@@ -38,6 +44,10 @@
         </activity>
         <activity
             android:name="com.community.yuequ.gui.VideoListActivity"
+            android:theme="@style/YQAppTheme" >
+        </activity>
+        <activity
+            android:name="com.community.yuequ.gui.VideoDetailActivity"
             android:theme="@style/YQAppTheme" >
         </activity>
     </application>

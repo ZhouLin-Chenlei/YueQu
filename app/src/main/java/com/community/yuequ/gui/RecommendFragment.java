@@ -20,6 +20,7 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.community.yuequ.R;
 import com.community.yuequ.YQApplication;
+import com.community.yuequ.util.Log;
 import com.community.yuequ.view.DividerItemDecoration;
 import com.community.yuequ.view.NetworkImageHolderView;
 import com.community.yuequ.view.PageStatuLayout;
@@ -29,18 +30,21 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 推荐页
  */
-public class RecommendFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener ,OnItemClickListener{
+public class RecommendFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener ,OnItemClickListener{
+    public static final String TAG = RecommendFragment.class.getSimpleName();
     protected PageStatuLayout mStatuLayout;
     private RecommendAdapter mRecommendAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
+    private View headView;
     private ConvenientBanner mConvenientBanner;
-
+    private Object mObjects = new Object();
 
 
     public RecommendFragment() {
@@ -54,20 +58,19 @@ public class RecommendFragment extends Fragment implements SwipeRefreshLayout.On
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_recommend, container, false);
+    protected int getLayoutId() {
+        return R.layout.fragment_recommend;
+    }
 
-        mStatuLayout = new PageStatuLayout(v);
-        mRecyclerView = (RecyclerView) v.findViewById(android.R.id.list);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeLayout);
-
+    @Override
+    protected void initView() {
+        mStatuLayout = new PageStatuLayout(convertView).hide();
+        mRecyclerView = findView(android.R.id.list);
+        mSwipeRefreshLayout = findView(R.id.swipeLayout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.pink900);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-
-        mConvenientBanner = (ConvenientBanner) inflater.inflate(R.layout.recommed_banner_layout, container, false);
-
-
+        headView = mLayoutInflater.inflate(R.layout.recommed_banner_layout,null);
+        mConvenientBanner = (ConvenientBanner) headView.findViewById(R.id.convenientBanner);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 //        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
@@ -93,13 +96,16 @@ public class RecommendFragment extends Fragment implements SwipeRefreshLayout.On
 //                .setOnPageChangeListener(this)//监听翻页事件
                 .setOnItemClickListener(this);
 
-        mRecommendAdapter.addHeadView(mConvenientBanner);
+        mRecommendAdapter.addHeadView(headView);
 //        View headView = View.inflate(getContext(), R.layout.recommed_banner_layout, null);
 //        mConvenientBanner = ((ConvenientBanner) headView.findViewById(R.id.convenientBanner));
-        mStatuLayout.hide();
-        return v;
+
     }
 
+    @Override
+    protected void initData() {
+
+    }
 
     RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -126,6 +132,8 @@ public class RecommendFragment extends Fragment implements SwipeRefreshLayout.On
 
 
     }
+
+
 
     // 开始自动翻页
     @Override
@@ -178,5 +186,11 @@ public class RecommendFragment extends Fragment implements SwipeRefreshLayout.On
     public void onItemClick(int position) {
 //        Toast.makeText(YQApplication.getAppContext(), "Position:"+position, Toast.LENGTH_SHORT).show();
        startActivity(new Intent(getActivity(),VideoGroupActivity.class));
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.i(TAG,"onDestroyView-----------");
     }
 }

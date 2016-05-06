@@ -46,7 +46,7 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL_LIST));
 
         mRecyclerView.addOnScrollListener(mScrollListener);
-        mListAdapter = new VideoListAdapter();
+        mListAdapter = new VideoListAdapter(this);
         mRecyclerView.setAdapter(mListAdapter);
 
     }

@@ -36,7 +36,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_more"
+        android:src="@mipmap/ic_arrow"
         android:id="@+id/iv_arrow"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
