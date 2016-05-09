@@ -1,14 +1,11 @@
 package com.community.yuequ.gui;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.community.yuequ.R;
+import com.community.yuequ.gui.adapter.YQVideoAdapter;
 import com.community.yuequ.modle.VideoPrograma;
 import com.community.yuequ.modle.VideoProgramaDao;
 import com.community.yuequ.modle.callback.VideoProgramaCallBack;

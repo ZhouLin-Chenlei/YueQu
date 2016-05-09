@@ -51,15 +51,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:orientation="vertical">
-
-            <com.community.yuequ.view.CustomRatioImageView
-                android:id="@+id/iv_movie_cover_left"
+            <com.community.yuequ.view.CustomRatioRelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@mipmap/test3"
-                android:scaleType="centerCrop"
+                android:layout_height="wrap_content"
                 app:rrHeight="3"
-                app:rrWidth="2"/>
+                app:rrWidth="2">
+                <ImageView
+                    android:id="@+id/iv_movie_cover_left"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/test3"
+                    android:scaleType="centerCrop"
+                    />
+            </com.community.yuequ.view.CustomRatioRelativeLayout>
+
 
         </LinearLayout>
 
@@ -73,14 +78,19 @@
             android:layout_weight="1.0"
             android:orientation="vertical">
 
-            <com.community.yuequ.view.CustomRatioImageView
-                android:id="@+id/iv_movie_cover_mid"
+            <com.community.yuequ.view.CustomRatioRelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@mipmap/test3"
-                android:scaleType="centerCrop"
+                android:layout_height="wrap_content"
                 app:rrHeight="3"
-                app:rrWidth="2"/>
+                app:rrWidth="2">
+                <ImageView
+                    android:id="@+id/iv_movie_cover_mid"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/test3"
+                    android:scaleType="centerCrop"
+                    />
+            </com.community.yuequ.view.CustomRatioRelativeLayout>
 
         </LinearLayout>
 
@@ -94,14 +104,19 @@
             android:layout_weight="1.0"
             android:orientation="vertical">
 
-            <com.community.yuequ.view.CustomRatioImageView
-                android:id="@+id/iv_movie_cover_right"
+            <com.community.yuequ.view.CustomRatioRelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/test3"
-                android:scaleType="centerCrop"
                 app:rrHeight="3"
-                app:rrWidth="2"/>
+                app:rrWidth="2">
+                <ImageView
+                    android:id="@+id/iv_movie_cover_right"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/test3"
+                    android:scaleType="centerCrop"
+                    />
+            </com.community.yuequ.view.CustomRatioRelativeLayout>
         </LinearLayout>
 
     </LinearLayout>

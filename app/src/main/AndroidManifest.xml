@@ -15,7 +15,7 @@
         <activity
             android:name=".gui.WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_welcome"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -33,15 +33,23 @@
         </activity>
         <activity
             android:name=".gui.VideoGroupActivity"
-            android:label="@string/title_activity_video_group"
             android:theme="@style/YQAppTheme">
         </activity>
         <activity
             android:name=".gui.VideoListActivity"
             android:theme="@style/YQAppTheme">
         </activity>
-        <activity android:name=".gui.VideoDetailActivity"
-                  android:theme="@style/YQAppTheme">
+        <activity
+            android:name=".gui.VideoDetailActivity"
+            android:theme="@style/YQAppTheme">
+        </activity>
+        <activity
+            android:name=".gui.PicListActivity"
+            android:theme="@style/YQAppTheme">
+        </activity>
+        <activity
+            android:name=".gui.PicDetailActivity"
+            android:theme="@style/YQAppTheme">
         </activity>
     </application>
 
