@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.community.yuequ.R;
+import com.community.yuequ.Session;
 import com.community.yuequ.YQApplication;
 import com.community.yuequ.contorl.ImageManager;
 import com.community.yuequ.gui.ImageActivity;
@@ -82,7 +83,7 @@ public class GroupImageView extends ViewGroup implements View.OnClickListener {
     }
 
     private void displayGroupImageView() {
-        int maxWidth = YQApplication.screenWidth - DisplayUtil.dip2px(mContext, 10 * 2);
+        int maxWidth = Session.get(mContext).getScreenWidth() - DisplayUtil.dip2px(mContext, 10 * 2);
         mWidth = Math.round(maxWidth * 1.0f);
         picRects = null;
         int size = picUrls.size();

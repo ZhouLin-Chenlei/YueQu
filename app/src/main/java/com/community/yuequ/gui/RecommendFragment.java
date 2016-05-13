@@ -12,15 +12,21 @@ import android.view.View;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
+import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.gui.adapter.RecommendAdapter;
-import com.community.yuequ.util.Log;
+import com.community.yuequ.modle.RecommendDao;
+import com.community.yuequ.modle.callback.RecommendDaoCallBack;
 import com.community.yuequ.view.NetworkImageHolderView;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.SwipeRefreshLayout;
+import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.Arrays;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Request;
 
 /**
  * 推荐页
@@ -34,7 +40,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
     private LinearLayoutManager mLayoutManager;
     private View headView;
     private ConvenientBanner mConvenientBanner;
-    private Object mObjects = new Object();
+    protected RecommendDao mRecommendDao;
 
 
     public RecommendFragment() {
@@ -85,16 +91,56 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
 //                .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.ALIGN_PARENT_RIGHT)
 //                .setOnPageChangeListener(this)//监听翻页事件
                 .setOnItemClickListener(this);
-
         mRecommendAdapter.addHeadView(headView);
-//        View headView = View.inflate(getContext(), R.layout.recommed_banner_layout, null);
-//        mConvenientBanner = ((ConvenientBanner) headView.findViewById(R.id.convenientBanner));
 
     }
 
     @Override
     protected void initData() {
+        OkHttpUtils
+                .post()
+                .url(Contants.URL_RECOMMEND)
+                .tag(TAG)
+                .build()
+                .execute(new RecommendDaoCallBack() {
+                    @Override
+                    public void onError(Call call, Exception e) {
+                        getDataFail();
+                    }
 
+                    @Override
+                    public void onResponse(RecommendDao response) {
+
+                        mRecommendDao = response;
+                        if(mRecommendDao==null){
+
+                        }
+                    }
+
+
+
+                    @Override
+                    public void onBefore(Request request) {
+                        getDataBefore();
+                    }
+
+                    @Override
+                    public void onAfter() {
+                        getDataAfter();
+                    }
+                });
+    }
+
+    protected void getDataBefore() {
+        super.getDataBefore();
+    }
+
+    protected void getDataFail() {
+        super.getDataFail();
+    }
+    protected void getDataAfter() {
+        super.getDataAfter();
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
@@ -120,7 +166,6 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
     }
 
 
@@ -144,43 +189,19 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
-        AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-
-        };
-        asyncTask.execute();
+        initData();
     }
 
     @Override
     public void onItemClick(int position) {
-//        Toast.makeText(YQApplication.getAppContext(), "Position:"+position, Toast.LENGTH_SHORT).show();
        startActivity(new Intent(getActivity(),VideoGroupActivity.class));
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.i(TAG,"onDestroyView-----------");
+
+        OkHttpUtils.getInstance().cancelTag(TAG);
     }
+
 }

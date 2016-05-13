@@ -12,6 +12,8 @@
     <string name="loading_data">加载中...</string>
 
 
+    <string name="unknow_erro">未知错误</string>
+
     <string name="more">更多</string>
     <string name="movie">影视</string>
     <string name="funny">搞笑</string>
@@ -20,6 +22,10 @@
     <string name="recreation">娱乐</string>
     <string name="play">播放</string>
     <string name="intro">简介</string>
+    <string name="unknow">未知</string>
+    <string name="cmcc">中国移动</string>
+    <string name="unicom">中国联通</string>
+    <string name="telecom">中国电信</string>
 
 
 </resources>

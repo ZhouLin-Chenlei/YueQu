@@ -164,25 +164,25 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    @Override
-    public long getItemId(int position) {
-        return 0l;
+    public MediaWrapper getItem(int position) {
+        if (hasHeader()) {
+            --position;
+        }
+        return mVideos.get(position);
     }
 
     @Override
     public int getItemCount() {
-        return mVideos.size() + 1;
+        int size = mVideos.size();
+        if (hasHeader()) {
+            size++;
+        }
+        return size;
     }
 
-    public MediaWrapper getItem(int position){
-        if(position==0){
-            return null;
-        }
-        return mVideos.get(position-1);
-    }
     @Override
     public int getItemViewType(int position) {
-        if(position==0){
+        if(isHeaderPosition(position)){
             return TYPE_HEAD_VIEW;
         }else if (getItem(position).type==1) {
             return TYPE_LIST_TITLE;
@@ -197,35 +197,27 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-//    public void setLoadMoreViewText(String text) {
-//        if (footView == null) return;
-//        ((TextView) footView.findViewById(R.id.tv_loading_more)).setText(text);
-//        notifyItemChanged(getItemCount());
-//    }
-//
-//    public void setLoadMoreViewVisibility(int visibility) {
-//        if (footView == null) return;
-//        footView.setVisibility(visibility);
-//        notifyItemChanged(getItemCount());
-//    }
-//
-//    public boolean isLoadMoreShown() {
-//        if (footView == null) return false;
-//        return footView.isShown();
-//    }
-//
-//    public String getLoadMoreViewText() {
-//        if (footView == null) return "";
-//        return ((TextView) footView.findViewById(R.id.tv_loading_more)).getText().toString();
-//    }
+    protected boolean hasHeader() {
+        return getHeader() != null;
+    }
+    public View getHeader() {
+        return headView;
+    }
+    protected boolean isHeaderType(int viewType) {
+        return viewType == TYPE_HEAD_VIEW;
+    }
 
-
-
-
+    public boolean isHeaderPosition(int position) {
+        return hasHeader() && position == 0;
+    }
 
     public void addHeadView(View headView) {
+//        if(hasHeader()){
+//           return;
+//        }
         this.headView = headView;
         notifyItemChanged(0);
+
     }
 
     public class TitleViewHolder extends RecyclerView.ViewHolder {

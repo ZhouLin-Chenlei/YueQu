@@ -19,7 +19,7 @@ public abstract class BaseFragment extends Fragment {
     private boolean isVisible = false;//当前Fragment是否可见
     private boolean isInitView = false;//是否与View建立起映射关系
     private boolean isFirstLoad = true;//是否是第一次加载数据
-
+    protected boolean isLoading = false;//是否正在加载
     protected View convertView;
     private SparseArray<View> mViews;
     protected  LayoutInflater mLayoutInflater;
@@ -112,5 +112,22 @@ public abstract class BaseFragment extends Fragment {
         return null;
     }
 
+
+    protected void getDataBefore() {
+        isLoading = true;
+    }
+
+    protected void getDataFail() {
+
+    }
+    protected void getDataAfter() {
+        isLoading = false;
+    }
+
+    @Override
+    public void onDestroyView() {
+        isLoading = false;
+        super.onDestroyView();
+    }
 }
 

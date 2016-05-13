@@ -4,12 +4,14 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.gui.adapter.YQVideoAdapter;
 import com.community.yuequ.modle.VideoPrograma;
-import com.community.yuequ.modle.VideoProgramaDao;
-import com.community.yuequ.modle.callback.VideoProgramaCallBack;
+import com.community.yuequ.modle.YQVideoDao;
+import com.community.yuequ.modle.callback.YQVideoDaoCallBack;
 import com.community.yuequ.util.Log;
+import com.community.yuequ.view.DividerItemDecoration;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.SwipeRefreshLayout;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -30,7 +32,7 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
     private YQVideoAdapter mVideoAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private LinearLayoutManager mLayoutManager;
-    private VideoProgramaDao mVideoPrograma;
+    private YQVideoDao mVideoPrograma;
     private final List<VideoPrograma> mProgramas = new ArrayList<>();
 
     public YQVideoFragment() {
@@ -60,7 +62,7 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-//        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
 
         mRecyclerView.addOnScrollListener(mScrollListener);
         mRecyclerView.setAdapter(mVideoAdapter);
@@ -70,20 +72,20 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     protected void initData() {
         OkHttpUtils
-                .get()
-                .url(testUrl/*Contants.URL_RECOMMEND*/)
+                .post()
+                .url(Contants.URL_VIDEOLIST)
                 .tag(TAG)
                 .build()
-                .execute(new VideoProgramaCallBack() {
+                .execute(new YQVideoDaoCallBack() {
                     @Override
                     public void onError(Call call, Exception e) {
                         getDataFail();
                     }
 
                     @Override
-                    public void onResponse(VideoProgramaDao response) {
+                    public void onResponse(YQVideoDao response) {
                         mVideoPrograma = response;
-                        if(mVideoPrograma.data==null||mVideoPrograma.data.isEmpty()){
+                        if(mVideoPrograma.result==null||mVideoPrograma.result.isEmpty()){
                             getDataEmpty();
                         }else{
                             getDataAdequate();
@@ -93,6 +95,10 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
                     @Override
                     public void onBefore(Request request) {
                         getDataBefore();
+                    }
+                    @Override
+                    public void onAfter() {
+                        getDataAfter();
                     }
                 });
     }
@@ -129,13 +135,25 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
     }
 
 
-    public void getDataBefore(){
+    protected void getDataBefore() {
+        super.getDataBefore();
         if(mVideoAdapter.getItemCount()==0){
             mStatuLayout.show().setProgressBarVisibility(true);
         }else {
 
         }
     }
+
+    protected void getDataFail() {
+        super.getDataFail();
+        mVideoAdapter.notifyDataSetChanged();
+        completeRefresh();
+    }
+    protected void getDataAfter() {
+        super.getDataAfter();
+    }
+
+
     //数据为空
     public void getDataEmpty() {
         mProgramas.clear();
@@ -146,18 +164,13 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
     //数据足够
     public void getDataAdequate() {
         mProgramas.clear();
-        mProgramas.addAll(mVideoPrograma.data);
+        mProgramas.addAll(mVideoPrograma.result);
         mVideoAdapter.notifyDataSetChanged();
         completeRefresh();
 
     }
 
-    //加载失败
-    public void getDataFail() {
-        mVideoAdapter.notifyDataSetChanged();
-        completeRefresh();
 
-    }
 
     @Override
     public void onRefresh() {

@@ -37,9 +37,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
 
-        YQApplication.screenWidth = DisplayUtil.getWindowWidth(this);
-        YQApplication.screenHeight = DisplayUtil.getWindowHeight(this);
-
         setContentView(R.layout.activity_main);
         mViewPager = ((ViewPager) findViewById(R.id.viewpager));
         rl_recommend = ((RelativeLayout) findViewById(R.id.rl_recommend));

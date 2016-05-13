@@ -3,8 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
     <color name="pink900">#E02167</color>
     <color name="pink950">#CB0D2F</color>
+
 
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>

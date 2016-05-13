@@ -11,13 +11,35 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    signingConfigs{
+        release{
+            storeFile file('zhoulin.jks')
+            storePassword '123456'
+            keyAlias 'zhoulin'
+            keyPassword '123456'
+
+        }
+    }
+
     buildTypes {
+
         release {
             minifyEnabled false
             zipAlignEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
+
+    }
+    productFlavors {
+        "10001" {}
+
+        productFlavors.all { flavor ->
+            flavor.manifestPlaceholders = [YUEQU_CHANNEL_VALUE: name]
+        }
+
     }
 }
 
