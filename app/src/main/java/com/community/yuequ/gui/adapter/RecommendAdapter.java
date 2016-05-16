@@ -18,6 +18,7 @@ import com.community.yuequ.gui.ImageActivity;
 import com.community.yuequ.gui.RecommendFragment;
 import com.community.yuequ.gui.VideoListActivity;
 import com.community.yuequ.modle.MediaWrapper;
+import com.community.yuequ.modle.RProgram;
 import com.community.yuequ.view.CustomRatioImageView;
 import com.community.yuequ.view.NetworkImageHolderView;
 
@@ -32,7 +33,7 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private RecommendFragment mFragment;
 
     private ArrayList<MediaWrapper> mVideos = new ArrayList<>();
-
+    private List<RProgram> mPrograms;
     private static final int TYPE_HEAD_VIEW = 0;
 //    private static final int TYPE_FOOT_VIEW = 1;
     private static final int TYPE_LIST_TITLE = 1;
@@ -217,6 +218,10 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 //        }
         this.headView = headView;
         notifyItemChanged(0);
+
+    }
+
+    public void setData(List<RProgram> programs) {
 
     }
 

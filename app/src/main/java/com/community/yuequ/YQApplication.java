@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 
+import com.zhy.http.okhttp.OkHttpUtils;
+
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +24,7 @@ public class YQApplication extends Application{
     public void onCreate() {
         super.onCreate();
         instance = this;
-
+//        OkHttpUtils.getInstance().setConnectTimeout();
 
 
     }

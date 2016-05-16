@@ -7,7 +7,8 @@ public class Contants {
 
     protected static final String PROTOCOL_HTTP = "http://";
     protected static String PROTOCOL = PROTOCOL_HTTP;
-    public static String DOMAIN = "171.8.239.48:8086/yqi";
+    public static String DOMAIN = "171.8.239.246:8086/yqi";
+    public static String PICDOMAIN = "http://171.8.239.246:8081/yqfile";
 
     public static final String PRODUCTNAME = "yuequ";
     //系统初始化接口

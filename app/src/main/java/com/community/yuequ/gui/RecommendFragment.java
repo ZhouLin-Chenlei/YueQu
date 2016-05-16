@@ -31,7 +31,7 @@ import okhttp3.Request;
 /**
  * 推荐页
  */
-public class RecommendFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener ,OnItemClickListener{
+public class RecommendFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, OnItemClickListener {
     public static final String TAG = RecommendFragment.class.getSimpleName();
     protected PageStatuLayout mStatuLayout;
     private RecommendAdapter mRecommendAdapter;
@@ -46,6 +46,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
     public RecommendFragment() {
         // Required empty public constructor
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +66,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
         mSwipeRefreshLayout = findView(R.id.swipeLayout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.pink900);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        headView = mLayoutInflater.inflate(R.layout.recommed_banner_layout,null);
+        headView = mLayoutInflater.inflate(R.layout.recommed_banner_layout, null);
         mConvenientBanner = (ConvenientBanner) headView.findViewById(R.id.convenientBanner);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -76,24 +77,51 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
         mRecyclerView.setHasFixedSize(true);
 
 
-        List<String> stringList = Arrays.asList(images);
-        //本地图片例子
-        mConvenientBanner.setPages(
-                new CBViewHolderCreator<NetworkImageHolderView>() {
-                    @Override
-                    public NetworkImageHolderView createHolder() {
-                        return new NetworkImageHolderView();
-                    }
-                }, stringList)
-                //设置两个点图片作为翻页指示器，不设置则没有指示器，可以根据自己需求自行配合自己的指示器,不需要圆点指示器可用不设
-                .setPageIndicator(new int[]{R.drawable.circular_indicator_white, R.drawable.circular_indicator_red})
-                //设置指示器的方向
+    }
+
+    private void display() {
+        if (mRecommendDao == null) {
+            return;
+        }
+        if(mRecommendDao.errorCode!=200){
+            if (mStatuLayout != null) {
+                mStatuLayout.setProgressBarVisibility(false);
+                mStatuLayout.show().setText(getString(R.string.load_data_fail));
+            }
+            return;
+        }
+
+        if(mRecommendDao.result==null ){
+            if (mStatuLayout != null) {
+                mStatuLayout.setProgressBarVisibility(false);
+                mStatuLayout.show().setText(getString(R.string.no_data));
+            }
+            return;
+        }
+
+        if(mRecommendDao.result.advert!=null){
+            //本地图片例子
+            mConvenientBanner.setPages(
+                    new CBViewHolderCreator<NetworkImageHolderView>() {
+                        @Override
+                        public NetworkImageHolderView createHolder() {
+                            return new NetworkImageHolderView();
+                        }
+                    }, mRecommendDao.result.advert)
+                    //设置两个点图片作为翻页指示器，不设置则没有指示器，可以根据自己需求自行配合自己的指示器,不需要圆点指示器可用不设
+                    .setPageIndicator(new int[]{R.drawable.circular_indicator_white, R.drawable.circular_indicator_red})
+                    //设置指示器的方向
 //                .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.ALIGN_PARENT_RIGHT)
 //                .setOnPageChangeListener(this)//监听翻页事件
-                .setOnItemClickListener(this);
-        mRecommendAdapter.addHeadView(headView);
+                    .setOnItemClickListener(this);
+            mRecommendAdapter.addHeadView(headView);
+        }
 
+        if(mRecommendDao.result.program!=null){
+            mRecommendAdapter.setData(mRecommendDao.result.program);
+        }
     }
+
 
     @Override
     protected void initData() {
@@ -112,11 +140,8 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
                     public void onResponse(RecommendDao response) {
 
                         mRecommendDao = response;
-                        if(mRecommendDao==null){
-
-                        }
+                        display();
                     }
-
 
 
                     @Override
@@ -131,13 +156,17 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
                 });
     }
 
+
     protected void getDataBefore() {
         super.getDataBefore();
+
+
     }
 
     protected void getDataFail() {
         super.getDataFail();
     }
+
     protected void getDataAfter() {
         super.getDataAfter();
         mSwipeRefreshLayout.setRefreshing(false);
@@ -159,15 +188,15 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
         }
     };
 
-    String[] images={"http://b.hiphotos.baidu.com/image/pic/item/962bd40735fae6cdba41808d0bb30f2443a70f60.jpg",
-                     "http://f.hiphotos.baidu.com/image/h%3D200/sign=713ba20d2b2eb938f36d7df2e56085fe/a686c9177f3e6709ece1e4133fc79f3df9dc557c.jpg",
-                    "http://a.hiphotos.baidu.com/image/h%3D200/sign=e62356eaa8af2eddcbf14ee9bd110102/b03533fa828ba61e38f9e0c34534970a314e59c2.jpg"};
+    String[] images = {"http://b.hiphotos.baidu.com/image/pic/item/962bd40735fae6cdba41808d0bb30f2443a70f60.jpg",
+            "http://f.hiphotos.baidu.com/image/h%3D200/sign=713ba20d2b2eb938f36d7df2e56085fe/a686c9177f3e6709ece1e4133fc79f3df9dc557c.jpg",
+            "http://a.hiphotos.baidu.com/image/h%3D200/sign=e62356eaa8af2eddcbf14ee9bd110102/b03533fa828ba61e38f9e0c34534970a314e59c2.jpg"};
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
     }
-
 
 
     // 开始自动翻页
@@ -194,7 +223,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
 
     @Override
     public void onItemClick(int position) {
-       startActivity(new Intent(getActivity(),VideoGroupActivity.class));
+        startActivity(new Intent(getActivity(), VideoGroupActivity.class));
     }
 
     @Override

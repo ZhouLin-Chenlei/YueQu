@@ -66,6 +66,7 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
 
         mRecyclerView.addOnScrollListener(mScrollListener);
         mRecyclerView.setAdapter(mVideoAdapter);
+        completeRefresh();
     }
 
     String testUrl = "http://image.baidu.com/channel/listjson?fr=channel&tag1=美女&tag2=泳装&sorttype=0&pn=1&rn=100&ie=utf8&oe=utf-8&8339397110145592";
@@ -115,7 +116,7 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             int topRowVerticalPosition =
                     (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
-            mSwipeRefreshLayout.setEnabled(topRowVerticalPosition >= 0);
+            mSwipeRefreshLayout.setEnabled(topRowVerticalPosition >= 0 && !isLoading);
         }
     };
 
@@ -126,8 +127,10 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
         }
         if (mStatuLayout != null) {
             mStatuLayout.setProgressBarVisibility(false);
-            if(mVideoAdapter.getItemCount()==0){
+            if(mVideoPrograma==null && mVideoAdapter.getItemCount()==0){
                 mStatuLayout.show().setText(getString(R.string.load_data_fail));
+            }else if(mVideoPrograma!=null && mVideoAdapter.getItemCount()==0){
+                mStatuLayout.show().setText(getString(R.string.no_data));
             }else {
                 mStatuLayout.hide();
             }
@@ -138,9 +141,9 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
     protected void getDataBefore() {
         super.getDataBefore();
         if(mVideoAdapter.getItemCount()==0){
-            mStatuLayout.show().setProgressBarVisibility(true);
+            mStatuLayout.show().setProgressBarVisibility(true).setText(null);
         }else {
-
+            mStatuLayout.hide();
         }
     }
 

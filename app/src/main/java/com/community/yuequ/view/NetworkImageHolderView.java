@@ -5,14 +5,16 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bigkoo.convenientbanner.holder.Holder;
+import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.contorl.ImageManager;
+import com.community.yuequ.modle.Advert;
 
 /**
  * Created by Sai on 15/8/4.
  * 网络图片加载例子
  */
-public class NetworkImageHolderView implements Holder<String> {
+public class NetworkImageHolderView implements Holder<Advert> {
     private ImageView imageView;
 
     @Override
@@ -24,14 +26,9 @@ public class NetworkImageHolderView implements Holder<String> {
     }
 
     @Override
-    public void UpdateUI(Context context, int position, String data) {
-        ImageManager.getInstance().loadUrlImage(context,data,imageView);
+    public void UpdateUI(Context context, int position, Advert data) {
+        String url = Contants.PICDOMAIN+data.img_path;
+        ImageManager.getInstance().loadUrlImage(context,url,imageView);
 
-//        Picasso.with(context) //
-//                .load(data) //
-//                .placeholder(R.mipmap.ic_launcher) //
-//                .error(R.mipmap.ic_launcher) //
-//                .tag(context) //
-//                .into(imageView);
     }
 }
