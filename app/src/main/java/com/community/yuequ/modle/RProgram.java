@@ -3,13 +3,14 @@ package com.community.yuequ.modle;
 import java.util.List;
 
 /**
- * Created by Administrator on 2016/5/11.
+ * 推荐页栏目的子元素，节目
  */
 public class RProgram {
-    public String column_id;
-    public String column_name;
-    public String type;
-    public List<Chip> plist;
-
+    public int id;
+    public String name;
+    public String img_path;
+    public String remark;
+    public int type;
+    public List<String> piclist;//图片节目的话就有图片集合
 
 }

@@ -3,20 +3,26 @@ package com.community.yuequ.gui;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.community.yuequ.Contants;
 import com.community.yuequ.R;
+import com.community.yuequ.YQApplication;
 import com.community.yuequ.gui.adapter.YQVideoAdapter;
 import com.community.yuequ.modle.VideoPrograma;
 import com.community.yuequ.modle.YQVideoDao;
 import com.community.yuequ.modle.callback.YQVideoDaoCallBack;
+import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.util.Log;
 import com.community.yuequ.view.DividerItemDecoration;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.SwipeRefreshLayout;
+import com.google.gson.Gson;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.Call;
@@ -72,8 +78,22 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
     String testUrl = "http://image.baidu.com/channel/listjson?fr=channel&tag1=美女&tag2=泳装&sorttype=0&pn=1&rn=100&ie=utf8&oe=utf-8&8339397110145592";
     @Override
     protected void initData() {
+        HashMap<String,Integer> hashMap  =new HashMap<>();
+        hashMap.put("level",1);//默认一级栏目，值=1；二级栏目，值=2
+        hashMap.put("col_id",2);//默认为视频ID，值=2
+        String content = "";
+        try {
+            content = AESUtil.encode(new Gson().toJson(hashMap));
+        } catch (Exception e) {
+            throw new RuntimeException("加密错误！");
+        }
+        if (TextUtils.isEmpty(content)){
+            Toast.makeText(YQApplication.getAppContext(), R.string.unknow_erro, Toast.LENGTH_SHORT).show();
+            return;
+        }
         OkHttpUtils
-                .post()
+                .postString()
+                .content(content)
                 .url(Contants.URL_VIDEOLIST)
                 .tag(TAG)
                 .build()

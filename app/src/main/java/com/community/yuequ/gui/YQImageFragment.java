@@ -5,16 +5,27 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.community.yuequ.Contants;
 import com.community.yuequ.R;
+import com.community.yuequ.YQApplication;
 import com.community.yuequ.gui.adapter.YQImageAdapter;
+import com.community.yuequ.modle.RTextImage;
 import com.community.yuequ.modle.YQImageDao;
 import com.community.yuequ.modle.callback.YQImageDaoCallBack;
+import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.view.DividerItemDecoration;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.SwipeRefreshLayout;
+import com.google.gson.Gson;
 import com.zhy.http.okhttp.OkHttpUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Request;
@@ -29,8 +40,8 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
     private YQImageAdapter mListAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private LinearLayoutManager mLayoutManager;
-
-
+    private YQImageDao imageDao;
+    public final List<RTextImage> rTextImages=new ArrayList<>();
     public YQImageFragment() {
     }
 
@@ -39,7 +50,7 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mListAdapter = new YQImageAdapter(this);
+        mListAdapter = new YQImageAdapter(this,rTextImages);
 
     }
 
@@ -81,9 +92,24 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     protected void initData() {
+
+        HashMap<String,Integer> hashMap  =new HashMap<>();
+        hashMap.put("level",1);//默认一级栏目，值=1；二级栏目，值=2
+        hashMap.put("col_id",4);//默认为视频ID，值=4
+        String content = "";
+        try {
+            content = AESUtil.encode(new Gson().toJson(hashMap));
+        } catch (Exception e) {
+            throw new RuntimeException("加密错误！");
+        }
+        if (TextUtils.isEmpty(content)){
+            Toast.makeText(YQApplication.getAppContext(), R.string.unknow_erro, Toast.LENGTH_SHORT).show();
+            return;
+        }
         OkHttpUtils
-                .post()
+                .postString()
                 .url(Contants.URL_SPECIALSUBJECTLIST)
+                .content(content)
                 .tag(TAG)
                 .build()
                 .execute(new YQImageDaoCallBack() {
@@ -94,7 +120,12 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
 
                     @Override
                     public void onResponse(YQImageDao response) {
-
+                        imageDao  = response;
+                        if(imageDao.result==null||imageDao.result.isEmpty()){
+                            getDataEmpty();
+                        }else{
+                            getDataAdequate();
+                        }
 
                     }
 
@@ -118,7 +149,40 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
     }
     protected void getDataAfter() {
         super.getDataAfter();
-        mSwipeRefreshLayout.setRefreshing(false);
+
+    }
+
+    //数据为空
+    public void getDataEmpty() {
+        rTextImages.clear();
+        mListAdapter.notifyDataSetChanged();
+        completeRefresh();
+    }
+
+    //数据足够
+    public void getDataAdequate() {
+        rTextImages.clear();
+        rTextImages.addAll(imageDao.result);
+        mListAdapter.notifyDataSetChanged();
+        completeRefresh();
+
+    }
+
+
+    private void completeRefresh() {
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+        if (mStatuLayout != null) {
+            mStatuLayout.setProgressBarVisibility(false);
+            if(imageDao==null && mListAdapter.getItemCount()==0){
+                mStatuLayout.show().setText(getString(R.string.load_data_fail));
+            }else if(imageDao!=null && mListAdapter.getItemCount()==0){
+                mStatuLayout.show().setText(getString(R.string.no_data));
+            }else {
+                mStatuLayout.hide();
+            }
+        }
     }
 
     @Override
@@ -137,32 +201,7 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-        AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-
-        };
-        asyncTask.execute();
+        initData();
     }
 
 }

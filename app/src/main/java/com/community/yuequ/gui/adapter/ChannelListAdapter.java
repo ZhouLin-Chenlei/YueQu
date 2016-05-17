@@ -9,23 +9,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.community.yuequ.R;
+import com.community.yuequ.contorl.ImageManager;
 import com.community.yuequ.gui.ChannelFragment;
+import com.community.yuequ.modle.Channel;
 import com.community.yuequ.modle.MediaWrapper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.ViewHolder> {
     private ChannelFragment mFragment;
-    private volatile ArrayList<MediaWrapper> mVideos = new ArrayList<>();
+    private List<Channel> mChannels;
 
 
-    public ChannelListAdapter(ChannelFragment fragment) {
+    public ChannelListAdapter(ChannelFragment fragment, List<Channel> list) {
         super();
         mFragment = fragment;
+        this.mChannels=list;
 
-        for(int i = 0;i<100;i++){
-            mVideos.add(new MediaWrapper());
-        }
 
     }
 
@@ -39,7 +40,10 @@ public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tv_channle_title.setText("专题:"+ position);
+        Channel channel = mChannels.get(position);
+
+        holder.tv_channle_title.setText(channel.name);
+        ImageManager.getInstance().loadUrlImage(mFragment,channel.img_path, holder.iv_channel_cover);
 
     }
 
@@ -50,7 +54,7 @@ public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.
 
     @Override
     public int getItemCount() {
-        return mVideos.size();
+        return mChannels.size();
     }
 
     @Override

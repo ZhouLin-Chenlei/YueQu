@@ -40,9 +40,9 @@ public class YQVideoAdapter extends RecyclerView.Adapter<YQVideoAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.ml_item_title.setText(mVideos.get(position).abs);
-        holder.ml_item_detail.setText("宽/高"+mVideos.get(position).thumbnail_width+"/"+mVideos.get(position).thumbnail_height);
-        ImageManager.getInstance().loadUrlImage(mFragment.getContext(),mVideos.get(position).thumbnail_url, holder.ml_item_image);
+        holder.ml_item_title.setText(mVideos.get(position).name);
+        holder.ml_item_detail.setText(mVideos.get(position).content_desc);
+        ImageManager.getInstance().loadUrlImage(mFragment,mVideos.get(position).img_path, holder.ml_item_image);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -7,23 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
-import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.community.yuequ.R;
-import com.community.yuequ.YQApplication;
 import com.community.yuequ.gui.ImageActivity;
 import com.community.yuequ.gui.RecommendFragment;
 import com.community.yuequ.gui.VideoListActivity;
 import com.community.yuequ.modle.MediaWrapper;
-import com.community.yuequ.modle.RProgram;
-import com.community.yuequ.view.CustomRatioImageView;
-import com.community.yuequ.view.NetworkImageHolderView;
+import com.community.yuequ.modle.RGroup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,7 +25,7 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private RecommendFragment mFragment;
 
     private ArrayList<MediaWrapper> mVideos = new ArrayList<>();
-    private List<RProgram> mPrograms;
+    private List<RGroup> mPrograms;
     private static final int TYPE_HEAD_VIEW = 0;
 //    private static final int TYPE_FOOT_VIEW = 1;
     private static final int TYPE_LIST_TITLE = 1;
@@ -47,48 +39,48 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public RecommendAdapter(RecommendFragment fragment) {
         mFragment = fragment;
-        MediaWrapper wrapper = new MediaWrapper();
-        wrapper.type = 1;
-        mVideos.add(wrapper);
-        wrapper = new MediaWrapper();
-        wrapper.type = 2;
-        mVideos.add(wrapper);
-        wrapper = new MediaWrapper();
-        wrapper.type = 2;
-        mVideos.add(wrapper);
-
-        wrapper = new MediaWrapper();
-        wrapper.type = 1;
-        mVideos.add(wrapper);
-        wrapper = new MediaWrapper();
-        wrapper.type = 3;
-        mVideos.add(wrapper);
-        wrapper = new MediaWrapper();
-        wrapper.type = 1;
-        mVideos.add(wrapper);
-        wrapper = new MediaWrapper();
-        wrapper.type = 3;
-        mVideos.add(wrapper);
-
-        wrapper = new MediaWrapper();
-        wrapper.type = 1;
-        mVideos.add(wrapper);
-        wrapper = new MediaWrapper();
-        wrapper.type = 4;
-        mVideos.add(wrapper);
-        wrapper = new MediaWrapper();
-        wrapper.type = 4;
-        mVideos.add(wrapper);
-
-        wrapper = new MediaWrapper();
-        wrapper.type = 1;
-        mVideos.add(wrapper);
-        wrapper = new MediaWrapper();
-        wrapper.type = 5;
-        mVideos.add(wrapper);
-        wrapper = new MediaWrapper();
-        wrapper.type = 5;
-        mVideos.add(wrapper);
+//        MediaWrapper wrapper = new MediaWrapper();
+//        wrapper.type = 1;
+//        mVideos.add(wrapper);
+//        wrapper = new MediaWrapper();
+//        wrapper.type = 2;
+//        mVideos.add(wrapper);
+//        wrapper = new MediaWrapper();
+//        wrapper.type = 2;
+//        mVideos.add(wrapper);
+//
+//        wrapper = new MediaWrapper();
+//        wrapper.type = 1;
+//        mVideos.add(wrapper);
+//        wrapper = new MediaWrapper();
+//        wrapper.type = 3;
+//        mVideos.add(wrapper);
+//        wrapper = new MediaWrapper();
+//        wrapper.type = 1;
+//        mVideos.add(wrapper);
+//        wrapper = new MediaWrapper();
+//        wrapper.type = 3;
+//        mVideos.add(wrapper);
+//
+//        wrapper = new MediaWrapper();
+//        wrapper.type = 1;
+//        mVideos.add(wrapper);
+//        wrapper = new MediaWrapper();
+//        wrapper.type = 4;
+//        mVideos.add(wrapper);
+//        wrapper = new MediaWrapper();
+//        wrapper.type = 4;
+//        mVideos.add(wrapper);
+//
+//        wrapper = new MediaWrapper();
+//        wrapper.type = 1;
+//        mVideos.add(wrapper);
+//        wrapper = new MediaWrapper();
+//        wrapper.type = 5;
+//        mVideos.add(wrapper);
+//        wrapper = new MediaWrapper();
+//        wrapper.type = 5;
+//        mVideos.add(wrapper);
     }
 
     @Override
@@ -221,7 +213,7 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
-    public void setData(List<RProgram> programs) {
+    public void setData(List<RGroup> programs) {
 
     }
 

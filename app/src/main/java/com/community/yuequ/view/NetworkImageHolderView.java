@@ -27,8 +27,8 @@ public class NetworkImageHolderView implements Holder<Advert> {
 
     @Override
     public void UpdateUI(Context context, int position, Advert data) {
-        String url = Contants.PICDOMAIN+data.img_path;
-        ImageManager.getInstance().loadUrlImage(context,url,imageView);
+
+        ImageManager.getInstance().loadUrlImage(context,data.img_path,imageView);
 
     }
 }

@@ -9,12 +9,16 @@ import android.support.v7.widget.RecyclerView;
 import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.gui.adapter.ChannelListAdapter;
+import com.community.yuequ.modle.Channel;
 import com.community.yuequ.modle.ChannelDao;
 import com.community.yuequ.modle.callback.ChannelDaoBack;
 import com.community.yuequ.view.DividerItemDecoration;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.SwipeRefreshLayout;
 import com.zhy.http.okhttp.OkHttpUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Request;
@@ -31,6 +35,7 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
     private LinearLayoutManager mLayoutManager;
     private ChannelDao mChannelDao;
 
+    public final List<Channel> mChannels =  new ArrayList<>();
     public ChannelFragment() {
         // Required empty public constructor
     }
@@ -39,7 +44,7 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAdapter = new ChannelListAdapter(this);
+        mAdapter = new ChannelListAdapter(this,mChannels);
 
     }
 
@@ -94,6 +99,11 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
                     @Override
                     public void onResponse(ChannelDao response) {
                         mChannelDao = response;
+                        if(mChannelDao.result==null||mChannelDao.result.isEmpty()){
+                            getDataEmpty();
+                        }else{
+                            getDataAdequate();
+                        }
 
                     }
 
@@ -117,9 +127,38 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
     }
     protected void getDataAfter() {
         super.getDataAfter();
-        mSwipeRefreshLayout.setRefreshing(false);
     }
 
+    //数据为空
+    public void getDataEmpty() {
+        mChannels.clear();
+        mAdapter.notifyDataSetChanged();
+        completeRefresh();
+    }
+
+    //数据足够
+    public void getDataAdequate() {
+        mChannels.clear();
+        mChannels.addAll(mChannelDao.result);
+        mAdapter.notifyDataSetChanged();
+        completeRefresh();
+
+    }
+    private void completeRefresh() {
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+        if (mStatuLayout != null) {
+            mStatuLayout.setProgressBarVisibility(false);
+            if(mChannelDao==null && mAdapter.getItemCount()==0){
+                mStatuLayout.show().setText(getString(R.string.load_data_fail));
+            }else if(mChannelDao!=null && mAdapter.getItemCount()==0){
+                mStatuLayout.show().setText(getString(R.string.no_data));
+            }else {
+                mStatuLayout.hide();
+            }
+        }
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -129,31 +168,6 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     public void onRefresh() {
-        AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-
-        };
-        asyncTask.execute();
+        initData();
     }
 }

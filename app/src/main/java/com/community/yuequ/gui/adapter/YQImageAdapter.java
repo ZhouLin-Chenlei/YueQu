@@ -10,24 +10,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.community.yuequ.R;
+import com.community.yuequ.contorl.ImageManager;
 import com.community.yuequ.gui.VideoGroupActivity;
 import com.community.yuequ.gui.YQImageFragment;
 import com.community.yuequ.modle.MediaWrapper;
+import com.community.yuequ.modle.RTextImage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class YQImageAdapter extends RecyclerView.Adapter<YQImageAdapter.ViewHolder> {
     private YQImageFragment mFragment;
-    private volatile ArrayList<MediaWrapper> mVideos = new ArrayList<>();
+    private List<RTextImage> rTextImages;
 
 
-    public YQImageAdapter(YQImageFragment fragment) {
+    public YQImageAdapter(YQImageFragment fragment, List<RTextImage> list) {
         super();
         mFragment = fragment;
-
-        for(int i = 0;i<100;i++){
-            mVideos.add(new MediaWrapper());
-        }
+        rTextImages=list;
 
     }
 
@@ -41,8 +41,11 @@ public class YQImageAdapter extends RecyclerView.Adapter<YQImageAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.ml_item_title.setText("Position:"+ position);
-        holder.ml_item_detail.setText("哈哈哈哈");
+        RTextImage rTextImage = rTextImages.get(position);
+        holder.ml_item_title.setText(rTextImage.name);
+        holder.ml_item_detail.setText(rTextImage.name);
+        ImageManager.getInstance().loadUrlImage(mFragment,rTextImage.img_path,holder.ml_item_image);
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,7 +63,7 @@ public class YQImageAdapter extends RecyclerView.Adapter<YQImageAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return mVideos.size();
+        return rTextImages.size();
     }
 
     @Override

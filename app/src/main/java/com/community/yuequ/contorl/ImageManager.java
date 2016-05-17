@@ -2,9 +2,11 @@ package com.community.yuequ.contorl;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.widget.GlideCircleTransform;
 
@@ -32,9 +34,20 @@ public class ImageManager {
     }
 
     // 加载网络图片
-    public void loadUrlImage(Context context, String url, ImageView imageView) {
+    public void loadUrlImage(Fragment context, String url, ImageView imageView) {
+        String path = Contants.PICDOMAIN+url;
         Glide.with(context)
-                .load(url)
+                .load(path)
+                .placeholder(R.mipmap.jiazai)
+                .error(R.mipmap.qowu)
+                .crossFade()
+                .into(imageView);
+    }
+    // 加载网络图片
+    public void loadUrlImage(Context context, String url, ImageView imageView) {
+        String path = Contants.PICDOMAIN+url;
+        Glide.with(context)
+                .load(path)
                 .placeholder(R.mipmap.jiazai)
                 .error(R.mipmap.qowu)
                 .crossFade()
