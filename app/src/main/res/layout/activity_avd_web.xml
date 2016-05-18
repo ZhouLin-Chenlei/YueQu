@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.community.yuequ.gui.AvdWebActivity">
     <include layout="@layout/title_bar"/>
     <FrameLayout
@@ -27,11 +28,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="15dp"
-            android:background="@color/white"
+            android:background="#FFF5F5F5"
             android:gravity="center_vertical|left"
             android:text=""
             android:textSize="16sp"
-            android:textColor="@color/grey875"
+            android:textColor="#757575"
             android:visibility="gone"/>
     </FrameLayout>
 

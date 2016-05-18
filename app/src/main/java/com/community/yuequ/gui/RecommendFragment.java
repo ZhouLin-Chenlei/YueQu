@@ -241,6 +241,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
             if (mRecommendDao.result.advert != null) {
 
                 Advert advert = mRecommendDao.result.advert.get(position);
+
                 if("1".equals(advert.link_type)){
                     Intent intent = new Intent(getContext(),AvdWebActivity.class);
                     intent.putExtra("title",advert.title);
