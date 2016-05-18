@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.community.yuequ.R;
 import com.community.yuequ.gui.RecommendFragment;
+import com.community.yuequ.gui.VideoDetailActivity;
 import com.community.yuequ.gui.VideoOrPicGroupActivity;
 import com.community.yuequ.gui.VideoListActivity;
 import com.community.yuequ.modle.RGroup;
@@ -94,35 +95,65 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             movie2RowViewHolder.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    mFragment.startActivity(new Intent(mFragment.getActivity(),VideoListActivity.class));
+                    Object item = parent.getAdapter().getItem(position);
+                    if(item instanceof RProgram){
+                        RProgram rProgram = (RProgram) item;
+                        Intent intent = new Intent(mFragment.getActivity(), VideoDetailActivity.class);
+//                        intent.putExtra("name",rProgram.name);
+//                        intent.putExtra("id",rProgram.id);
+                        intent.putExtra("video",rProgram);
+                        mFragment.startActivity(intent);
+                    }
                 }
             });
 
 
         }else  if (holder instanceof Movie3RowViewHolder) {
             Movie3RowViewHolder movie3RowViewHolder = ((Movie3RowViewHolder) holder);
-            RGroup rGroup = getItem(position);
+           final RGroup rGroup = getItem(position);
             movie3RowViewHolder.tv_title.setText(rGroup.column_name);
             movie3RowViewHolder.gridView.setAdapter(new GridView3RowAdapter(rGroup.plist));
 
             movie3RowViewHolder.rl_title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Intent intent = new Intent(mFragment.getContext(),VideoOrPicGroupActivity.class);
+                    intent.putExtra("column_id",rGroup.column_id);
+                    intent.putExtra("type",rGroup.type);
+                    intent.putExtra("column_name",rGroup.column_name);
+                    mFragment.startActivity(intent);
                 }
             });
 
             movie3RowViewHolder.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    mFragment.startActivity(new Intent(mFragment.getActivity(),VideoListActivity.class));
+                    Object item = parent.getAdapter().getItem(position);
+                    if(item instanceof RProgram){
+                        RProgram rProgram = (RProgram) item;
+                        Intent intent = new Intent(mFragment.getActivity(), VideoDetailActivity.class);
+//                        intent.putExtra("name",rProgram.name);
+//                        intent.putExtra("id",rProgram.id);
+                        intent.putExtra("video",rProgram);
+                        mFragment.startActivity(intent);
+                    }
                 }
             });
 
         }else  if (holder instanceof Pic2RowViewHolder) {
             Pic2RowViewHolder pic2RowViewHolder = ((Pic2RowViewHolder) holder);
-            RGroup rGroup = getItem(position);
+            final RGroup rGroup = getItem(position);
             pic2RowViewHolder.tv_title.setText(rGroup.column_name);
+            pic2RowViewHolder.rl_title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mFragment.getContext(),VideoOrPicGroupActivity.class);
+                    intent.putExtra("column_id",rGroup.column_id);
+                    intent.putExtra("type",rGroup.type);
+                    intent.putExtra("column_name",rGroup.column_name);
+                    mFragment.startActivity(intent);
+                }
+            });
            if(rGroup.plist!=null && !rGroup.plist.isEmpty()){
                if(rGroup.plist.size()>0){
                    RProgram rProgram = rGroup.plist.get(0);
@@ -258,6 +289,7 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public class Pic2RowViewHolder extends RecyclerView.ViewHolder {
+        public View rl_title;
         public TextView tv_title;
         public TextView tv_second_title;
         public TextView tv_dsc;
@@ -269,6 +301,7 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         public Pic2RowViewHolder(View itemView) {
             super(itemView);
+            rl_title = itemView.findViewById(R.id.rl_title);
             tv_title = (TextView) itemView.findViewById(R.id.tv_title);
             tv_second_title = (TextView) itemView.findViewById(R.id.tv_second_title);
             tv_dsc = (TextView) itemView.findViewById(R.id.tv_dsc);

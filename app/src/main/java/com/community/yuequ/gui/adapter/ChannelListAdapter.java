@@ -1,6 +1,7 @@
 package com.community.yuequ.gui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import com.community.yuequ.R;
 import com.community.yuequ.contorl.ImageManager;
 import com.community.yuequ.gui.ChannelFragment;
+import com.community.yuequ.gui.PicListActivity;
+import com.community.yuequ.gui.VideoListActivity;
 import com.community.yuequ.modle.Channel;
 import com.community.yuequ.modle.MediaWrapper;
 
@@ -40,10 +43,25 @@ public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Channel channel = mChannels.get(position);
+        final Channel channel = mChannels.get(position);
 
         holder.tv_channle_title.setText(channel.name);
         ImageManager.getInstance().loadUrlImage(mFragment,channel.img_path, holder.iv_channel_cover);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                if("1".equals(channel.type)){
+                    intent.setClass(mFragment.getContext(),VideoListActivity.class);
+                }else{
+                    intent.setClass(mFragment.getContext(),PicListActivity.class);
+                }
+                intent.putExtra("column_id",channel.id);
+                intent.putExtra("type",channel.type);//1:视频;2:图文
+                intent.putExtra("column_name",channel.name);
+                mFragment.startActivity(intent);
+            }
+        });
 
     }
 

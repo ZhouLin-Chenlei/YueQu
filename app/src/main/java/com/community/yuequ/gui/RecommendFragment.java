@@ -58,7 +58,6 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
     @Override
     protected void initView() {
         mStatuLayout = new PageStatuLayout(convertView)
-                .setProgressBarVisibility(true)
                 .setText(null)
                 .show();
         mRecyclerView = findView(android.R.id.list);
@@ -79,46 +78,42 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
     }
 
     private void display() {
-        if (mRecommendDao == null) {
-            return;
-        }
-        if(mRecommendDao.errorCode!=200){
-            if (mStatuLayout != null) {
-                mStatuLayout.setProgressBarVisibility(false);
-                mStatuLayout.show().setText(getString(R.string.load_data_fail));
-            }
-            return;
-        }
-
-        if(mRecommendDao.result==null ){
-            if (mStatuLayout != null) {
-                mStatuLayout.setProgressBarVisibility(false);
-                mStatuLayout.show().setText(getString(R.string.no_data));
-            }
-            return;
-        }
-
-        if(mRecommendDao.result.advert!=null){
-            //本地图片例子
-            mConvenientBanner.setPages(
-                    new CBViewHolderCreator<NetworkImageHolderView>() {
-                        @Override
-                        public NetworkImageHolderView createHolder() {
-                            return new NetworkImageHolderView();
-                        }
-                    }, mRecommendDao.result.advert)
-                    //设置两个点图片作为翻页指示器，不设置则没有指示器，可以根据自己需求自行配合自己的指示器,不需要圆点指示器可用不设
-                    .setPageIndicator(new int[]{R.drawable.circular_indicator_white, R.drawable.circular_indicator_red})
-                    //设置指示器的方向
+        if(mRecommendDao!=null && mRecommendDao.result!=null) {
+            if (mRecommendDao.result.advert != null) {
+                //本地图片例子
+                mConvenientBanner.setPages(
+                        new CBViewHolderCreator<NetworkImageHolderView>() {
+                            @Override
+                            public NetworkImageHolderView createHolder() {
+                                return new NetworkImageHolderView();
+                            }
+                        }, mRecommendDao.result.advert)
+                        //设置两个点图片作为翻页指示器，不设置则没有指示器，可以根据自己需求自行配合自己的指示器,不需要圆点指示器可用不设
+                        .setPageIndicator(new int[]{R.drawable.circular_indicator_white, R.drawable.circular_indicator_red})
+                        //设置指示器的方向
 //                .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.ALIGN_PARENT_RIGHT)
 //                .setOnPageChangeListener(this)//监听翻页事件
-                    .setOnItemClickListener(this);
-            mRecommendAdapter.addHeadView(headView);
+                        .setOnItemClickListener(this);
+                mRecommendAdapter.addHeadView(headView);
+            }
+
+            if (mRecommendDao.result.program != null) {
+                mRecommendAdapter.setData(mRecommendDao.result.program);
+            }
         }
 
-        if(mRecommendDao.result.program!=null){
-            mRecommendAdapter.setData(mRecommendDao.result.program);
+        if (mStatuLayout != null) {
+            if(mRecommendAdapter.getItemCount()==0){
+                mStatuLayout.show()
+                        .setProgressBarVisibility(false)
+                        .setText(getString(R.string.no_data));
+            }else {
+                mStatuLayout.hide()
+                        .setProgressBarVisibility(false)
+                        .setText(null);
+            }
         }
+
     }
 
 
@@ -158,12 +153,34 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
 
     protected void getDataBefore() {
         super.getDataBefore();
-
+        if (mStatuLayout != null) {
+           if(mRecommendAdapter.getItemCount()==0){
+                mStatuLayout.show()
+                        .setProgressBarVisibility(true)
+                        .setText(null);
+            }else {
+                mStatuLayout.hide()
+                        .setProgressBarVisibility(true)
+                        .setText(null);
+            }
+        }
 
     }
 
     protected void getDataFail() {
         super.getDataFail();
+
+        if (mStatuLayout != null) {
+           if(mRecommendAdapter.getItemCount()==0){
+                mStatuLayout.show()
+                        .setProgressBarVisibility(false)
+                        .setText(getString(R.string.load_data_fail));
+            }else {
+               mStatuLayout.hide()
+                       .setProgressBarVisibility(false)
+                       .setText(null);
+            }
+        }
     }
 
     protected void getDataAfter() {

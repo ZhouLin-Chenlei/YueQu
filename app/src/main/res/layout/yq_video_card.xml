@@ -11,7 +11,7 @@
         android:layout_width="112dip"
         android:layout_height="117dip"
         android:scaleType="centerCrop"
-        android:src="@mipmap/test2"/>
+        />
 
     <RelativeLayout
         android:layout_width="match_parent"

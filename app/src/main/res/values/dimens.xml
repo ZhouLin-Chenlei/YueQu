@@ -5,7 +5,7 @@
     <dimen name="toolbarSize">49dp</dimen>
     <dimen name="maintab_textsize">11sp</dimen>
     <dimen name="text_margin">16dp</dimen>
-    <dimen name="gap_pics">4sp</dimen>
+    <dimen name="gap_pics">4dp</dimen>
 
 
     <dimen name="base_list_margin_left">10dp</dimen>

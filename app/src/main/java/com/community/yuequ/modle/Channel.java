@@ -26,6 +26,7 @@ public class Channel {
      } ]
      }
      */
+
     public int id;
     public String name;
     public String img_path;

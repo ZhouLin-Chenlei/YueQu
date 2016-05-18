@@ -1,11 +1,12 @@
 package com.community.yuequ.modle;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * 推荐页栏目的子元素，节目
  */
-public class RProgram {
+public class RProgram implements Serializable{
     public int id;
     public String name;
     public String img_path;

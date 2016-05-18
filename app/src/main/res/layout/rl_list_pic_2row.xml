@@ -1,16 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dip"
         android:orientation="vertical"
+        android:id="@+id/rl_title">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/base_list_margin_left"
+            android:drawableLeft="@mipmap/ic_label"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/grey900"
+            android:textSize="17sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/base_list_margin_left"
+            android:drawablePadding="8dp"
+            android:drawableRight="@mipmap/ic_more"
+            android:text="@string/more"
+            android:textColor="@color/grey900"
+            android:textSize="17sp"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:background="@color/grey300"
         android:gravity="center_vertical"
-        android:background="@color/grey300">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_second_title"
@@ -22,69 +52,128 @@
             android:drawablePadding="8dp"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:textColor="@color/grey900"
-            android:textSize="17sp"
+            android:lines="1"
             android:text="如果你是一头猪"
-            android:lines="1"/>
+            android:textColor="@color/grey900"
+            android:textSize="17sp"/>
     </LinearLayout>
+
     <TextView
         android:id="@+id/tv_dsc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/base_list_margin_left"
         android:layout_marginLeft="@dimen/base_list_margin_left"
         android:layout_marginRight="@dimen/base_list_margin_left"
         android:layout_marginTop="@dimen/base_list_margin_left"
-        android:layout_marginBottom="@dimen/base_list_margin_left"
         android:ellipsize="end"
-        android:textColor="@color/grey900"
-        android:textSize="16sp"
+        android:maxLines="2"
         android:text="这是一个关于笨蛋的故事吗？有一天我走在回家的路上唱着妈妈教给我的歌"
-        android:maxLines="2"/>
+        android:textColor="@color/grey900"
+        android:textSize="16sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/base_list_margin_left"
+        android:layout_marginLeft="@dimen/base_list_margin_left"
+        android:layout_marginRight="@dimen/base_list_margin_left">
 
-        <LinearLayout
+        <com.community.yuequ.view.GroupImageView
+            android:id="@+id/giv_image_group"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <com.community.yuequ.view.CustomRatioImageView
-                android:id="@+id/iv_movie_cover_left"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@mipmap/test3"
-                android:scaleType="centerCrop"
-                app:rrHeight="2"
-                app:rrWidth="3"/>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="@dimen/base_list_margin_left"
-            android:layout_height="match_parent"
-           />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:orientation="vertical">
-
-            <com.community.yuequ.view.CustomRatioImageView
-                android:id="@+id/iv_movie_cover_right"
-                android:layout_width="match_parent"
+            <ImageView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/test3"
-                android:scaleType="centerCrop"
-                app:rrHeight="2"
-                app:rrWidth="3"/>
-        </LinearLayout>
+                android:scaleType="centerCrop"/>
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"/>
+
+        </com.community.yuequ.view.GroupImageView>
     </LinearLayout>
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:background="@color/grey300"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_second_title2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/base_list_margin_left"
+            android:layout_marginRight="@dimen/base_list_margin_left"
+            android:drawableLeft="@mipmap/ic_sub"
+            android:drawablePadding="8dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:lines="1"
+            android:text="如果你是一头猪"
+            android:textColor="@color/grey900"
+            android:textSize="17sp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_dsc2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/base_list_margin_left"
+        android:layout_marginLeft="@dimen/base_list_margin_left"
+        android:layout_marginRight="@dimen/base_list_margin_left"
+        android:layout_marginTop="@dimen/base_list_margin_left"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="这是一个关于笨蛋的故事吗？有一天我走在回家的路上唱着妈妈教给我的歌"
+        android:textColor="@color/grey900"
+        android:textSize="16sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/base_list_margin_left"
+        android:layout_marginLeft="@dimen/base_list_margin_left"
+        android:layout_marginRight="@dimen/base_list_margin_left">
+
+        <com.community.yuequ.view.GroupImageView
+            android:id="@+id/giv_image_group2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"/>
+
+        </com.community.yuequ.view.GroupImageView>
+    </LinearLayout>
+
 
     <View
         android:layout_width="match_parent"

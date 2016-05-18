@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="187dp"
         android:scaleType="centerCrop"
-        android:src="@mipmap/test3"
+
       />
     <!-- app:rrHeight="562"
            app:rrWidth="537"-->
