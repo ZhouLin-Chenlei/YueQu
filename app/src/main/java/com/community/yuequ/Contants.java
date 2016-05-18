@@ -26,5 +26,7 @@ public class Contants {
     public static String URL_PROGRAMDETAIL = PROTOCOL + DOMAIN +"/program/programDetail.shtml";
     //专题列表
     public static String URL_SPECIALSUBJECTLIST = PROTOCOL + DOMAIN +"/column/specialSubjectList.shtml";
+    //专题节目列表
+    public static String URL_SPECPROGRAMLIST = PROTOCOL + DOMAIN +"/program/specProgramList.shtml";
 
 }

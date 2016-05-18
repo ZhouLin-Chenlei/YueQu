@@ -59,6 +59,7 @@ public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.
                 intent.putExtra("column_id",channel.id);
                 intent.putExtra("type",channel.type);//1:视频;2:图文
                 intent.putExtra("column_name",channel.name);
+                intent.putExtra("from",4);
                 mFragment.startActivity(intent);
             }
         });

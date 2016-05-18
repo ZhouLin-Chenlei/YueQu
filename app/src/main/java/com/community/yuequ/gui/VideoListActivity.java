@@ -46,6 +46,8 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
     private String type = "1";
     private int column_id;
     private String column_name;
+    private int from;
+
 
     private PicListDao.PicListBean mPicListBean;
     @Override
@@ -54,6 +56,7 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_video_group);
         Intent intent = getIntent();
         column_id = intent.getIntExtra("column_id",0);
+        from = intent.getIntExtra("from",0);
         type = intent.getStringExtra("type");
         column_name = intent.getStringExtra("column_name");
         mStatuLayout = new PageStatuLayout(this)
@@ -81,9 +84,16 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
         getdata(1);
     }
     private void getdata(final int page) {
+        String url = null;
         HashMap<String,Integer> hashMap  =new HashMap<>();
         hashMap.put("pageIdx",page);
-        hashMap.put("col_id",column_id);//默认为视频ID，值=2
+        if(from==4){
+            hashMap.put("subject_id",column_id);//from==4，是专题过来的
+            url = Contants.URL_SPECPROGRAMLIST;
+        }else{
+            hashMap.put("col_id",column_id);//默认为视频ID，值=2
+            url = Contants.URL_PROGRAMLIST;
+        }
         String content = "";
 
         try {
@@ -99,7 +109,7 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
         OkHttpUtils
                 .postString()
                 .content(content)
-                .url(Contants.URL_PROGRAMLIST)
+                .url(url)
                 .tag(TAG)
                 .build()
                 .execute(new PicListDaoCallBack() {
