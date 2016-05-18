@@ -5,15 +5,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.community.yuequ.R;
-import com.community.yuequ.gui.ImageActivity;
 import com.community.yuequ.gui.RecommendFragment;
+import com.community.yuequ.gui.VideoOrPicGroupActivity;
 import com.community.yuequ.gui.VideoListActivity;
-import com.community.yuequ.modle.MediaWrapper;
 import com.community.yuequ.modle.RGroup;
+import com.community.yuequ.modle.RProgram;
+import com.community.yuequ.view.GroupImageView;
+import com.community.yuequ.view.MyGridView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,63 +26,21 @@ import java.util.List;
 public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private RecommendFragment mFragment;
 
-    private ArrayList<MediaWrapper> mVideos = new ArrayList<>();
-    private List<RGroup> mPrograms;
+    private final List<RGroup> mPrograms = new ArrayList<>();
     private static final int TYPE_HEAD_VIEW = 0;
-//    private static final int TYPE_FOOT_VIEW = 1;
-    private static final int TYPE_LIST_TITLE = 1;
-    private static final int TYPE_LIST_M2 = 2;
-    private static final int TYPE_LIST_M3 = 3;
-    private static final int TYPE_LIST_P2 = 4;
-    private static final int TYPE_LIST_P3 = 5;
+    private static final int TYPE_LIST_VIDEO_2R = 1;
+    private static final int TYPE_LIST_VIDEO_3R = 2;
+    private static final int TYPE_LIST_TEXTPIC = 3;
+
+//    private static final int TYPE_LIST_P2 = 4;
+//    private static final int TYPE_LIST_P3 = 5;
 
     private View headView;
 //    private View footView;
 
     public RecommendAdapter(RecommendFragment fragment) {
         mFragment = fragment;
-//        MediaWrapper wrapper = new MediaWrapper();
-//        wrapper.type = 1;
-//        mVideos.add(wrapper);
-//        wrapper = new MediaWrapper();
-//        wrapper.type = 2;
-//        mVideos.add(wrapper);
-//        wrapper = new MediaWrapper();
-//        wrapper.type = 2;
-//        mVideos.add(wrapper);
-//
-//        wrapper = new MediaWrapper();
-//        wrapper.type = 1;
-//        mVideos.add(wrapper);
-//        wrapper = new MediaWrapper();
-//        wrapper.type = 3;
-//        mVideos.add(wrapper);
-//        wrapper = new MediaWrapper();
-//        wrapper.type = 1;
-//        mVideos.add(wrapper);
-//        wrapper = new MediaWrapper();
-//        wrapper.type = 3;
-//        mVideos.add(wrapper);
-//
-//        wrapper = new MediaWrapper();
-//        wrapper.type = 1;
-//        mVideos.add(wrapper);
-//        wrapper = new MediaWrapper();
-//        wrapper.type = 4;
-//        mVideos.add(wrapper);
-//        wrapper = new MediaWrapper();
-//        wrapper.type = 4;
-//        mVideos.add(wrapper);
-//
-//        wrapper = new MediaWrapper();
-//        wrapper.type = 1;
-//        mVideos.add(wrapper);
-//        wrapper = new MediaWrapper();
-//        wrapper.type = 5;
-//        mVideos.add(wrapper);
-//        wrapper = new MediaWrapper();
-//        wrapper.type = 5;
-//        mVideos.add(wrapper);
+
     }
 
     @Override
@@ -91,28 +51,20 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             case TYPE_HEAD_VIEW:
                 viewHolder = new HeadViewHolder(headView);
                 break;
-            case TYPE_LIST_TITLE:
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rl_list_title, parent, false);
-                viewHolder = new TitleViewHolder(view);
-                break;
-            case TYPE_LIST_M2:
+
+            case TYPE_LIST_VIDEO_2R:
                 View movie2Row = LayoutInflater.from(parent.getContext()).inflate(R.layout.rl_list_movie_2row, parent, false);
                 viewHolder = new Movie2RowViewHolder(movie2Row);
 
                 break;
-            case TYPE_LIST_M3:
+            case TYPE_LIST_VIDEO_3R:
                 View movie3Row = LayoutInflater.from(parent.getContext()).inflate(R.layout.rl_list_movie_3row, parent, false);
                 viewHolder = new Movie3RowViewHolder(movie3Row);
 
                 break;
-            case TYPE_LIST_P2:
+            default:
                 View pic2Row = LayoutInflater.from(parent.getContext()).inflate(R.layout.rl_list_pic_2row, parent, false);
                 viewHolder = new Pic2RowViewHolder(pic2Row);
-
-                break;
-            default:
-                View pic3Row = LayoutInflater.from(parent.getContext()).inflate(R.layout.rl_list_pic_3row, parent, false);
-                viewHolder = new Pic3RowViewHolder(pic3Row);
                 break;
         }
         return viewHolder;
@@ -124,49 +76,101 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if(holder instanceof HeadViewHolder){
 
 
-        }else  if (holder instanceof TitleViewHolder) {
-            TitleViewHolder listViewHolder = ((TitleViewHolder) holder);
-            listViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mFragment.startActivity(new Intent(mFragment.getActivity(),ImageActivity.class));
-                }
-            });
-
         }else  if (holder instanceof Movie2RowViewHolder) {
             Movie2RowViewHolder movie2RowViewHolder = ((Movie2RowViewHolder) holder);
-            movie2RowViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            final RGroup rGroup = getItem(position);
+            movie2RowViewHolder.tv_title.setText(rGroup.column_name);
+            movie2RowViewHolder.gridView.setAdapter(new GridView2RowAdapter(rGroup.plist));
+            movie2RowViewHolder.rl_title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Intent intent = new Intent(mFragment.getContext(),VideoOrPicGroupActivity.class);
+                    intent.putExtra("column_id",rGroup.column_id);
+                    intent.putExtra("type",rGroup.type);
+                    intent.putExtra("column_name",rGroup.column_name);
+                    mFragment.startActivity(intent);
+                }
+            });
+            movie2RowViewHolder.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     mFragment.startActivity(new Intent(mFragment.getActivity(),VideoListActivity.class));
                 }
             });
 
+
         }else  if (holder instanceof Movie3RowViewHolder) {
             Movie3RowViewHolder movie3RowViewHolder = ((Movie3RowViewHolder) holder);
+            RGroup rGroup = getItem(position);
+            movie3RowViewHolder.tv_title.setText(rGroup.column_name);
+            movie3RowViewHolder.gridView.setAdapter(new GridView3RowAdapter(rGroup.plist));
 
+            movie3RowViewHolder.rl_title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
+            movie3RowViewHolder.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    mFragment.startActivity(new Intent(mFragment.getActivity(),VideoListActivity.class));
+                }
+            });
 
         }else  if (holder instanceof Pic2RowViewHolder) {
             Pic2RowViewHolder pic2RowViewHolder = ((Pic2RowViewHolder) holder);
+            RGroup rGroup = getItem(position);
+            pic2RowViewHolder.tv_title.setText(rGroup.column_name);
+           if(rGroup.plist!=null && !rGroup.plist.isEmpty()){
+               if(rGroup.plist.size()>0){
+                   RProgram rProgram = rGroup.plist.get(0);
+
+                   pic2RowViewHolder.tv_second_title.setVisibility(View.VISIBLE);
+                   pic2RowViewHolder.tv_dsc.setVisibility(View.VISIBLE);
+                   pic2RowViewHolder.mGroupImageView.setVisibility(View.VISIBLE);
+
+                   pic2RowViewHolder.tv_second_title.setText(rProgram.name);
+                   pic2RowViewHolder.tv_dsc.setText(rProgram.remark);
+                   pic2RowViewHolder.mGroupImageView.setPics(rProgram.picList);
+               }else{
+                   pic2RowViewHolder.tv_second_title.setVisibility(View.GONE);
+                   pic2RowViewHolder.tv_dsc.setVisibility(View.GONE);
+                   pic2RowViewHolder.mGroupImageView.setVisibility(View.GONE);
+               }
+
+               if(rGroup.plist.size() > 1){
+                   RProgram rProgram = rGroup.plist.get(1);
+
+                   pic2RowViewHolder.tv_second_title2.setVisibility(View.VISIBLE);
+                   pic2RowViewHolder.tv_dsc2.setVisibility(View.VISIBLE);
+                   pic2RowViewHolder.mGroupImageView2.setVisibility(View.VISIBLE);
+
+                   pic2RowViewHolder.tv_second_title2.setText(rProgram.name);
+                   pic2RowViewHolder.tv_dsc2.setText(rProgram.remark);
+                   pic2RowViewHolder.mGroupImageView2.setPics(rProgram.picList);
+               }else{
+                   pic2RowViewHolder.tv_second_title2.setVisibility(View.GONE);
+                   pic2RowViewHolder.tv_dsc2.setVisibility(View.GONE);
+                   pic2RowViewHolder.mGroupImageView2.setVisibility(View.GONE);
+               }
 
 
-        }else  if (holder instanceof Pic3RowViewHolder) {
-            Pic3RowViewHolder pic3RowViewHolder = ((Pic3RowViewHolder) holder);
-
-
+           }
         }
     }
 
-    public MediaWrapper getItem(int position) {
+    public RGroup getItem(int position) {
         if (hasHeader()) {
             --position;
         }
-        return mVideos.get(position);
+        return mPrograms.get(position);
     }
 
     @Override
     public int getItemCount() {
-        int size = mVideos.size();
+        int size = mPrograms.size();
         if (hasHeader()) {
             size++;
         }
@@ -177,16 +181,12 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public int getItemViewType(int position) {
         if(isHeaderPosition(position)){
             return TYPE_HEAD_VIEW;
-        }else if (getItem(position).type==1) {
-            return TYPE_LIST_TITLE;
-        } else if(getItem(position).type==2){
-            return TYPE_LIST_M2;
-        }else if(getItem(position).type==3){
-            return TYPE_LIST_M3;
-        }else if(getItem(position).type==4){
-            return TYPE_LIST_P2;
+        }else if (getItem(position).tworow && "1".equals(getItem(position).type)) {
+            return TYPE_LIST_VIDEO_2R;
+        } else if ("1".equals(getItem(position).type)) {
+            return TYPE_LIST_VIDEO_3R;
         }else{
-            return TYPE_LIST_P3;
+            return TYPE_LIST_TEXTPIC;
         }
     }
 
@@ -214,65 +214,73 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public void setData(List<RGroup> programs) {
-
-    }
-
-    public class TitleViewHolder extends RecyclerView.ViewHolder {
-
-
-        public TitleViewHolder(View itemView) {
-            super(itemView);
-
+        boolean isFirst = true;
+        for (RGroup group : programs){
+            if("1".equals(group.type)){
+                if(isFirst){
+                    group.tworow = true;
+                }else{
+                    group.tworow = false;
+                }
+                isFirst = false;
+            }
         }
-
+        mPrograms.clear();
+        mPrograms.addAll(programs);
+        notifyDataSetChanged();
     }
 
     public class Movie2RowViewHolder extends RecyclerView.ViewHolder {
-        public ImageView iv_movie_cover_left;
-        public TextView tv_movie_name_left;
-        public TextView tv_movie_dsc_left;
-        public ImageView iv_movie_cover_right;
-        public TextView tv_movie_name_right;
-        public TextView tv_movie_dsc_right;
-
+        public View rl_title;
+        public TextView tv_title;
+        public MyGridView gridView;
         public Movie2RowViewHolder(View itemView) {
             super(itemView);
-            iv_movie_cover_left = (ImageView) itemView.findViewById(R.id.iv_movie_cover_left);
-            tv_movie_name_left = (TextView) itemView.findViewById(R.id.tv_movie_name_left);
-            tv_movie_dsc_left = (TextView) itemView.findViewById(R.id.tv_movie_dsc_left);
-            iv_movie_cover_right = (ImageView) itemView.findViewById(R.id.iv_movie_cover_right);
-            tv_movie_name_right = (TextView) itemView.findViewById(R.id.tv_movie_name_right);
-            tv_movie_dsc_right = (TextView) itemView.findViewById(R.id.tv_movie_dsc_right);
+            rl_title = itemView.findViewById(R.id.rl_title);
+            tv_title = (TextView) itemView.findViewById(R.id.tv_title);
+            gridView = (MyGridView) itemView.findViewById(R.id.gridView);
+
         }
 
     }
     public class Movie3RowViewHolder extends RecyclerView.ViewHolder {
-
+        public View rl_title;
+        public TextView tv_title;
+        public MyGridView gridView;
 
         public Movie3RowViewHolder(View itemView) {
             super(itemView);
-
+            rl_title = itemView.findViewById(R.id.rl_title);
+            tv_title = (TextView) itemView.findViewById(R.id.tv_title);
+            gridView = (MyGridView) itemView.findViewById(R.id.gridView);
         }
 
     }
-    public class Pic2RowViewHolder extends RecyclerView.ViewHolder {
 
+    public class Pic2RowViewHolder extends RecyclerView.ViewHolder {
+        public TextView tv_title;
+        public TextView tv_second_title;
+        public TextView tv_dsc;
+        public GroupImageView mGroupImageView;
+
+        public TextView tv_second_title2;
+        public TextView tv_dsc2;
+        public GroupImageView mGroupImageView2;
 
         public Pic2RowViewHolder(View itemView) {
             super(itemView);
+            tv_title = (TextView) itemView.findViewById(R.id.tv_title);
+            tv_second_title = (TextView) itemView.findViewById(R.id.tv_second_title);
+            tv_dsc = (TextView) itemView.findViewById(R.id.tv_dsc);
+            mGroupImageView = (GroupImageView) itemView.findViewById(R.id.giv_image_group);
 
+            tv_second_title2 = (TextView) itemView.findViewById(R.id.tv_second_title2);
+            tv_dsc2 = (TextView) itemView.findViewById(R.id.tv_dsc2);
+            mGroupImageView2 = (GroupImageView) itemView.findViewById(R.id.giv_image_group2);
         }
 
     }
-    public class Pic3RowViewHolder extends RecyclerView.ViewHolder {
 
-
-        public Pic3RowViewHolder(View itemView) {
-            super(itemView);
-
-        }
-
-    }
     static class HeadViewHolder extends RecyclerView.ViewHolder {
 
         View headView;

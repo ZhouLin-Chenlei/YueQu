@@ -35,7 +35,7 @@ public class ImageManager {
 
     // 加载网络图片
     public void loadUrlImage(Fragment context, String url, ImageView imageView) {
-        String path = Contants.PICDOMAIN+url;
+        String path = /*Contants.PICDOMAIN+*/url;
         Glide.with(context)
                 .load(path)
                 .placeholder(R.mipmap.jiazai)
@@ -45,7 +45,7 @@ public class ImageManager {
     }
     // 加载网络图片
     public void loadUrlImage(Context context, String url, ImageView imageView) {
-        String path = Contants.PICDOMAIN+url;
+        String path =/* Contants.PICDOMAIN+*/url;
         Glide.with(context)
                 .load(path)
                 .placeholder(R.mipmap.jiazai)

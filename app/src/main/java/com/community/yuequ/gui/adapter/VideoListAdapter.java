@@ -10,7 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.community.yuequ.R;
+import com.community.yuequ.contorl.ImageManager;
 import com.community.yuequ.gui.VideoDetailActivity;
+import com.community.yuequ.modle.RProgram;
+
+import java.util.List;
 
 /**
  * modou
@@ -20,7 +24,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private View footView;
     private static final int TYPE_LIST = 0;
     private static final int TYPE_FOOT_VIEW = 1;
-
+    private List<RProgram> mRPrograms;
 
     public VideoListAdapter(Context  context){
         this.mContext = context;
@@ -49,7 +53,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ViewHolder){
             ViewHolder viewHolder = (ViewHolder) holder;
-            viewHolder.tv_name.setText("position:"+position);
+            RProgram rProgram = mRPrograms.get(position);
+
+            viewHolder.tv_name.setText(rProgram.name);
+            ImageManager.getInstance().loadUrlImage(mContext,rProgram.img_path,viewHolder.iv_cover);
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -62,7 +69,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemCount() {
-        return 20;
+        if(mRPrograms==null){
+            return 0;
+        }
+        return mRPrograms.size() + 1;
     }
     @Override
     public int getItemViewType(int position) {
@@ -95,7 +105,18 @@ public class VideoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return ((TextView) footView.findViewById( R.id.tv_loading_more)).getText().toString();
     }
 
+    public void setData(List<RProgram> list) {
+        mRPrograms = list;
+        notifyDataSetChanged();
 
+    }
+
+    public void addData(List<RProgram> list) {
+        if(list!=null&&!list.isEmpty()){
+            mRPrograms.addAll(list);
+            notifyDataSetChanged();
+        }
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView iv_cover;

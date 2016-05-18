@@ -2,7 +2,6 @@ package com.community.yuequ.gui;
 
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,9 +20,6 @@ import com.community.yuequ.view.NetworkImageHolderView;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.SwipeRefreshLayout;
 import com.zhy.http.okhttp.OkHttpUtils;
-
-import java.util.Arrays;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Request;
@@ -61,7 +57,10 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
 
     @Override
     protected void initView() {
-        mStatuLayout = new PageStatuLayout(convertView).hide();
+        mStatuLayout = new PageStatuLayout(convertView)
+                .setProgressBarVisibility(true)
+                .setText(null)
+                .show();
         mRecyclerView = findView(android.R.id.list);
         mSwipeRefreshLayout = findView(R.id.swipeLayout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.pink900);
@@ -76,7 +75,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
         mRecyclerView.setAdapter(mRecommendAdapter);
         mRecyclerView.setHasFixedSize(true);
 
-
+        display();
     }
 
     private void display() {
@@ -188,10 +187,6 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
         }
     };
 
-    String[] images = {"http://b.hiphotos.baidu.com/image/pic/item/962bd40735fae6cdba41808d0bb30f2443a70f60.jpg",
-            "http://f.hiphotos.baidu.com/image/h%3D200/sign=713ba20d2b2eb938f36d7df2e56085fe/a686c9177f3e6709ece1e4133fc79f3df9dc557c.jpg",
-            "http://a.hiphotos.baidu.com/image/h%3D200/sign=e62356eaa8af2eddcbf14ee9bd110102/b03533fa828ba61e38f9e0c34534970a314e59c2.jpg"};
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -204,7 +199,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
     public void onResume() {
         super.onResume();
         //开始自动翻页
-        mConvenientBanner.startTurning(4000);
+//        mConvenientBanner.startTurning(4000);
     }
 
     // 停止自动翻页
@@ -212,7 +207,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
     public void onPause() {
         super.onPause();
         //停止翻页
-        mConvenientBanner.stopTurning();
+//        mConvenientBanner.stopTurning();
     }
 
 
@@ -223,7 +218,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
 
     @Override
     public void onItemClick(int position) {
-        startActivity(new Intent(getActivity(), VideoGroupActivity.class));
+        startActivity(new Intent(getActivity(), VideoOrPicGroupActivity.class));
     }
 
     @Override

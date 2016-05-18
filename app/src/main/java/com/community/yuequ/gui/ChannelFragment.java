@@ -70,7 +70,10 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     protected void initView() {
-        mStatuLayout = new PageStatuLayout(convertView).hide();
+        mStatuLayout = new PageStatuLayout(convertView)
+                .setProgressBarVisibility(true)
+                .setText(null)
+                .show();
         mRecyclerView = findView(android.R.id.list);
         mSwipeRefreshLayout = findView(R.id.swipeLayout);
 
@@ -81,6 +84,7 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         mRecyclerView.addOnScrollListener(mScrollListener);
         mRecyclerView.setAdapter(mAdapter);
+        completeRefresh();
     }
 
     @Override

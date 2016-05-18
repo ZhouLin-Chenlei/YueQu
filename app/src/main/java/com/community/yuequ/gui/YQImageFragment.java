@@ -76,7 +76,10 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     protected void initView() {
-        mStatuLayout = new PageStatuLayout(convertView).hide();
+        mStatuLayout = new PageStatuLayout(convertView)
+                .setProgressBarVisibility(true)
+                .setText(null)
+                .show();
         mRecyclerView = findView(android.R.id.list);
         mSwipeRefreshLayout = findView(R.id.swipeLayout);
 
@@ -88,6 +91,7 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
 
         mRecyclerView.addOnScrollListener(mScrollListener);
         mRecyclerView.setAdapter(mListAdapter);
+        completeRefresh();
     }
 
     @Override
@@ -108,7 +112,7 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
         }
         OkHttpUtils
                 .postString()
-                .url(Contants.URL_SPECIALSUBJECTLIST)
+                .url(Contants.URL_PICTURELIST)
                 .content(content)
                 .tag(TAG)
                 .build()

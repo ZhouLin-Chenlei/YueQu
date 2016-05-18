@@ -11,5 +11,5 @@ public class RGroup {
     public String type;
     public List<RProgram> plist;
 
-
+    public boolean tworow = false;
 }

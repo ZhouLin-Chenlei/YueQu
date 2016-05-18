@@ -11,6 +11,6 @@ public class RProgram {
     public String img_path;
     public String remark;
     public int type;
-    public List<String> piclist;//图片节目的话就有图片集合
+    public List<String> picList;//图片节目的话就有图片集合
 
 }

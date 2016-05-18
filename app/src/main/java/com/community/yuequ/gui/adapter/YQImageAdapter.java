@@ -11,12 +11,10 @@ import android.widget.TextView;
 
 import com.community.yuequ.R;
 import com.community.yuequ.contorl.ImageManager;
-import com.community.yuequ.gui.VideoGroupActivity;
+import com.community.yuequ.gui.VideoOrPicGroupActivity;
 import com.community.yuequ.gui.YQImageFragment;
-import com.community.yuequ.modle.MediaWrapper;
 import com.community.yuequ.modle.RTextImage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class YQImageAdapter extends RecyclerView.Adapter<YQImageAdapter.ViewHolder> {
@@ -41,16 +39,21 @@ public class YQImageAdapter extends RecyclerView.Adapter<YQImageAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        RTextImage rTextImage = rTextImages.get(position);
-        holder.ml_item_title.setText(rTextImage.name);
-        holder.ml_item_detail.setText(rTextImage.name);
+        final RTextImage rTextImage = rTextImages.get(position);
+        String title = rTextImage.name+"（"+rTextImage.program_cnt+"）";
+
+        holder.ml_item_title.setText(title);
+        holder.ml_item_detail.setText(rTextImage.content_desc);
+
         ImageManager.getInstance().loadUrlImage(mFragment,rTextImage.img_path,holder.ml_item_image);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mFragment.getContext(), VideoGroupActivity.class);
-                intent.putExtra("type",2);
+                Intent intent = new Intent(mFragment.getContext(),VideoOrPicGroupActivity.class);
+                intent.putExtra("column_id",rTextImage.id);
+                intent.putExtra("type","2");//图文
+                intent.putExtra("column_name",rTextImage.name);
                 mFragment.startActivity(intent);
             }
         });

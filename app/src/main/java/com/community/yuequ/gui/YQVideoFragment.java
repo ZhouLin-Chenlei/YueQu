@@ -10,8 +10,8 @@ import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.YQApplication;
 import com.community.yuequ.gui.adapter.YQVideoAdapter;
-import com.community.yuequ.modle.VideoPrograma;
-import com.community.yuequ.modle.YQVideoDao;
+import com.community.yuequ.modle.VideoOrPicGroup;
+import com.community.yuequ.modle.YQVideoOrPicGroupDao;
 import com.community.yuequ.modle.callback.YQVideoDaoCallBack;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.util.Log;
@@ -38,8 +38,8 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
     private YQVideoAdapter mVideoAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private LinearLayoutManager mLayoutManager;
-    private YQVideoDao mVideoPrograma;
-    private final List<VideoPrograma> mProgramas = new ArrayList<>();
+    private YQVideoOrPicGroupDao mVideoPrograma;
+    private final List<VideoOrPicGroup> mProgramas = new ArrayList<>();
 
     public YQVideoFragment() {
     }
@@ -61,7 +61,10 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     protected void initView() {
-        mStatuLayout = new PageStatuLayout(convertView).hide();
+        mStatuLayout = new PageStatuLayout(convertView)
+                .setProgressBarVisibility(true)
+                .setText(null)
+                .show();
         mRecyclerView = findView(android.R.id.list);
         mSwipeRefreshLayout = findView(R.id.swipeLayout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.pink900);
@@ -104,7 +107,7 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
                     }
 
                     @Override
-                    public void onResponse(YQVideoDao response) {
+                    public void onResponse(YQVideoOrPicGroupDao response) {
                         mVideoPrograma = response;
                         if(mVideoPrograma.result==null||mVideoPrograma.result.isEmpty()){
                             getDataEmpty();

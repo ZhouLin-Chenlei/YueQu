@@ -12,18 +12,18 @@ import android.widget.TextView;
 
 import com.community.yuequ.R;
 import com.community.yuequ.contorl.ImageManager;
-import com.community.yuequ.gui.VideoGroupActivity;
+import com.community.yuequ.gui.VideoOrPicGroupActivity;
 import com.community.yuequ.gui.YQVideoFragment;
-import com.community.yuequ.modle.VideoPrograma;
+import com.community.yuequ.modle.VideoOrPicGroup;
 
 import java.util.List;
 
 public class YQVideoAdapter extends RecyclerView.Adapter<YQVideoAdapter.ViewHolder> {
     private YQVideoFragment mFragment;
-    private List<VideoPrograma> mVideos;
+    private List<VideoOrPicGroup> mVideos;
 
 
-    public YQVideoAdapter(YQVideoFragment fragment, List<VideoPrograma> programas) {
+    public YQVideoAdapter(YQVideoFragment fragment, List<VideoOrPicGroup> programas) {
         super();
         mFragment = fragment;
         mVideos = programas;
@@ -40,14 +40,18 @@ public class YQVideoAdapter extends RecyclerView.Adapter<YQVideoAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.ml_item_title.setText(mVideos.get(position).name);
-        holder.ml_item_detail.setText(mVideos.get(position).content_desc);
-        ImageManager.getInstance().loadUrlImage(mFragment,mVideos.get(position).img_path, holder.ml_item_image);
+        final VideoOrPicGroup programa = mVideos.get(position);
+        String title = programa.name+"（"+programa.program_cnt+"）";
+        holder.ml_item_title.setText(title);
+        holder.ml_item_detail.setText(programa.content_desc);
+        ImageManager.getInstance().loadUrlImage(mFragment, programa.img_path, holder.ml_item_image);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mFragment.getActivity(), VideoGroupActivity.class);
-                intent.putExtra("type",1);
+                Intent intent = new Intent(mFragment.getContext(),VideoOrPicGroupActivity.class);
+                intent.putExtra("column_id",programa.id);
+                intent.putExtra("type","1");//视频
+                intent.putExtra("column_name",programa.name);
                 mFragment.startActivity(intent);
             }
         });
