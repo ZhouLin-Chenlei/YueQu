@@ -5,7 +5,7 @@ package com.community.yuequ.modle;
  */
 public class Advert {
     public String title;
-    public int link_type;
+    public String link_type;//1：内链，2：外链
     public String link_url;
     public String img_path;
 

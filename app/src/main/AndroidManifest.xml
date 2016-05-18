@@ -15,8 +15,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <meta-data android:name="YUEQU_CHANNEL" android:value="${YUEQU_CHANNEL_VALUE}"/>
+        <meta-data
+            android:name="YUEQU_CHANNEL"
+            android:value="${YUEQU_CHANNEL_VALUE}"/>
 
         <activity
             android:name=".gui.WelcomeActivity"
@@ -57,7 +58,9 @@
             android:name=".gui.PicDetailActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-
+        <activity android:name=".gui.AvdWebActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

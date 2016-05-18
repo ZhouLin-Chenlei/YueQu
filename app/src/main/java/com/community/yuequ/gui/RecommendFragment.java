@@ -2,6 +2,7 @@ package com.community.yuequ.gui;
 
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +15,7 @@ import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.gui.adapter.RecommendAdapter;
+import com.community.yuequ.modle.Advert;
 import com.community.yuequ.modle.RecommendDao;
 import com.community.yuequ.modle.callback.RecommendDaoCallBack;
 import com.community.yuequ.view.NetworkImageHolderView;
@@ -235,7 +237,27 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
 
     @Override
     public void onItemClick(int position) {
-        startActivity(new Intent(getActivity(), VideoOrPicGroupActivity.class));
+        if(mRecommendDao!=null && mRecommendDao.result!=null) {
+            if (mRecommendDao.result.advert != null) {
+
+                Advert advert = mRecommendDao.result.advert.get(position);
+                if("1".equals(advert.link_type)){
+                    Intent intent = new Intent(getContext(),AvdWebActivity.class);
+                    intent.putExtra("title",advert.title);
+                    intent.putExtra("link_url",advert.link_url);
+                    startActivity(intent);
+                }else{
+                    try {
+                        String openurl = advert.link_url;
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(openurl));
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
     }
 
     @Override
