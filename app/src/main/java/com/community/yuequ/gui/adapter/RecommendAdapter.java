@@ -1,6 +1,7 @@
 package com.community.yuequ.gui.adapter;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import com.community.yuequ.Contants;
 import com.community.yuequ.R;
+import com.community.yuequ.gui.PicDetailActivity;
 import com.community.yuequ.gui.RecommendFragment;
 import com.community.yuequ.gui.VideoDetailActivity;
 import com.community.yuequ.gui.VideoOrPicGroupActivity;
@@ -97,12 +100,23 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Object item = parent.getAdapter().getItem(position);
                     if(item instanceof RProgram){
+
                         RProgram rProgram = (RProgram) item;
-                        Intent intent = new Intent(mFragment.getActivity(), VideoDetailActivity.class);
+                        if(Contants.SHOWTYPE_LINK.equals(rProgram.show_type)){
+                            try {
+                                String openurl = rProgram.link_url;
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(openurl));
+                                mFragment.startActivity(intent);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Intent intent = new Intent(mFragment.getActivity(), VideoDetailActivity.class);
 //                        intent.putExtra("name",rProgram.name);
 //                        intent.putExtra("id",rProgram.id);
-                        intent.putExtra("video",rProgram);
-                        mFragment.startActivity(intent);
+                            intent.putExtra("program",rProgram);
+                            mFragment.startActivity(intent);
+                        }
                     }
                 }
             });
@@ -131,11 +145,21 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     Object item = parent.getAdapter().getItem(position);
                     if(item instanceof RProgram){
                         RProgram rProgram = (RProgram) item;
-                        Intent intent = new Intent(mFragment.getActivity(), VideoDetailActivity.class);
+                        if(Contants.SHOWTYPE_LINK.equals(rProgram.show_type)){
+                            try {
+                                String openurl = rProgram.link_url;
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(openurl));
+                                mFragment.startActivity(intent);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            Intent intent = new Intent(mFragment.getActivity(), VideoDetailActivity.class);
 //                        intent.putExtra("name",rProgram.name);
 //                        intent.putExtra("id",rProgram.id);
-                        intent.putExtra("video",rProgram);
-                        mFragment.startActivity(intent);
+                            intent.putExtra("program", rProgram);
+                            mFragment.startActivity(intent);
+                        }
                     }
                 }
             });
@@ -154,37 +178,47 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     mFragment.startActivity(intent);
                 }
             });
+            pic2RowViewHolder.ll_preagram1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    RProgram rProgram = rGroup.plist.get(0);
+                    Intent intent = new Intent(mFragment.getActivity(), PicDetailActivity.class);
+                    intent.putExtra("program",rProgram);
+                    mFragment.startActivity(intent);
+                }
+            });
+
+            pic2RowViewHolder.ll_preagram2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    RProgram rProgram = rGroup.plist.get(1);
+                    Intent intent = new Intent(mFragment.getActivity(), PicDetailActivity.class);
+                    intent.putExtra("program",rProgram);
+                    mFragment.startActivity(intent);
+                }
+            });
            if(rGroup.plist!=null && !rGroup.plist.isEmpty()){
                if(rGroup.plist.size()>0){
                    RProgram rProgram = rGroup.plist.get(0);
 
-                   pic2RowViewHolder.tv_second_title.setVisibility(View.VISIBLE);
-                   pic2RowViewHolder.tv_dsc.setVisibility(View.VISIBLE);
-                   pic2RowViewHolder.mGroupImageView.setVisibility(View.VISIBLE);
-
+                   pic2RowViewHolder.ll_preagram1.setVisibility(View.VISIBLE);
                    pic2RowViewHolder.tv_second_title.setText(rProgram.name);
                    pic2RowViewHolder.tv_dsc.setText(rProgram.remark);
                    pic2RowViewHolder.mGroupImageView.setPics(rProgram.picList);
                }else{
-                   pic2RowViewHolder.tv_second_title.setVisibility(View.GONE);
-                   pic2RowViewHolder.tv_dsc.setVisibility(View.GONE);
-                   pic2RowViewHolder.mGroupImageView.setVisibility(View.GONE);
+                   pic2RowViewHolder.ll_preagram1.setVisibility(View.GONE);
                }
 
                if(rGroup.plist.size() > 1){
                    RProgram rProgram = rGroup.plist.get(1);
 
-                   pic2RowViewHolder.tv_second_title2.setVisibility(View.VISIBLE);
-                   pic2RowViewHolder.tv_dsc2.setVisibility(View.VISIBLE);
-                   pic2RowViewHolder.mGroupImageView2.setVisibility(View.VISIBLE);
+                   pic2RowViewHolder.ll_preagram2.setVisibility(View.VISIBLE);
 
                    pic2RowViewHolder.tv_second_title2.setText(rProgram.name);
                    pic2RowViewHolder.tv_dsc2.setText(rProgram.remark);
                    pic2RowViewHolder.mGroupImageView2.setPics(rProgram.picList);
                }else{
-                   pic2RowViewHolder.tv_second_title2.setVisibility(View.GONE);
-                   pic2RowViewHolder.tv_dsc2.setVisibility(View.GONE);
-                   pic2RowViewHolder.mGroupImageView2.setVisibility(View.GONE);
+                   pic2RowViewHolder.ll_preagram2.setVisibility(View.GONE);
                }
 
 
@@ -290,11 +324,14 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public class Pic2RowViewHolder extends RecyclerView.ViewHolder {
         public View rl_title;
+
+        public View ll_preagram1;
         public TextView tv_title;
         public TextView tv_second_title;
         public TextView tv_dsc;
         public GroupImageView mGroupImageView;
 
+        public View ll_preagram2;
         public TextView tv_second_title2;
         public TextView tv_dsc2;
         public GroupImageView mGroupImageView2;
@@ -302,11 +339,12 @@ public class RecommendAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         public Pic2RowViewHolder(View itemView) {
             super(itemView);
             rl_title = itemView.findViewById(R.id.rl_title);
+            ll_preagram1 = itemView.findViewById(R.id.ll_preagram1);
             tv_title = (TextView) itemView.findViewById(R.id.tv_title);
             tv_second_title = (TextView) itemView.findViewById(R.id.tv_second_title);
             tv_dsc = (TextView) itemView.findViewById(R.id.tv_dsc);
             mGroupImageView = (GroupImageView) itemView.findViewById(R.id.giv_image_group);
-
+            ll_preagram2 = itemView.findViewById(R.id.ll_preagram2);
             tv_second_title2 = (TextView) itemView.findViewById(R.id.tv_second_title2);
             tv_dsc2 = (TextView) itemView.findViewById(R.id.tv_dsc2);
             mGroupImageView2 = (GroupImageView) itemView.findViewById(R.id.giv_image_group2);

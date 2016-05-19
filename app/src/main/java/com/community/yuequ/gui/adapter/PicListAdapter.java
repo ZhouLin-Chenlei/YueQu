@@ -56,7 +56,7 @@ public class PicListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ListViewHolder) {
             final ListViewHolder listViewHolder = (ListViewHolder) holder;
-            RProgram rProgram = mRPrograms.get(position);
+            final RProgram rProgram = mRPrograms.get(position);
             listViewHolder.tv_second_title.setText(rProgram.name);
             listViewHolder.tv_dsc.setText(rProgram.remark);
             listViewHolder.mGroupImageView.setPics(rProgram.picList);
@@ -64,6 +64,9 @@ public class PicListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 @Override
                 public void onClick(View v) {
 
+                    Intent intent = new Intent(mContext, PicDetailActivity.class);
+                    intent.putExtra("program",rProgram);
+                    mContext.startActivity(intent);
                 }
             });
 

@@ -2,6 +2,7 @@ package com.community.yuequ.gui.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.contorl.ImageManager;
 import com.community.yuequ.gui.VideoDetailActivity;
@@ -61,12 +63,19 @@ public class VideoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    Intent intent = new Intent(mContext, VideoDetailActivity.class);
-//                        intent.putExtra("name",rProgram.name);
-//                        intent.putExtra("id",rProgram.id);
-                    intent.putExtra("video", rProgram);
-                    mContext.startActivity(intent);
+                    if(Contants.SHOWTYPE_LINK.equals(rProgram.show_type)){
+                        try {
+                            String openurl = rProgram.link_url;
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(openurl));
+                            mContext.startActivity(intent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        Intent intent = new Intent(mContext, VideoDetailActivity.class);
+                        intent.putExtra("program", rProgram);
+                        mContext.startActivity(intent);
+                    }
 
                 }
             });

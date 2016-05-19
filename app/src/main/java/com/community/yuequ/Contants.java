@@ -6,6 +6,12 @@ package com.community.yuequ;
 public class Contants {
 
     public static final int HTTP_OK = 200;
+    /**1：上传，2：外链地址，3：手工填写视频URL*/
+    public static final String SHOWTYPE_UPLOAD = "1";
+    public static final String SHOWTYPE_LINK = "2";
+    public static final String SHOWTYPE_EDIT = "3";
+
+
     protected static final String PROTOCOL_HTTP = "http://";
     protected static String PROTOCOL = PROTOCOL_HTTP;
     public static String DOMAIN = "171.8.238.102:8086/yqi";
@@ -28,5 +34,6 @@ public class Contants {
     public static String URL_SPECIALSUBJECTLIST = PROTOCOL + DOMAIN +"/column/specialSubjectList.shtml";
     //专题节目列表
     public static String URL_SPECPROGRAMLIST = PROTOCOL + DOMAIN +"/program/specProgramList.shtml";
+
 
 }
