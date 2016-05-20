@@ -1,9 +1,11 @@
 package com.community.yuequ.modle;
 
+import java.io.Serializable;
+
 /**
  * Created by xmyb on 2016/5/19.
  */
-public class RProgramDetail {
+public class RProgramDetail implements Serializable{
 
     /**
      *{

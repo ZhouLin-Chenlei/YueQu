@@ -21,6 +21,7 @@ import com.community.yuequ.modle.RProgramDetail;
 import com.community.yuequ.modle.RProgramDetailDao;
 import com.community.yuequ.modle.callback.PicListDaoCallBack;
 import com.community.yuequ.modle.callback.RProgramDetailDaoCallBack;
+import com.community.yuequ.player.VideoViewActivity;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.TitleBarLayout;
@@ -160,7 +161,8 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                 finish();
                 break;
             case R.id.btn_play:
-
+                Intent intent = new Intent(this,VideoViewActivity.class);
+                intent.putExtra("programDetail",programDetail);
                 break;
             default:
                 break;

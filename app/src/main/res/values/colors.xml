@@ -33,5 +33,6 @@
     <color name="whitetransparent">#dcffffff</color>
     <color name="transparent">#00000000</color>
 
-
+    <color name="selectplay_selected">#AD0015</color>
+    <color name="info_panel_bg">#000000</color>
 </resources>
