@@ -259,6 +259,7 @@ public class GroupImageView extends ViewGroup implements View.OnClickListener {
         intent.putExtra("index", index);
         intent.putExtra("picUrls", picUrls.toArray(new String[picUrls.size()]));
         mContext.startActivity(intent);
+
     }
 
 }
