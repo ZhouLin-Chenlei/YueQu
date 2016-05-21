@@ -163,6 +163,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
             case R.id.btn_play:
                 Intent intent = new Intent(this,VideoViewActivity.class);
                 intent.putExtra("programDetail",programDetail);
+                startActivity(intent);
                 break;
             default:
                 break;

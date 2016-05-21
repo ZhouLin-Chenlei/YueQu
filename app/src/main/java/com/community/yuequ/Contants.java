@@ -14,7 +14,7 @@ public class Contants {
 
     protected static final String PROTOCOL_HTTP = "http://";
     protected static String PROTOCOL = PROTOCOL_HTTP;
-    public static String DOMAIN = "171.8.238.102:8086/yqi";
+    public static String DOMAIN = "171.8.236.234:8086/yqi";
     public static String PICDOMAIN = "http://171.8.238.102:8081/yqfile";
 
     public static final String PRODUCTNAME = "yuequ";

@@ -48,7 +48,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
     TextView tvErrorMsg;
     ProgressBar progressBar;
     private WebSettings settings;
-
+    private TextView tv_second_title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +63,10 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         mWebView = (WebView) findViewById(R.id.webView);
         tvErrorMsg = (TextView) findViewById(R.id.tv_error_msg);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        tv_second_title = (TextView) findViewById(R.id.tv_second_title);
 
-        mTitleBarLayout.setText(mRProgram.name);
+        mTitleBarLayout.setText(getString(R.string.detail));
+        tv_second_title.setText(mRProgram.name);
         initView();
         getData();
     }

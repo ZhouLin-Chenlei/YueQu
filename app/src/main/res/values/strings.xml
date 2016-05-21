@@ -26,6 +26,7 @@
     <string name="cmcc">中国移动</string>
     <string name="unicom">中国联通</string>
     <string name="telecom">中国电信</string>
+    <string name="detail">详情</string>
 
     <string name="content_desc_lock">锁定</string>
     <string name="video_original">100%</string>

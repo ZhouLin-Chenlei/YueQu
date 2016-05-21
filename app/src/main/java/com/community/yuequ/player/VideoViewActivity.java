@@ -18,6 +18,7 @@ package com.community.yuequ.player;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 
 import com.community.yuequ.R;
 import com.community.yuequ.modle.RProgramDetail;
+import com.community.yuequ.view.TitleBarLayout;
 
 import java.util.ArrayList;
 
@@ -41,8 +43,8 @@ import io.vov.vitamio.Vitamio;
  */
 
 @SuppressLint("HandlerLeak")
-public class VideoViewActivity extends Activity {
-
+public class VideoViewActivity extends Activity implements View.OnClickListener{
+	private TitleBarLayout mTitleBarLayout;
 	private WhtVideoView whtVideoView;
 	private boolean mCreated = false;
 
@@ -61,6 +63,7 @@ public class VideoViewActivity extends Activity {
 		programDetails.add(programDetail);
 		whtVideoView.open(this, false, programDetails);
 		whtVideoView.play(0);
+		mTitleBarLayout.setText(programDetail.name);
 
 
 	}
@@ -122,6 +125,10 @@ public class VideoViewActivity extends Activity {
 				.getParent());
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+		mTitleBarLayout = new TitleBarLayout(this)
+				.setLeftButtonVisibility(true)
+				.setLeftButtonClickListener(this);
 	}
 
 	@Override
@@ -135,4 +142,14 @@ public class VideoViewActivity extends Activity {
 		}
 	}
 
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.btn_back:
+				finish();
+				break;
+			default:
+				break;
+		}
+	}
 }

@@ -263,9 +263,9 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
 
     @Override
     public void onDestroyView() {
+        OkHttpUtils.getInstance().cancelTag(TAG);
         super.onDestroyView();
 
-        OkHttpUtils.getInstance().cancelTag(TAG);
     }
 
 }
