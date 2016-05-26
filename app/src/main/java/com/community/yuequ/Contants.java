@@ -12,9 +12,16 @@ public class Contants {
     public static final String SHOWTYPE_EDIT = "3";
 
 
+    //201：游客，202：包月会员，203：按次订购会员
+    public static final int HTTP_NO = 201;
+    public static final int HTTP_VIP = 202;
+    public static final int HTTP_ONECE = 203;
+    public static final int HTTP_NO_PERMISSION = 500;
+
+
     protected static final String PROTOCOL_HTTP = "http://";
     protected static String PROTOCOL = PROTOCOL_HTTP;
-    public static String DOMAIN = "171.8.236.234:8086/yqi";
+    public static String DOMAIN = "171.8.238.103:8086/yqi";
     public static String PICDOMAIN = "http://171.8.238.102:8081/yqfile";
 
     public static final String PRODUCTNAME = "yuequ";
@@ -34,6 +41,10 @@ public class Contants {
     public static String URL_SPECIALSUBJECTLIST = PROTOCOL + DOMAIN +"/column/specialSubjectList.shtml";
     //专题节目列表
     public static String URL_SPECPROGRAMLIST = PROTOCOL + DOMAIN +"/program/specProgramList.shtml";
+    //2.10	根据订购类型获取订购提示语
+    public static String URL_ORDERTIPS = PROTOCOL + DOMAIN +"/order/orderTips.shtml";
+    //2.11	视频播放鉴权
+    public static String URL_PLAYACCESS = PROTOCOL + DOMAIN +"/program/playAccess.shtml";
 
 
 }

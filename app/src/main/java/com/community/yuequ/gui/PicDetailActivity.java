@@ -25,6 +25,7 @@ import com.community.yuequ.modle.RProgramDetail;
 import com.community.yuequ.modle.RProgramDetailDao;
 import com.community.yuequ.modle.callback.RProgramDetailDaoCallBack;
 import com.community.yuequ.util.AESUtil;
+import com.community.yuequ.util.Utils;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.TitleBarLayout;
 import com.google.gson.Gson;
@@ -35,13 +36,14 @@ import java.util.HashMap;
 import okhttp3.Call;
 import okhttp3.Request;
 
-public class PicDetailActivity extends AppCompatActivity implements View.OnClickListener{
+public class PicDetailActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String TAG = VideoDetailActivity.class.getSimpleName();
 
     private TitleBarLayout mTitleBarLayout;
 
     private RProgram mRProgram;
     private Session session;
+    private RProgramDetailDao programDetailDao;
     private RProgramDetail programDetail;
 
     WebView mWebView;
@@ -101,11 +103,20 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
 
                     @Override
                     public void onResponse(RProgramDetailDao response) {
+                        programDetailDao = response;
                         programDetail = response.result;
-                        if(programDetail!=null && !TextUtils.isEmpty(programDetail.contents)){
-                            mWebView.loadData(programDetail.contents,"text/html; charset=UTF-8",null);
+                        if(response.errorCode==Contants.HTTP_NO_PERMISSION){
+                            Toast.makeText(YQApplication.getAppContext(), "没有权限", Toast.LENGTH_SHORT).show();
 
+                        }else if(response.errorCode==Contants.HTTP_OK){
+                            if (programDetail != null && !TextUtils.isEmpty(programDetail.contents)) {
+                                mWebView.loadData(programDetail.contents, "text/html; charset=UTF-8", null);
+
+                            }
+                        }else{
+                            Toast.makeText(YQApplication.getAppContext(), R.string.unknow_erro, Toast.LENGTH_SHORT).show();
                         }
+
 
 
                     }

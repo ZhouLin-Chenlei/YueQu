@@ -53,6 +53,7 @@ public class RProgramDetail implements Serializable{
     public String link_url;
     /**1：上传，2：外链地址，3：手工填写视频URL*/
     public String show_type;
+    //（0：否，1：是）
     public String is_cost;
     public String remark;
 
