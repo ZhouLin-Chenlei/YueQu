@@ -24,7 +24,9 @@ public class YQApplication extends Application{
     public void onCreate() {
         super.onCreate();
         instance = this;
-//        OkHttpUtils.getInstance().setConnectTimeout();
+        OkHttpUtils.getInstance().setConnectTimeout(20,TimeUnit.SECONDS);
+        OkHttpUtils.getInstance().setReadTimeout(20,TimeUnit.SECONDS);
+        OkHttpUtils.getInstance().setWriteTimeout(20,TimeUnit.SECONDS);
 
 
     }

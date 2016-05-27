@@ -57,7 +57,8 @@ public class PicListDao {
     public PicListBean result;
 
      public static class PicListBean{
-        public int total_cnt;
+        public int total_cnt;//总个数
+        public int total_page;//总页数
         public List<RProgram> list;
 
      }

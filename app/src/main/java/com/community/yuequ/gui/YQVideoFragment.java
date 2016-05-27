@@ -103,11 +103,17 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
                 .execute(new YQVideoDaoCallBack() {
                     @Override
                     public void onError(Call call, Exception e) {
+                        if(isDetached()){
+                            return;
+                        }
                         getDataFail();
                     }
 
                     @Override
                     public void onResponse(YQVideoOrPicGroupDao response) {
+                        if(isDetached()){
+                            return;
+                        }
                         mVideoPrograma = response;
                         if(mVideoPrograma.result==null||mVideoPrograma.result.isEmpty()){
                             getDataEmpty();
@@ -122,6 +128,9 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
                     }
                     @Override
                     public void onAfter() {
+                        if(isDetached()){
+                            return;
+                        }
                         getDataAfter();
                     }
                 });

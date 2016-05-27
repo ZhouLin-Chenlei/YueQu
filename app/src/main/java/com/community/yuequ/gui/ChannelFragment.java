@@ -97,11 +97,17 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
                 .execute(new ChannelDaoBack() {
                     @Override
                     public void onError(Call call, Exception e) {
+                        if(isDetached()){
+                            return;
+                        }
                         getDataFail();
                     }
 
                     @Override
                     public void onResponse(ChannelDao response) {
+                        if(isDetached()){
+                            return;
+                        }
                         mChannelDao = response;
                         if(mChannelDao.result==null||mChannelDao.result.isEmpty()){
                             getDataEmpty();
@@ -117,6 +123,9 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
                     }
                     @Override
                     public void onAfter() {
+                        if(isDetached()){
+                            return;
+                        }
                         getDataAfter();
                     }
                 });

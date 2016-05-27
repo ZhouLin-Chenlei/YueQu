@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -148,9 +149,14 @@ public class WelcomeActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-        finish();
+//        finish();
     }
 
+   public void onClickButton(View v){
+       Intent intent = new Intent(this, MainActivity.class);
+       intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+       startActivity(intent);
+   }
     @Override
     protected void onDestroy() {
         super.onDestroy();

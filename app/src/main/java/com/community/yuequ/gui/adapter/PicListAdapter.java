@@ -145,11 +145,11 @@ public class PicListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     static class FootViewHolder extends RecyclerView.ViewHolder {
-
+        TextView tvLoadingMore;
 
         public FootViewHolder(View view) {
             super(view);
-
+            tvLoadingMore = (TextView) view.findViewById(R.id.tv_loading_more);
         }
     }
 }

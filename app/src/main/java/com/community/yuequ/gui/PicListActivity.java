@@ -151,7 +151,7 @@ public class PicListActivity extends AppCompatActivity implements View.OnClickLi
                             }else{
                                 mListAdapter.addData(mPicListBean.list);
                             }
-                            if(mPage >= mPicListBean.total_cnt){
+                            if(mPage >= mPicListBean.total_page){
                                 mListAdapter.setLoadMoreViewVisibility(View.VISIBLE);
                                 mListAdapter.setLoadMoreViewText(getString(R.string.load_data_adequate));
                             }else{
