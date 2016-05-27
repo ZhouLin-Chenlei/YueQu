@@ -4,11 +4,24 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 
+import com.community.yuequ.util.Log;
 import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.cookie.CookieJarImpl;
+import com.zhy.http.okhttp.cookie.store.CookieStore;
+import com.zhy.http.okhttp.cookie.store.PersistentCookieStore;
+import com.zhy.http.okhttp.log.LoggerInterceptor;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 
 /**
  * modou
@@ -19,15 +32,39 @@ public class YQApplication extends Application{
     /* Up to 2 threads maximum, inactive threads are killed after 2 seconds */
     private ThreadPoolExecutor mThreadPool = new ThreadPoolExecutor(0, 2, 2, TimeUnit.SECONDS,
             new LinkedBlockingQueue<Runnable>());
-
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
-        OkHttpUtils.getInstance().setConnectTimeout(20,TimeUnit.SECONDS);
-        OkHttpUtils.getInstance().setReadTimeout(20,TimeUnit.SECONDS);
-        OkHttpUtils.getInstance().setWriteTimeout(20,TimeUnit.SECONDS);
+        CookieJarImpl cookieJar = new CookieJarImpl(new PersistentCookieStore(getApplicationContext())){
+            @Override
+            public synchronized void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                super.saveFromResponse(url, cookies);
+            }
 
+            @Override
+            public synchronized List<Cookie> loadForRequest(HttpUrl url) {
+                List<Cookie> cookies = super.loadForRequest(url);
+                for(Cookie cookie:cookies){
+                    Log.i("TAG","cookie:"+cookie.name()+"*"+cookie.value());
+                }
+                return cookies;
+            }
+
+            @Override
+            public CookieStore getCookieStore() {
+                return super.getCookieStore();
+            }
+        };
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(new LoggerInterceptor("TAG"))
+                .connectTimeout(20000L, TimeUnit.MILLISECONDS)
+                .readTimeout(20000L, TimeUnit.MILLISECONDS)
+                .cookieJar(cookieJar)
+                //其他配置
+                .build();
+
+        OkHttpUtils.initClient(okHttpClient);
 
     }
 

@@ -169,4 +169,9 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                 break;
         }
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        OkHttpUtils.getInstance().cancelTag(TAG);
+    }
 }

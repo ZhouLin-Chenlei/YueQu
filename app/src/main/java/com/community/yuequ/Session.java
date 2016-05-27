@@ -156,7 +156,7 @@ public class Session {
 
     public static Session get(Context context) {
         if (mInstance == null) {
-            mInstance = new Session(context);
+            mInstance = new Session(context.getApplicationContext());
         }
         return mInstance;
     }

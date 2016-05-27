@@ -42,5 +42,8 @@
     <string name="video_screenshot_failed">截图失败</string>
     <string name="video_layout_loading">正在缓冲&#8230;</string>
     <string name="closing_file">正在退出&#8230;</string>
+    <string name="alert_dialog_ok">确定</string>
+    <string name="alert_dialog_cancel">取消</string>
+    <string name="alert_dialog_text_phonenumber">请输入手机号</string>
 
 </resources>

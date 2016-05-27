@@ -21,7 +21,7 @@ public class Contants {
 
     protected static final String PROTOCOL_HTTP = "http://";
     protected static String PROTOCOL = PROTOCOL_HTTP;
-    public static String DOMAIN = "171.8.238.103:8086/yqi";
+    public static String DOMAIN = "171.8.237.116:8086/yqi";
     public static String PICDOMAIN = "http://171.8.238.102:8081/yqfile";
 
     public static final String PRODUCTNAME = "yuequ";
@@ -45,6 +45,8 @@ public class Contants {
     public static String URL_ORDERTIPS = PROTOCOL + DOMAIN +"/order/orderTips.shtml";
     //2.11	视频播放鉴权
     public static String URL_PLAYACCESS = PROTOCOL + DOMAIN +"/program/playAccess.shtml";
+    //2.13	更新用户信息（系统没有用户手机号，添加用户手机号）
+    public static String URL_UPDATEUSER = PROTOCOL + DOMAIN +"/system/updateUser.shtml";
 
 
 }

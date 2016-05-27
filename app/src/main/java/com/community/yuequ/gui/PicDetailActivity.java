@@ -1,5 +1,6 @@
 package com.community.yuequ.gui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -23,20 +24,24 @@ import com.community.yuequ.YQApplication;
 import com.community.yuequ.modle.RProgram;
 import com.community.yuequ.modle.RProgramDetail;
 import com.community.yuequ.modle.RProgramDetailDao;
+import com.community.yuequ.modle.UpdateUserDao;
 import com.community.yuequ.modle.callback.RProgramDetailDaoCallBack;
+import com.community.yuequ.modle.callback.UpdateUserCallBack;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.util.Utils;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.TitleBarLayout;
+import com.community.yuequ.widget.InputPhoneNumberDialog;
 import com.google.gson.Gson;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
 import okhttp3.Call;
 import okhttp3.Request;
 
-public class PicDetailActivity extends AppCompatActivity implements View.OnClickListener {
+public class PicDetailActivity extends AppCompatActivity implements View.OnClickListener ,InputPhoneNumberDialog.PhoneNumberCallBack {
     public static final String TAG = VideoDetailActivity.class.getSimpleName();
 
     private TitleBarLayout mTitleBarLayout;
@@ -106,13 +111,16 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
                         programDetailDao = response;
                         programDetail = response.result;
                         if(response.errorCode==Contants.HTTP_NO_PERMISSION){
-                            Toast.makeText(YQApplication.getAppContext(), "没有权限", Toast.LENGTH_SHORT).show();
 
+                            Toast.makeText(YQApplication.getAppContext(), "没有权限", Toast.LENGTH_SHORT).show();
+                            toBuy();
                         }else if(response.errorCode==Contants.HTTP_OK){
-                            if (programDetail != null && !TextUtils.isEmpty(programDetail.contents)) {
+                            if (!TextUtils.isEmpty(programDetail.contents)) {
                                 mWebView.loadData(programDetail.contents, "text/html; charset=UTF-8", null);
 
                             }
+                        }else if(!TextUtils.isEmpty(programDetailDao.errorMessage)){
+                            Toast.makeText(YQApplication.getAppContext(),programDetailDao.errorMessage, Toast.LENGTH_SHORT).show();
                         }else{
                             Toast.makeText(YQApplication.getAppContext(), R.string.unknow_erro, Toast.LENGTH_SHORT).show();
                         }
@@ -132,6 +140,81 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
                         progressBar.setVisibility(View.GONE);
                     }
                 });
+    }
+
+    private void toBuy() {
+        String phoneNumber = session.getPhoneNumber();
+        phoneNumber = null;
+        if(TextUtils.isEmpty(phoneNumber)){
+            InputPhoneNumberDialog phoneNumberDialog = InputPhoneNumberDialog.newInstance();
+            phoneNumberDialog.show(getSupportFragmentManager(),"phoneNumber");
+
+        }else{
+
+
+        }
+    }
+
+    private void setphoneNumber(String phoneNumber) {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("tel",phoneNumber);
+        hashMap.put("imei", session.getIMEI());
+        String content = "";
+        try {
+            content = AESUtil.encode(new Gson().toJson(hashMap));
+        } catch (Exception e) {
+            throw new RuntimeException("加密错误！");
+        }
+        if (TextUtils.isEmpty(content)) {
+            Toast.makeText(YQApplication.getAppContext(), R.string.unknow_erro, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        OkHttpUtils
+                .postString()
+                .content(content)
+                .url(Contants.URL_UPDATEUSER)
+                .tag(TAG)
+                .build()
+                .execute(new MyUpdateUserCallBack(this));
+    }
+    protected static class MyUpdateUserCallBack extends UpdateUserCallBack {
+        private WeakReference<PicDetailActivity> mWeakReference;
+
+        public MyUpdateUserCallBack(PicDetailActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onError(Call call, Exception e) {
+            PicDetailActivity activity = mWeakReference.get();
+            if(activity!=null){
+                Toast.makeText(activity, "设置手机号错误！", Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+
+        @Override
+        public void onResponse(UpdateUserDao response) {
+            PicDetailActivity activity = mWeakReference.get();
+            if(activity!=null){
+                activity.toBuyStep2();
+
+
+            }
+
+        }
+
+        @Override
+        public void onBefore(Request request) {
+
+        }
+    }
+
+    private void toBuyStep2() {
+        Intent intent = new Intent(this,PayListActivity.class);
+        startActivity(intent);
     }
 
     private void initView() {
@@ -246,5 +329,16 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
             default:
                 break;
         }
+    }
+
+    @Override
+    public void phoneNumber(String phoneNumber) {
+        setphoneNumber(phoneNumber);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        OkHttpUtils.getInstance().cancelTag(TAG);
     }
 }
