@@ -129,19 +129,20 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
                 .execute(new RecommendDaoCallBack() {
                     @Override
                     public void onError(Call call, Exception e) {
-                        if(isDetached()){
-                            return;
+                        if(isAdded()){
+                            getDataFail();
                         }
-                        getDataFail();
+
                     }
 
                     @Override
                     public void onResponse(RecommendDao response) {
-                        if(isDetached()){
-                            return;
-                        }
                         mRecommendDao = response;
-                        display();
+                        if(isAdded()){
+                            display();
+                        }
+
+
                     }
 
 
@@ -152,10 +153,10 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
 
                     @Override
                     public void onAfter() {
-                        if(isDetached()){
-                            return;
+                        if(isAdded()){
+                            getDataAfter();
                         }
-                        getDataAfter();
+
                     }
                 });
     }

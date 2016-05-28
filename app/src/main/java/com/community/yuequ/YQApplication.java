@@ -57,9 +57,9 @@ public class YQApplication extends Application{
             }
         };
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(new LoggerInterceptor("TAG"))
-                .connectTimeout(20000L, TimeUnit.MILLISECONDS)
-                .readTimeout(20000L, TimeUnit.MILLISECONDS)
+//                .addInterceptor(new LoggerInterceptor("TAG"))
+                .connectTimeout(15000L, TimeUnit.MILLISECONDS)
+                .readTimeout(15000L, TimeUnit.MILLISECONDS)
                 .cookieJar(cookieJar)
                 //其他配置
                 .build();

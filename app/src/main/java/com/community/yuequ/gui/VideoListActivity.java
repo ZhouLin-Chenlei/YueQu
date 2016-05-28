@@ -118,7 +118,8 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
                         if (mSwipeRefreshLayout != null) {
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
-                        mListAdapter.setLoadMoreViewVisibility(View.GONE);
+                        mListAdapter.setLoadMoreViewVisibility(View.VISIBLE);
+                        mListAdapter.setLoadMoreViewText(getString(R.string.load_data_fail));
                         if (mStatuLayout != null) {
                             if(mListAdapter.getItemCount()==0){
                                 mStatuLayout.show()
@@ -247,7 +248,7 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         OkHttpUtils.getInstance().cancelTag(TAG);
+        super.onDestroy();
     }
 }

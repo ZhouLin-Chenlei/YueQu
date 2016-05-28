@@ -122,7 +122,8 @@ public class PicListActivity extends AppCompatActivity implements View.OnClickLi
                         if (mSwipeRefreshLayout != null) {
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
-                        mListAdapter.setLoadMoreViewVisibility(View.GONE);
+                        mListAdapter.setLoadMoreViewVisibility(View.VISIBLE);
+                        mListAdapter.setLoadMoreViewText(getString(R.string.load_data_fail));
                         if (mStatuLayout != null) {
                             if(mListAdapter.getItemCount()==0){
                                 mStatuLayout.show()
@@ -142,15 +143,9 @@ public class PicListActivity extends AppCompatActivity implements View.OnClickLi
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
 
-                        if(response!=null && response.result!=null){
+                        if(response.result!=null){
                             mPage = page;
                             mPicListBean = response.result;
-                            if(mPage==1){
-                                mListAdapter.setData(mPicListBean.list);
-
-                            }else{
-                                mListAdapter.addData(mPicListBean.list);
-                            }
                             if(mPage >= mPicListBean.total_page){
                                 mListAdapter.setLoadMoreViewVisibility(View.VISIBLE);
                                 mListAdapter.setLoadMoreViewText(getString(R.string.load_data_adequate));
@@ -158,6 +153,14 @@ public class PicListActivity extends AppCompatActivity implements View.OnClickLi
                                 mListAdapter.setLoadMoreViewVisibility(View.VISIBLE);
                                 mListAdapter.setLoadMoreViewText(getString(R.string.loading_data));
                             }
+
+                            if(mPage==1){
+                                mListAdapter.setData(mPicListBean.list);
+
+                            }else{
+                                mListAdapter.addData(mPicListBean.list);
+                            }
+
                         }
 
 

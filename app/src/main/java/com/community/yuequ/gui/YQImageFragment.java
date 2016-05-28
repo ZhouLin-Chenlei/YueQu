@@ -119,23 +119,24 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
                 .execute(new YQImageDaoCallBack() {
                     @Override
                     public void onError(Call call, Exception e) {
-                        if(isDetached()){
-                            return;
+                        if(isAdded()){
+                            getDataFail();
                         }
-                        getDataFail();
+
                     }
 
                     @Override
                     public void onResponse(YQImageDao response) {
-                        if(isDetached()){
-                            return;
-                        }
                         imageDao  = response;
-                        if(imageDao.result==null||imageDao.result.isEmpty()){
-                            getDataEmpty();
-                        }else{
-                            getDataAdequate();
+                        if(isAdded()){
+                            if(imageDao.result==null||imageDao.result.isEmpty()){
+                                getDataEmpty();
+                            }else{
+                                getDataAdequate();
+                            }
                         }
+
+
 
                     }
 
@@ -145,10 +146,10 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
                     }
                     @Override
                     public void onAfter() {
-                        if(isDetached()){
-                            return;
+                        if(isAdded()){
+                            getDataAfter();
                         }
-                        getDataAfter();
+
                     }
                 });
     }
