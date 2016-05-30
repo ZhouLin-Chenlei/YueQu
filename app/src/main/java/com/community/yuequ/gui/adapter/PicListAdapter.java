@@ -77,7 +77,7 @@ public class PicListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public int getItemCount() {
         if(mRPrograms==null){
-            return 0;
+            return 1;
         }
         return mRPrograms.size() + 1;
     }

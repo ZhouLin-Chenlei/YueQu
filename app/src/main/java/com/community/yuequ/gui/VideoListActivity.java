@@ -222,7 +222,7 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
 
     //上拉加载数据
     protected void onScrollLast(){
-        Toast.makeText(this, "加载更多...", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "加载更多...", Toast.LENGTH_SHORT).show();
         getdata(mPage+1);
     }
 
@@ -243,7 +243,7 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onRefresh() {
-        getdata(mPage);
+        getdata(1);
     }
 
     @Override

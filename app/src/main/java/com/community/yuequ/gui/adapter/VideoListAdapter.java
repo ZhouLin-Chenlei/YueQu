@@ -86,7 +86,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public int getItemCount() {
         if (mRPrograms == null) {
-            return 0;
+            return 1;
         }
         return mRPrograms.size() + 1;
     }
