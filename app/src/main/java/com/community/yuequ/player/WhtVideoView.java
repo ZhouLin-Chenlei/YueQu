@@ -1225,7 +1225,9 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 			return true;
 		} else if (keyCode == KeyEvent.KEYCODE_BACK) {
 			int screenOrientation = getScreenOrientation();
-			if (screenOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+			if(mContext instanceof VideoViewActivity){
+				return super.dispatchKeyEvent(event);
+			}else if (screenOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
 
 				setActivityOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 			} else if (screenOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
@@ -1243,6 +1245,8 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 		if (isLocked()) {
 			show();
 			return true;
+		}else if(mContext instanceof VideoViewActivity){
+			return false;
 		} else if (getScreenOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
 			setActivityOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 

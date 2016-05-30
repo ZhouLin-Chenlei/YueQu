@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -43,7 +44,7 @@ import io.vov.vitamio.Vitamio;
  */
 
 @SuppressLint("HandlerLeak")
-public class VideoViewActivity extends Activity implements View.OnClickListener{
+public class VideoViewActivity extends AppCompatActivity implements View.OnClickListener{
 	private TitleBarLayout mTitleBarLayout;
 	private WhtVideoView whtVideoView;
 	private boolean mCreated = false;
