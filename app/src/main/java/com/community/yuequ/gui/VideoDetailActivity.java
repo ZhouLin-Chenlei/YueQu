@@ -45,6 +45,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
     private RProgram mRProgram;
     private Session session;
     private RProgramDetail programDetail;
+    private boolean isLoading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                 .setLeftButtonVisibility(true)
                 .setLeftButtonClickListener(this);
         mStatuLayout = new PageStatuLayout(this)
+                .setReloadListener(this)
                 .hide();
         iv_img = (ImageView) findViewById(R.id.iv_img);
         tv_dec = (TextView) findViewById(R.id.tv_dec);
@@ -110,7 +112,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                 .execute(new RProgramDetailDaoCallBack() {
                     @Override
                     public void onError(Call call, Exception e) {
-
+                        isLoading = false;
 
                         if (mStatuLayout != null) {
                             mStatuLayout.show()
@@ -121,6 +123,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
 
                     @Override
                     public void onResponse(RProgramDetailDao response) {
+                        isLoading = false;
                         programDetail = response.result;
                         display();
                         if (mStatuLayout != null) {
@@ -140,6 +143,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
 
                     @Override
                     public void onBefore(Request request) {
+                        isLoading = true;
                         mStatuLayout.show()
                                 .setProgressBarVisibility(true)
                                 .setText(null);
@@ -148,6 +152,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onAfter() {
                         super.onAfter();
+                        isLoading = false;
                     }
                 });
     }
@@ -161,9 +166,18 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                 finish();
                 break;
             case R.id.btn_play:
-                Intent intent = new Intent(this,VideoViewActivity.class);
-                intent.putExtra("programDetail",programDetail);
-                startActivity(intent);
+                if(programDetail==null){
+                    Toast.makeText(VideoDetailActivity.this, "获取视频信息失败！", Toast.LENGTH_SHORT).show();
+                }else{
+                    Intent intent = new Intent(this,VideoViewActivity.class);
+                    intent.putExtra("programDetail",programDetail);
+                    startActivity(intent);
+                }
+                break;
+            case R.id.ll_status:
+                if(!isLoading){
+                    getData();
+                }
                 break;
             default:
                 break;
@@ -171,7 +185,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
     }
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         OkHttpUtils.getInstance().cancelTag(TAG);
+        super.onDestroy();
     }
 }

@@ -50,6 +50,10 @@ public class PageStatuLayout {
         stateView.setVisibility(View.VISIBLE);
         return this;
     }
+    public PageStatuLayout setReloadListener(View.OnClickListener listener) {
+        stateView.setOnClickListener(listener);
+        return this;
+    }
 
     public View build() {
         return stateView;

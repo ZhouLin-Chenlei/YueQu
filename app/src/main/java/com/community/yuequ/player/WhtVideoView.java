@@ -1312,10 +1312,13 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 				return;
 			}
 			int screenOrientation = getScreenOrientation();
-			if (screenOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-				Activity activity = ((Activity) mContext);
-				if (!activity.isFinishing()) {
-					activity.finish();
+			if(mContext instanceof VideoViewActivity){
+				if (!mContext.isFinishing()) {
+					mContext.finish();
+				}
+			}else if (screenOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+				if (!mContext.isFinishing()) {
+					mContext.finish();
 				}
 
 			} else {

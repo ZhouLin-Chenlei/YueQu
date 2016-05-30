@@ -224,7 +224,6 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         settings.setSupportZoom(true); //支持缩放
         settings.setBuiltInZoomControls(true); //支持手势缩放
         settings.setDisplayZoomControls(false); //是否显示缩放按钮
-
         // >= 19(SDK4.4)启动硬件加速，否则启动软件加速
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);

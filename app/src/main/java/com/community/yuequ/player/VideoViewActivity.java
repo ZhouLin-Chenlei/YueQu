@@ -60,11 +60,15 @@ public class VideoViewActivity extends AppCompatActivity implements View.OnClick
 		mCreated = true;
 
 		RProgramDetail programDetail = (RProgramDetail) getIntent().getSerializableExtra("programDetail");
-		ArrayList<RProgramDetail> programDetails = new ArrayList<>();
-		programDetails.add(programDetail);
-		whtVideoView.open(this, false, programDetails);
-		whtVideoView.play(0);
-		mTitleBarLayout.setText(programDetail.name);
+		if(programDetail!=null){
+
+			ArrayList<RProgramDetail> programDetails = new ArrayList<>();
+			programDetails.add(programDetail);
+			whtVideoView.open(this, false, programDetails);
+			whtVideoView.play(0);
+			mTitleBarLayout.setText(programDetail.name);
+
+		}
 
 
 	}
