@@ -33,10 +33,14 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.community.yuequ.modle.InitMsg;
+import com.community.yuequ.modle.OrderTip;
 import com.community.yuequ.modle.UpgradeInfo;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 
  * The Client Seesion Object for YueQu, contains some necessary
@@ -411,6 +415,10 @@ public class Session {
         return mInitMsg;
     }
 
+    public boolean haveOrderTips() {
+        return mInitMsg!=null && mInitMsg.orderTips!=null && !mInitMsg.orderTips.isEmpty();
+    }
+
     public boolean isShowUpgradeDialog() {
         boolean show = false;
         if(mInitMsg!=null){
@@ -420,5 +428,12 @@ public class Session {
             }
         }
         return show;
+    }
+
+    public ArrayList<OrderTip> getOrderTips() {
+        if(mInitMsg!=null){
+           return mInitMsg.orderTips;
+        }
+        return null;
     }
 }

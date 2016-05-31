@@ -8,7 +8,10 @@ import android.view.View;
 
 import com.community.yuequ.R;
 import com.community.yuequ.gui.adapter.PayListAdapter;
+import com.community.yuequ.modle.OrderTip;
 import com.community.yuequ.view.TitleBarLayout;
+
+import java.util.ArrayList;
 
 public class PayListActivity extends AppCompatActivity implements View.OnClickListener{
     private TitleBarLayout mTitleBarLayout;
@@ -17,13 +20,14 @@ public class PayListActivity extends AppCompatActivity implements View.OnClickLi
     private LinearLayoutManager mLayoutManager;
 
     private PayListAdapter mListAdapter;
-
+    private ArrayList<OrderTip> mOrderTips;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay_list);
 
+        mOrderTips = getIntent().getParcelableArrayListExtra("ordertips");
         mTitleBarLayout = new TitleBarLayout(this)
                 .setText("购买")
                 .setLeftButtonVisibility(true)
@@ -32,7 +36,7 @@ public class PayListActivity extends AppCompatActivity implements View.OnClickLi
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mListAdapter = new PayListAdapter();
+        mListAdapter = new PayListAdapter(mOrderTips);
         mRecyclerView.setAdapter(mListAdapter);
 
     }

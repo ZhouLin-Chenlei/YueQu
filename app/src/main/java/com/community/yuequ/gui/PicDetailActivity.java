@@ -21,10 +21,14 @@ import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.Session;
 import com.community.yuequ.YQApplication;
+import com.community.yuequ.modle.InitDao;
+import com.community.yuequ.modle.InitMsg;
+import com.community.yuequ.modle.OrderTipsDao;
 import com.community.yuequ.modle.RProgram;
 import com.community.yuequ.modle.RProgramDetail;
 import com.community.yuequ.modle.RProgramDetailDao;
 import com.community.yuequ.modle.UpdateUserDao;
+import com.community.yuequ.modle.callback.OrderTipsCallBack;
 import com.community.yuequ.modle.callback.RProgramDetailDaoCallBack;
 import com.community.yuequ.modle.callback.UpdateUserCallBack;
 import com.community.yuequ.util.AESUtil;
@@ -47,7 +51,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
     private TitleBarLayout mTitleBarLayout;
 
     private RProgram mRProgram;
-    private Session session;
+    private Session mSession;
     private RProgramDetailDao programDetailDao;
     private RProgramDetail programDetail;
 
@@ -61,7 +65,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pic_detail);
-        session = Session.get(this);
+        mSession = Session.get(this);
         Intent intent = getIntent();
         mRProgram = (RProgram) intent.getSerializableExtra("program");
         mTitleBarLayout = new TitleBarLayout(this)
@@ -82,7 +86,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("program_id", mRProgram.id);
-        hashMap.put("imei", session.getIMEI());
+        hashMap.put("imei", mSession.getIMEI());
         String content = "";
         try {
             content = AESUtil.encode(new Gson().toJson(hashMap));
@@ -143,14 +147,13 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void toBuy() {
-        String phoneNumber = session.getPhoneNumber();
-        phoneNumber = null;
+        String phoneNumber = mSession.getPhoneNumber();
+
         if(TextUtils.isEmpty(phoneNumber)){
             InputPhoneNumberDialog phoneNumberDialog = InputPhoneNumberDialog.newInstance();
             phoneNumberDialog.show(getSupportFragmentManager(),"phoneNumber");
-
         }else{
-
+            toBuyStep2();
 
         }
     }
@@ -158,7 +161,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
     private void setphoneNumber(String phoneNumber) {
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("tel",phoneNumber);
-        hashMap.put("imei", session.getIMEI());
+        hashMap.put("imei", mSession.getIMEI());
         String content = "";
         try {
             content = AESUtil.encode(new Gson().toJson(hashMap));
@@ -197,10 +200,13 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
 
         @Override
         public void onResponse(UpdateUserDao response) {
-            PicDetailActivity activity = mWeakReference.get();
-            if(activity!=null){
-                activity.toBuyStep2();
-
+            if(response.errorCode==Contants.HTTP_OK){
+                PicDetailActivity activity = mWeakReference.get();
+                if(activity!=null){
+                    activity.toBuyStep2();
+                }
+            }else{
+                Toast.makeText(YQApplication.getAppContext(), "设置手机号错误！", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -208,14 +214,56 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
 
         @Override
         public void onBefore(Request request) {
+            PicDetailActivity activity = mWeakReference.get();
+            if(activity!=null){
 
+            }
         }
     }
 
     private void toBuyStep2() {
-        Intent intent = new Intent(this,PayListActivity.class);
-        startActivity(intent);
+
+        if(mSession.haveOrderTips()){
+            Intent intent = new Intent(this,PayListActivity.class);
+            intent.putParcelableArrayListExtra("ordertips",mSession.getOrderTips());
+            startActivity(intent);
+
+        }else{
+            OkHttpUtils
+                    .post()
+                    .url(Contants.URL_ORDERTIPS)
+                    .tag(TAG)
+                    .build()
+                    .execute(new MyOrderTipsCallBack(this));
+        }
     }
+
+    public static class MyOrderTipsCallBack extends OrderTipsCallBack {
+        private WeakReference<PicDetailActivity> mWeakReference;
+        public MyOrderTipsCallBack(PicDetailActivity activity){
+            mWeakReference = new WeakReference<>(activity);
+        }
+        @Override
+        public void onError(Call call, Exception e) {
+            PicDetailActivity activity = mWeakReference.get();
+            if(activity!=null){
+                Toast.makeText(activity, "获取信息失败！", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onResponse(OrderTipsDao response) {
+            PicDetailActivity activity = mWeakReference.get();
+            if(activity!=null){
+                if(response.errorCode==Contants.HTTP_OK){
+
+                }else{
+                    Toast.makeText(activity, "获取信息失败！", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
 
     private void initView() {
         settings = mWebView.getSettings();

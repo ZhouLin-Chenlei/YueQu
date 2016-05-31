@@ -15,9 +15,7 @@ import com.community.yuequ.gui.ChannelFragment;
 import com.community.yuequ.gui.PicListActivity;
 import com.community.yuequ.gui.VideoListActivity;
 import com.community.yuequ.modle.Channel;
-import com.community.yuequ.modle.MediaWrapper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ChannelListAdapter extends RecyclerView.Adapter<ChannelListAdapter.ViewHolder> {
