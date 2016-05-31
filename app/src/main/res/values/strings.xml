@@ -45,5 +45,8 @@
     <string name="alert_dialog_ok">确定</string>
     <string name="alert_dialog_cancel">取消</string>
     <string name="alert_dialog_text_phonenumber">请输入手机号</string>
+    <string name="alert_dialog_upgrade">升级</string>
+    <string name="alert_dialog_upgradetip">升级提示</string>
+    <string name="alert_dialog_jump">跳过</string>
 
 </resources>

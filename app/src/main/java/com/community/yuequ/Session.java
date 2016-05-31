@@ -32,6 +32,9 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.community.yuequ.modle.InitMsg;
+import com.community.yuequ.modle.UpgradeInfo;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 /**
@@ -131,7 +134,8 @@ public class Session {
 
     /** The singleton instance */
     private static Session mInstance;
-    
+
+    private InitMsg mInitMsg;
 
     /**
      * default constructor
@@ -197,8 +201,8 @@ public class Session {
             TelephonyManager telMgr = (TelephonyManager) mContext
                     .getSystemService(Context.TELEPHONY_SERVICE);
             imei = telMgr.getDeviceId();
-            sim = telMgr.getSimSerialNumber();
             phoneNumber = telMgr.getLine1Number();
+            sim = telMgr.getSubscriberId();
         } catch (NameNotFoundException e) {
             Log.d(TAG, "met some error when get application info");
         }
@@ -400,4 +404,21 @@ public class Session {
         return phoneNumber;
     }
 
+    public void setInitMsg(InitMsg msg) {
+       this.mInitMsg = msg;
+    }
+    public InitMsg getInitMsg() {
+        return mInitMsg;
+    }
+
+    public boolean isShowUpgradeDialog() {
+        boolean show = false;
+        if(mInitMsg!=null){
+            UpgradeInfo upgradeInfo = mInitMsg.upgrade;
+            if(upgradeInfo != null && versionCode < upgradeInfo.version && !TextUtils.isEmpty(upgradeInfo.app_path)){
+                show = true;
+            }
+        }
+        return show;
+    }
 }

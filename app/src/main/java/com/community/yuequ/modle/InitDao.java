@@ -6,9 +6,6 @@ package com.community.yuequ.modle;
 public class InitDao {
     public int errorCode;
     public String errorMessage;
-    public Account result;
+    public InitMsg result;
 
-    public static class Account{
-
-    }
 }
