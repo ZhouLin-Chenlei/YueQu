@@ -65,7 +65,9 @@ import com.community.yuequ.modle.RProgramDetail;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+
 
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
@@ -78,16 +80,14 @@ import io.vov.vitamio.MediaPlayer.OnTimedTextListener;
 import io.vov.vitamio.MediaPlayer.OnVideoSizeChangedListener;
 import io.vov.vitamio.MediaPlayer.ShownHideListener;
 import io.vov.vitamio.utils.StringUtils;
-
 /**
  * 视频SDK的基本容器类，是一个FrameLayout，一般包含三层，按照从下往上的顺序：<br>
  * 第一层：自定义的VideoView，只是用来播放视频<br>
  * 第二层：控制层：一堆按钮集合，在这一层实现所有的控制单元<br>
  * 第三层：显示一些信息
- * 
  * @author zhoulin
- * 
- * 
+ *
+ *
  */
 public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 		OnCompletionListener, OnInfoListener, OnErrorListener,
@@ -101,7 +101,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 	private ImageButton mScreenToggle;
 	private ImageButton mVideoback;
 	private SeekBar mProgress;
-	private TextView mEndTime, mCurrentTime;
+	private TextView mEndTime,mCurrentTime;
 	private ImageButton mPauseButton;
 	private ListView mProgramlist;
 	private ProgramAdapter adapter;
@@ -155,7 +155,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 	private Animation mAnimSlideOutBottom;
 
 	private CommonGestures mGestures;
-	private int mVideoMode;
+//	private int mVideoMode = VideoView.VIDEO_LAYOUT_ORIGIN;
 
 	private VideoView mVideoView;
 
@@ -172,6 +172,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 	private boolean mEnd = false;
 	// private OnBuyListener onBuyListener;
 	private OnIndexChangeListener indexChangeListener;
+	private OnCompletionListener onCompletionListener;
 	private float mSeekTo = -1f;
 	public static final IntentFilter SCREEN_FILTER = new IntentFilter(
 			Intent.ACTION_SCREEN_ON);
@@ -221,6 +222,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 			mVideoView.setOnSeekCompleteListener(this);
 			mVideoView.setOnBufferingUpdateListener(this);
 			mVideoView.setShownHideListener(this);
+			mVideoView.setSizeChangedListener(this);
 			initVedio();
 		}
 		if (((View) mVideoView).getParent() == null) {
@@ -233,7 +235,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// WhtLog.i("TAG", "ScreenReceiver:"+intent.getAction());
+//			WhtLog.i("TAG", "ScreenReceiver:"+intent.getAction());
 			if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
 				screenOn = false;
 				pause();
@@ -316,7 +318,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 
 	/**
 	 * 视频直播界面设置
-	 * 
+	 *
 	 * @param isLive
 	 */
 	public void setIsLive(boolean isLive) {
@@ -337,7 +339,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 
 	/**
 	 * 横竖屏切换，从onConfigurationChanged入口进来的
-	 * 
+	 *
 	 * @param isFullScreen
 	 *            true 表全屏；false 表非全屏
 	 */
@@ -347,7 +349,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 
 	/**
 	 * 增加一个私有函数，用来做initVideo时候的调用专用
-	 * 
+	 *
 	 * @param isFullScreen
 	 * @param isInited
 	 */
@@ -563,9 +565,9 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 			return;
 		}
 		setBackgroundColor(Color.BLACK);
-		LayoutParams lp = new LayoutParams(
-				LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT);
+		FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+				FrameLayout.LayoutParams.WRAP_CONTENT,
+				FrameLayout.LayoutParams.WRAP_CONTENT);
 		lp.gravity = Gravity.CENTER;
 		addView((VideoView) vv, 0, lp);
 	}
@@ -614,7 +616,8 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 
 		mSystemInfoLayout = v.findViewById(R.id.info_panel);
 
-		mEndTime = (TextView) v.findViewById(R.id.mediacontroller_time_total);
+		mEndTime = (TextView) v
+				.findViewById(R.id.mediacontroller_time_total);
 		mCurrentTime = (TextView) v
 				.findViewById(R.id.mediacontroller_time_current);
 		mMenu = v.findViewById(R.id.video_menu);
@@ -757,7 +760,9 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 
 		@Override
 		public void onDoubleTap() {
-			toggleVideoMode(true, true);
+			int aspectRatio = toggleAspectRatio();
+			String aspectRatioText = MeasureHelper.getAspectRatioText(mContext, aspectRatio);
+			setOperationInfo(aspectRatioText, 500);
 		}
 
 		@Override
@@ -768,16 +773,16 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 		@Override
 		public void onScale(float scaleFactor, int state) {
 			switch (state) {
-			case CommonGestures.SCALE_STATE_BEGIN:
-				// mVideoMode = VideoView.VIDEO_LAYOUT_FIT_PARENT;
-				// toggleVideoMode(mVideoMode);
-				break;
-			case CommonGestures.SCALE_STATE_SCALEING:
-				// float currentRatio = mPlayer.scale(scaleFactor);
-				// setOperationInfo((int) (currentRatio * 100) + "%", 500);
-				break;
-			case CommonGestures.SCALE_STATE_END:
-				break;
+				case CommonGestures.SCALE_STATE_BEGIN:
+					// mVideoMode = VideoView.VIDEO_LAYOUT_FIT_PARENT;
+					// toggleVideoMode(mVideoMode);
+					break;
+				case CommonGestures.SCALE_STATE_SCALEING:
+					// float currentRatio = mPlayer.scale(scaleFactor);
+					// setOperationInfo((int) (currentRatio * 100) + "%", 500);
+					break;
+				case CommonGestures.SCALE_STATE_END:
+					break;
 			}
 		}
 
@@ -787,8 +792,8 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 				return;
 			}
 
-			// Log.i("TAG", "distanceX:" + distanceX);
-			long mVideo_total_length = mVideoView.getDuration();// 总长度
+//			Log.i("TAG", "distanceX:" + distanceX);
+			long mVideo_total_length = mVideoView.getDuration();//总长度
 			long mVideo_current_length = mVideoView.getCurrentPosition();// 当前播放长度
 			if (distanceX > 0) {// 往左滑动 --
 				mSpeed = (int) (mSpeed - distanceX);
@@ -797,14 +802,15 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 			}
 			int i = mSpeed * 1000;// 快进长度
 
-			mVideo_start_length = mVideo_current_length + i;// 快进之后长度
+			mVideo_start_length = mVideo_current_length +i;// 快进之后长度
 			if (mVideo_start_length >= mVideo_total_length) {
 				mVideo_start_length = mVideo_total_length;
 			} else if (mVideo_start_length <= 0) {
 				mVideo_start_length = 0;
 			}
 
-			// String start_length = length2time(mVideo_start_length);
+
+//			String start_length = length2time(mVideo_start_length);
 
 			String time = StringUtils.generateTime(mVideo_start_length);
 
@@ -846,7 +852,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 		return inflater.inflate(R.layout.mediacontroller, this);
 	}
 
-	private OnClickListener mMenuListener = new OnClickListener() {
+	private View.OnClickListener mMenuListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			if (mProgramlist.isShown()) {
@@ -963,43 +969,24 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 	// mHiddenListener = l;
 	// }
 
-	private void toggleVideoMode(boolean larger, boolean recycle) {
-		if (larger) {
-			if (mVideoMode < VideoView.VIDEO_LAYOUT_ZOOM)
-				mVideoMode++;
-			else if (recycle)
-				mVideoMode = VideoView.VIDEO_LAYOUT_ORIGIN;
-		} else {
-			if (mVideoMode > VideoView.VIDEO_LAYOUT_ORIGIN)
-				mVideoMode--;
-			else if (recycle)
-				mVideoMode = VideoView.VIDEO_LAYOUT_ZOOM;
-		}
 
-		switch (mVideoMode) {
-		case VideoView.VIDEO_LAYOUT_ORIGIN:
-			setOperationInfo(mContext.getString(R.string.video_original), 500);
-			// mScreenToggle
-			// .setImageResource(R.drawable.mediacontroller_sreen_size_100);
-			break;
-		case VideoView.VIDEO_LAYOUT_SCALE:
-			setOperationInfo(mContext.getString(R.string.video_fit_screen), 500);
-			// mScreenToggle
-			// .setImageResource(R.drawable.mediacontroller_screen_fit);
-			break;
-		case VideoView.VIDEO_LAYOUT_STRETCH:
-			setOperationInfo(mContext.getString(R.string.video_stretch), 500);
-			// mScreenToggle
-			// .setImageResource(R.drawable.mediacontroller_screen_size);
-			break;
-		case VideoView.VIDEO_LAYOUT_ZOOM:
-			setOperationInfo(mContext.getString(R.string.video_crop), 500);
-			// mScreenToggle
-			// .setImageResource(R.drawable.mediacontroller_sreen_size_crop);
-			break;
-		}
+	private static final int[] s_allAspectRatio = {
+			VideoView.AR_ASPECT_FIT_PARENT,
+			VideoView.AR_ASPECT_FILL_PARENT,
+			VideoView.AR_ASPECT_WRAP_CONTENT,
+			// IRenderView.AR_MATCH_PARENT,
+			VideoView.AR_16_9_FIT_PARENT, VideoView.AR_4_3_FIT_PARENT };
+	private int mCurrentAspectRatioIndex = 0;
+	private int mCurrentAspectRatio = s_allAspectRatio[0];
 
-		mVideoView.setVideoLayout(mVideoMode, mVideoView.getVideoAspectRatio());
+	public int toggleAspectRatio() {
+		mCurrentAspectRatioIndex++;
+		mCurrentAspectRatioIndex %= s_allAspectRatio.length;
+
+		mCurrentAspectRatio = s_allAspectRatio[mCurrentAspectRatioIndex];
+		if (mVideoView != null)
+			mVideoView.setAspectRatio(mCurrentAspectRatio);
+		return mCurrentAspectRatio;
 	}
 
 	private void lock(boolean toLock) {
@@ -1036,8 +1023,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 	private static final int MSG_TIME_TICK = 4;
 	private static final int MSG_HIDE_OPERATION_INFO = 5;
 	private static final int MSG_HIDE_OPERATION_VOLLUM = 6;
-
-	// private static final int MSG_SHOW_PROGRESS_BUY = 7;
+	//	private static final int MSG_SHOW_PROGRESS_BUY = 7;
 	private static class MHandler extends Handler {
 		private WeakReference<WhtVideoView> mc;
 
@@ -1120,13 +1106,13 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 			mProgress.setProgress((int) pos);
 		}
 		int percent = mVideoView.getBufferPercentage();
-		// WhtLog.i("TAG", "percent："+percent);
+//		WhtLog.i("TAG", "percent："+percent);
 		mProgress.setSecondaryProgress(percent * 10);
 
 		mDuration = duration;
 
-		if (mEndTime != null) {
-			mEndTime.setText("/" + StringUtils.generateTime(mDuration));
+		if(mEndTime!=null){
+			mEndTime.setText("/"+StringUtils.generateTime(mDuration));
 		}
 		if (mCurrentTime != null) {
 			mCurrentTime.setText(StringUtils.generateTime(position));
@@ -1142,8 +1128,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 //	}
 
 	public long getCurrentPosition() {
-		if (mVideoView == null)
-			return 0;
+		if(mVideoView==null)return 0;
 		return mVideoView.getCurrentPosition();
 	}
 
@@ -1194,16 +1179,16 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 		int keyCode = event.getKeyCode();
 
 		switch (keyCode) {
-		case KeyEvent.KEYCODE_VOLUME_MUTE:
-			return super.dispatchKeyEvent(event);
-		case KeyEvent.KEYCODE_VOLUME_UP:
-		case KeyEvent.KEYCODE_VOLUME_DOWN:
-			mVolume = mAM.getStreamVolume(AudioManager.STREAM_MUSIC);
-			int step = keyCode == KeyEvent.KEYCODE_VOLUME_UP ? 1 : -1;
-			setVolume(mVolume + step);
-			mHandler.removeMessages(MSG_HIDE_OPERATION_VOLLUM);
-			mHandler.sendEmptyMessageDelayed(MSG_HIDE_OPERATION_VOLLUM, 500);
-			return true;
+			case KeyEvent.KEYCODE_VOLUME_MUTE:
+				return super.dispatchKeyEvent(event);
+			case KeyEvent.KEYCODE_VOLUME_UP:
+			case KeyEvent.KEYCODE_VOLUME_DOWN:
+				mVolume = mAM.getStreamVolume(AudioManager.STREAM_MUSIC);
+				int step = keyCode == KeyEvent.KEYCODE_VOLUME_UP ? 1 : -1;
+				setVolume(mVolume + step);
+				mHandler.removeMessages(MSG_HIDE_OPERATION_VOLLUM);
+				mHandler.sendEmptyMessageDelayed(MSG_HIDE_OPERATION_VOLLUM, 500);
+				return true;
 		}
 
 		if (isLocked()) {
@@ -1213,7 +1198,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 
 		if (event.getRepeatCount() == 0
 				&& (keyCode == KeyEvent.KEYCODE_HEADSETHOOK
-						|| keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE || keyCode == KeyEvent.KEYCODE_SPACE)) {
+				|| keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE || keyCode == KeyEvent.KEYCODE_SPACE)) {
 			doPauseResume();
 			show(DEFAULT_TIME_OUT);
 			return true;
@@ -1304,7 +1289,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 		}
 	};
 
-	private OnClickListener mVideoBackClickListener = new OnClickListener() {
+	private View.OnClickListener mVideoBackClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			if (isLocked()) {
@@ -1350,8 +1335,9 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 				setActivityOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
 			} else {
-				mVideoMode = mVideoView.getVideoLayout();
-				toggleVideoMode(true, true);
+				int aspectRatio = toggleAspectRatio();
+				String aspectRatioText = MeasureHelper.getAspectRatioText(mContext, aspectRatio);
+				setOperationInfo(aspectRatioText, 500);
 
 			}
 
@@ -1397,10 +1383,10 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 
 		@Override
 		public void onProgressChanged(SeekBar bar, int progress,
-				boolean fromuser) {
+									  boolean fromuser) {
 			if (!fromuser)
 				return;
-			// TODO onProgressChanged
+			//TODO onProgressChanged
 			long newposition = (mDuration * progress) / 1000;
 
 			String time = StringUtils.generateTime(newposition);
@@ -1482,33 +1468,37 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 			stop();
 		}
 
+
+		if(onCompletionListener!=null){
+			onCompletionListener.onCompletion(mp);
+		}
 	}
 
 	@Override
 	public boolean onInfo(MediaPlayer mp, int what, int extra) {
 		switch (what) {
-		case MediaPlayer.MEDIA_INFO_BUFFERING_START:
-			if (mVideoView.isPlaying()) {
-				mVideoView.pause();
-				pb.setVisibility(View.VISIBLE);
-				// downloadRateView.setText("");
-				loadRateView.setText("");
-				// downloadRateView.setVisibility(View.VISIBLE);
-				loadRateView.setVisibility(View.VISIBLE);
+			case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+				if (mVideoView.isPlaying()) {
+					mVideoView.pause();
+					pb.setVisibility(View.VISIBLE);
+					// downloadRateView.setText("");
+					loadRateView.setText("");
+					// downloadRateView.setVisibility(View.VISIBLE);
+					loadRateView.setVisibility(View.VISIBLE);
 
-			}
-			break;
-		case MediaPlayer.MEDIA_INFO_BUFFERING_END:
-			mVideoView.start();
-			pb.setVisibility(View.GONE);
-			// downloadRateView.setVisibility(View.GONE);
-			loadRateView.setVisibility(View.GONE);
-			break;
-		case MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED:
-			// downloadRateView.setText("" + extra + "kb/s" + "  ");
-			// setDownloadRate("" + extra + "kb/s" + "  ");
+				}
+				break;
+			case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+				mVideoView.start();
+				pb.setVisibility(View.GONE);
+				// downloadRateView.setVisibility(View.GONE);
+				loadRateView.setVisibility(View.GONE);
+				break;
+			case MediaPlayer.MEDIA_INFO_DOWNLOAD_RATE_CHANGED:
+				// downloadRateView.setText("" + extra + "kb/s" + "  ");
+				// setDownloadRate("" + extra + "kb/s" + "  ");
 
-			break;
+				break;
 		}
 		return true;
 	}
@@ -1549,13 +1539,14 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 
 	@Override
 	public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-		// TODO Auto-generated method stub
+
+		requestLayout();
 
 	}
 
 	/**
 	 * 计费点弹计费
-	 * 
+	 *
 	 * @param l
 	 */
 	// public void setOnBuyListener(OnBuyListener l) {
@@ -1604,78 +1595,78 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 			defaultWide = !defaultWide;
 		if (defaultWide) {
 			switch (rot) {
-			case Surface.ROTATION_0:
-				return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-			case Surface.ROTATION_90:
-				return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-			case Surface.ROTATION_180:
-				// SCREEN_ORIENTATION_REVERSE_PORTRAIT only available since API
-				// Level 9+
-				return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-						: ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-			case Surface.ROTATION_270:
-				// SCREEN_ORIENTATION_REVERSE_LANDSCAPE only available since API
-				// Level 9+
-				return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
-						: ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-			default:
-				return 0;
+				case Surface.ROTATION_0:
+					return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+				case Surface.ROTATION_90:
+					return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+				case Surface.ROTATION_180:
+					// SCREEN_ORIENTATION_REVERSE_PORTRAIT only available since API
+					// Level 9+
+					return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+							: ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+				case Surface.ROTATION_270:
+					// SCREEN_ORIENTATION_REVERSE_LANDSCAPE only available since API
+					// Level 9+
+					return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+							: ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				default:
+					return 0;
 			}
 		} else {
 			switch (rot) {
-			case Surface.ROTATION_0:
-				return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-			case Surface.ROTATION_90:
-				return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-			case Surface.ROTATION_180:
-				// SCREEN_ORIENTATION_REVERSE_PORTRAIT only available since API
-				// Level 9+
-				return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
-						: ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-			case Surface.ROTATION_270:
-				// SCREEN_ORIENTATION_REVERSE_LANDSCAPE only available since API
-				// Level 9+
-				return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-						: ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-			default:
-				return 0;
+				case Surface.ROTATION_0:
+					return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+				case Surface.ROTATION_90:
+					return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+				case Surface.ROTATION_180:
+					// SCREEN_ORIENTATION_REVERSE_PORTRAIT only available since API
+					// Level 9+
+					return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
+							: ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				case Surface.ROTATION_270:
+					// SCREEN_ORIENTATION_REVERSE_LANDSCAPE only available since API
+					// Level 9+
+					return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO ? ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
+							: ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+				default:
+					return 0;
 			}
 		}
 	}
 
 	/*
 	 * public interface MediaPlayerControl { void start();
-	 * 
+	 *
 	 * void pause();
-	 * 
+	 *
 	 * void stop();
-	 * 
+	 *
 	 * void seekTo(long pos);
-	 * 
+	 *
 	 * boolean isPlaying();
-	 * 
+	 *
 	 * long getDuration();
-	 * 
+	 *
 	 * long getCurrentPosition();
-	 * 
+	 *
 	 * int getBufferPercentage();
-	 * 
+	 *
 	 * void previous();
-	 * 
+	 *
 	 * void next();
-	 * 
+	 *
 	 * long goForward();
-	 * 
+	 *
 	 * long goBack();
-	 * 
+	 *
 	 * void toggleVideoMode(int mode);
-	 * 
+	 *
 	 * void showMenu();
-	 * 
+	 *
 	 * void removeLoadingView();
-	 * 
+	 *
 	 * void snapshot();
-	 * 
+	 *
 	 * }
 	 */
 
@@ -1744,7 +1735,7 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 
 	/**
 	 * 0 ：表示播放本身或者第一集， 大于0表示播放子集0
-	 * 
+	 *
 	 * @param index
 	 */
 	public void play(int index) {
@@ -1823,96 +1814,98 @@ public class WhtVideoView extends FrameLayout implements OnPreparedListener,
 	private void savePosition() {
 		// WhtLog.i("TAG", "savePosition");
 		if (mVideoView != null && mUri != null) {
-			// PreferenceUtils.put(
-			// mUri.toString(),
-			// StringUtils.generateTime((int) (0.5 + mVideoView
-			// .getCurrentPosition()))
-			// + " / "
-			// + StringUtils.generateTime(mVideoView.getDuration()));
+//			PreferenceUtils.put(
+//					mUri.toString(),
+//					StringUtils.generateTime((int) (0.5 + mVideoView
+//							.getCurrentPosition()))
+//							+ " / "
+//							+ StringUtils.generateTime(mVideoView.getDuration()));
 			PreferenceUtils.reset(mContext);
-			if (mEnd) {
+			if (mEnd){
 				PreferenceUtils.put(mUri + SESSION_LAST_POSITION_SUFIX, 1.0f);
 				mSeekTo = 1.0f;
 
-			} else {
-				float pos = (float) (getCurrentPosition() / (double) mVideoView
-						.getDuration());
-				PreferenceUtils.put(mUri + SESSION_LAST_POSITION_SUFIX, pos);
+			}
+			else{
+				float pos = (float) (getCurrentPosition() / (double)mVideoView.getDuration());
+				PreferenceUtils.put(mUri + SESSION_LAST_POSITION_SUFIX,pos);
 				mSeekTo = pos;
 			}
-			// WhtLog.i("TAG", "savePosition-存- : "+(float)
-			// (getCurrentPosition() / (double)mVideoView.getDuration()));
+//			WhtLog.i("TAG", "savePosition-存- : "+(float) (getCurrentPosition() / (double)mVideoView.getDuration()));
 
 		}
 	}
 
 	private float getStartPosition() {
-		float pos = PreferenceUtils.getFloat(
-				mUri + SESSION_LAST_POSITION_SUFIX, 7.7f);
-		// WhtLog.i("TAG", "getStartPosition-取- : "+pos);
+		float pos = PreferenceUtils.getFloat(mUri+ SESSION_LAST_POSITION_SUFIX, 7.7f);
+//		WhtLog.i("TAG", "getStartPosition-取- : "+pos);
 		return pos;
 
 	}
 
-	// @Override
-	// public void onRestoreInstanceState(Parcelable state) {
-	// SavedState savedState = (SavedState) state;
-	// super.onRestoreInstanceState(savedState.getSuperState());
-	// mIndex = savedState.mIndex;
-	// mSeekTo = savedState.mSeekTo;
-	// mUrl = savedState.mUrl;
-	// if(mUrl!=null){
-	// mUri = Uri.parse(mUrl);
-	// }
-	//
-	// requestLayout();
-	// }
+	public void addOnCompletionListener(OnCompletionListener onCompletionListener) {
+		// TODO Auto-generated method stub
+		this.onCompletionListener = onCompletionListener;
+	}
 
-	// @Override
-	// public Parcelable onSaveInstanceState() {
-	// Parcelable superState = super.onSaveInstanceState();
-	// SavedState savedState = new SavedState(superState);
-	// savedState.mIndex = mIndex;
-	// savedState.mSeekTo = mSeekTo;
-	// savedState.mUrl = mUrl;
-	// return savedState;
-	// }
-	// static class SavedState extends BaseSavedState {
-	// int mIndex;
-	// float mSeekTo;
-	// String mUrl;
-	// public SavedState(Parcelable superState) {
-	// super(superState);
-	// }
-	//
-	// private SavedState(Parcel in) {
-	// super(in);
-	// mIndex = in.readInt();
-	// mSeekTo = in.readFloat();
-	// mUrl = in.readString();
-	//
-	// }
-	//
-	// @Override
-	// public void writeToParcel(Parcel dest, int flags) {
-	// super.writeToParcel(dest, flags);
-	// dest.writeInt(mIndex);
-	// dest.writeFloat(mSeekTo);
-	// dest.writeString(mUrl);
-	// }
-	//
-	// public static final Parcelable.Creator<SavedState> CREATOR = new
-	// Parcelable.Creator<SavedState>() {
-	// @Override
-	// public SavedState createFromParcel(Parcel in) {
-	// return new SavedState(in);
-	// }
-	//
-	// @Override
-	// public SavedState[] newArray(int size) {
-	// return new SavedState[size];
-	// }
-	// };
-	// }
+//	@Override
+//	public void onRestoreInstanceState(Parcelable state) {
+//		SavedState savedState = (SavedState) state;
+//		super.onRestoreInstanceState(savedState.getSuperState());
+//		mIndex = savedState.mIndex;
+//		mSeekTo = savedState.mSeekTo;
+//		mUrl = savedState.mUrl;
+//		if(mUrl!=null){
+//			mUri  = Uri.parse(mUrl);
+//		}
+//
+//		requestLayout();
+//	}
+
+//	@Override
+//	public Parcelable onSaveInstanceState() {
+//		Parcelable superState = super.onSaveInstanceState();
+//		SavedState savedState = new SavedState(superState);
+//		savedState.mIndex = mIndex;
+//		savedState.mSeekTo = mSeekTo;
+//		savedState.mUrl = mUrl;
+//		return savedState;
+//	}
+//	static class SavedState extends BaseSavedState {
+//		int mIndex;
+//		float mSeekTo;
+//		String mUrl;
+//		public SavedState(Parcelable superState) {
+//			super(superState);
+//		}
+//
+//		private SavedState(Parcel in) {
+//			super(in);
+//			mIndex = in.readInt();
+//			mSeekTo = in.readFloat();
+//			mUrl = in.readString();
+//
+//		}
+//
+//		@Override
+//		public void writeToParcel(Parcel dest, int flags) {
+//			super.writeToParcel(dest, flags);
+//			dest.writeInt(mIndex);
+//			dest.writeFloat(mSeekTo);
+//			dest.writeString(mUrl);
+//		}
+//
+//		public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+//			@Override
+//			public SavedState createFromParcel(Parcel in) {
+//				return new SavedState(in);
+//			}
+//
+//			@Override
+//			public SavedState[] newArray(int size) {
+//				return new SavedState[size];
+//			}
+//		};
+//	}
 
 }

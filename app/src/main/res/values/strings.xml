@@ -49,4 +49,12 @@
     <string name="alert_dialog_upgradetip">升级提示</string>
     <string name="alert_dialog_jump">跳过</string>
 
+    <string name="VideoView_ar_aspect_fit_parent">自适应</string>
+    <string name="VideoView_ar_aspect_fill_parent">裁剪</string>
+    <string name="VideoView_ar_aspect_wrap_content">100%</string>
+    <string name="VideoView_ar_match_parent">Free / Fill parent</string>
+    <string name="VideoView_ar_16_9_fit_parent">16:9</string>
+    <string name="VideoView_ar_4_3_fit_parent">4:3</string>
+    <string name="N_A">N/A</string>
+
 </resources>

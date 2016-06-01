@@ -17,26 +17,6 @@
 
 package com.community.yuequ.player;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.PixelFormat;
-import android.media.AudioManager;
-import android.net.Uri;
-import android.os.Build;
-import android.util.AttributeSet;
-import android.util.Pair;
-import android.util.SparseArray;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import io.vov.vitamio.MediaFormat;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.MediaPlayer.OnBufferingUpdateListener;
@@ -54,6 +34,28 @@ import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.utils.Log;
 import io.vov.vitamio.utils.ScreenResolution;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.PixelFormat;
+import android.media.AudioManager;
+import android.net.Uri;
+import android.os.Build;
+import android.util.AttributeSet;
+import android.util.Pair;
+import android.util.SparseArray;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+
+import com.community.yuequ.player.MeasureHelper;
+
 /**
  * Displays a video file. The VideoView class can load images from various
  * sources (such as resources or content providers), takes care of computing its
@@ -65,11 +67,13 @@ import io.vov.vitamio.utils.ScreenResolution;
  * {@link #setTimedTextShown(boolean)}
  */
 public class VideoView extends SurfaceView {
-	public static final int VIDEO_LAYOUT_ORIGIN = 0;
-	public static final int VIDEO_LAYOUT_SCALE = 1;
-	public static final int VIDEO_LAYOUT_STRETCH = 2;
-	public static final int VIDEO_LAYOUT_ZOOM = 3;
-	public static final int VIDEO_LAYOUT_FIT_PARENT = 4;
+	public static final int AR_ASPECT_FIT_PARENT = 0; // without clip
+	public static final int AR_ASPECT_FILL_PARENT = 1; // may clip
+	public static final int AR_ASPECT_WRAP_CONTENT = 2;
+	public static final int AR_MATCH_PARENT = 3;
+	public static final int AR_16_9_FIT_PARENT = 4;
+	public static final int AR_4_3_FIT_PARENT = 5;
+	private MeasureHelper mMeasureHelper;
 
 	private static final int STATE_ERROR = -1;
 	private static final int STATE_IDLE = 0;
@@ -86,9 +90,15 @@ public class VideoView extends SurfaceView {
 			Log.d("onVideoSizeChanged: (%dx%d)", width, height);
 			mVideoWidth = mp.getVideoWidth();
 			mVideoHeight = mp.getVideoHeight();
-			mVideoAspectRatio = mp.getVideoAspectRatio();
-			if (mVideoWidth != 0 && mVideoHeight != 0)
-				setVideoLayout(mVideoLayout, mAspectRatio);
+//			mVideoAspectRatio = mp.getVideoAspectRatio();
+			if (mVideoWidth != 0 && mVideoHeight != 0){
+				setVideoSize(mVideoWidth, mVideoHeight);
+//				setVideoSampleAspectRatio(mVideoWidth, mVideoHeight);
+				if(mSizeChangedCallback!=null){
+					mSizeChangedCallback.onVideoSizeChanged( mp,  width, height);
+				}
+//				requestLayout();
+			}
 		}
 	};
 	OnPreparedListener mPreparedListener = new OnPreparedListener() {
@@ -106,14 +116,15 @@ public class VideoView extends SurfaceView {
 			// mMediaController.setEnabled(true);
 			mVideoWidth = mp.getVideoWidth();
 			mVideoHeight = mp.getVideoHeight();
-			mVideoAspectRatio = mp.getVideoAspectRatio();
+//			mVideoAspectRatio = mp.getVideoAspectRatio();
 
 			long seekToPosition = mSeekWhenPrepared;
 			if (seekToPosition != 0)
 				seekTo(seekToPosition);
 
 			if (mVideoWidth != 0 && mVideoHeight != 0) {
-				setVideoLayout(mVideoLayout, mAspectRatio);
+				setVideoSize(mVideoWidth, mVideoHeight);
+//				setVideoSampleAspectRatio(mVideoWidth, mVideoHeight);
 				if (mSurfaceWidth == mVideoWidth
 						&& mSurfaceHeight == mVideoHeight) {
 					if (mTargetState == STATE_PLAYING) {
@@ -133,7 +144,7 @@ public class VideoView extends SurfaceView {
 	};
 	SurfaceHolder.Callback mSHCallback = new SurfaceHolder.Callback() {
 		public void surfaceChanged(SurfaceHolder holder, int format, int w,
-				int h) {
+								   int h) {
 			mSurfaceWidth = w;
 			mSurfaceHeight = h;
 			boolean isValidState = (mTargetState == STATE_PLAYING);
@@ -172,13 +183,13 @@ public class VideoView extends SurfaceView {
 	private long mDuration;
 	private int mCurrentState = STATE_IDLE;
 	private int mTargetState = STATE_IDLE;
-	private float mAspectRatio = 0;
-	private int mVideoLayout = VIDEO_LAYOUT_SCALE;
+	//	private float mAspectRatio = 0;
+	// private int mVideoLayout = VIDEO_LAYOUT_ORIGIN;
 	private SurfaceHolder mSurfaceHolder = null;
 	private MediaPlayer mMediaPlayer = null;
 	private int mVideoWidth;
 	private int mVideoHeight;
-	private float mVideoAspectRatio;
+	//	private float mVideoAspectRatio;
 	private int mVideoChroma = MediaPlayer.VIDEOCHROMA_RGBA;
 	private boolean mHardwareDecoder = false;
 	private int mSurfaceWidth;
@@ -194,9 +205,13 @@ public class VideoView extends SurfaceView {
 	private OnBufferingUpdateListener mOnBufferingUpdateListener;
 	private OnCachingUpdateListener mOnCachingUpdateListener;
 	private ShownHideListener shownHideListener;
+
+
+
+	private OnVideoSizeChangedListener mSizeChangedCallback;
 	private int mCurrentBufferPercentage;
 	private long mSeekWhenPrepared; // recording the seek position while
-									// preparing
+	// preparing
 	private Context mContext;
 	private Map<String, String> mHeaders;
 	private int mBufSize = 1024*1024;
@@ -225,34 +240,7 @@ public class VideoView extends SurfaceView {
 					return true;
 			}
 
-//			if (getWindowToken() != null) {
-//				int message = framework_err == MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK ? getResources()
-//						.getIdentifier(
-//								"VideoView_error_text_invalid_progressive_playback",
-//								"string", mContext.getPackageName())
-//						: getResources().getIdentifier(
-//								"VideoView_error_text_unknown", "string",
-//								mContext.getPackageName());
-//
-//				new AlertDialog.Builder(mContext)
-//						.setTitle(
-//								getResources().getIdentifier(
-//										"VideoView_error_title", "string",
-//										mContext.getPackageName()))
-//						.setMessage(message)
-//						.setPositiveButton(
-//								getResources().getIdentifier(
-//										"VideoView_error_button", "string",
-//										mContext.getPackageName()),
-//								new DialogInterface.OnClickListener() {
-//									public void onClick(DialogInterface dialog,
-//											int whichButton) {
-//										if (mOnCompletionListener != null)
-//											mOnCompletionListener
-//													.onCompletion(mMediaPlayer);
-//									}
-//								}).setCancelable(false).show();
-//			}
+
 			return true;
 		}
 	};
@@ -268,13 +256,13 @@ public class VideoView extends SurfaceView {
 		public boolean onInfo(MediaPlayer mp, int what, int extra) {
 			Log.d("onInfo: (%d, %d)", what, extra);
 			if(MediaPlayer.MEDIA_INFO_UNKNOW_TYPE == what){
-	    		Log.e(" VITAMIO--TYPE_CHECK  stype  not include  onInfo mediaplayer unknow type ");
-	    	} 
-	    	
-	    	if(MediaPlayer.MEDIA_INFO_FILE_OPEN_OK == what){
-	    		long buffersize=mMediaPlayer.audioTrackInit(); 
-	    		mMediaPlayer.audioInitedOk(buffersize);
-	    	}
+				Log.e(" VITAMIO--TYPE_CHECK  stype  not include  onInfo mediaplayer unknow type ");
+			}
+
+			if(MediaPlayer.MEDIA_INFO_FILE_OPEN_OK == what){
+				long buffersize=mMediaPlayer.audioTrackInit();
+				mMediaPlayer.audioInitedOk(buffersize);
+			}
 			if (mOnInfoListener != null) {
 				mOnInfoListener.onInfo(mp, what, extra);
 			} else if (mMediaPlayer != null) {
@@ -314,7 +302,7 @@ public class VideoView extends SurfaceView {
 				mOnTimedTextListener.onTimedText(text);
 		}
 	};
-	
+
 	private boolean mChangeParentView;
 
 	public VideoView(Context context) {
@@ -332,70 +320,6 @@ public class VideoView extends SurfaceView {
 		initVideoView(context);
 	}
 
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		int width = getDefaultSize(mVideoWidth, widthMeasureSpec);
-		int height = getDefaultSize(mVideoHeight, heightMeasureSpec);
-		setMeasuredDimension(width, height);
-	}
-
-	/**
-	 * Set the display options
-	 * 
-	 * @param layout
-	 *            <ul>
-	 *            <li>{@link #VIDEO_LAYOUT_ORIGIN}
-	 *            <li>{@link #VIDEO_LAYOUT_SCALE}
-	 *            <li>{@link #VIDEO_LAYOUT_STRETCH}
-	 *            <li>{@link #VIDEO_LAYOUT_ZOOM}
-	 *            <li>{@link #VIDEO_LAYOUT_FIT_PARENT}
-	 *            </ul>
-	 * @param aspectRatio
-	 *            video aspect ratio, will audo detect if 0.
-	 */
-	public void setVideoLayout(int layout, float aspectRatio) {
-		LayoutParams lp = getLayoutParams();
-		Pair<Integer, Integer> res = ScreenResolution.getResolution(mContext);
-		int windowWidth = res.first.intValue(), windowHeight = res.second
-				.intValue();
-		float windowRatio = windowWidth / (float) windowHeight;
-		float videoRatio = aspectRatio <= 0.01f ? mVideoAspectRatio
-				: aspectRatio;
-		mSurfaceHeight = mVideoHeight;
-		mSurfaceWidth = mVideoWidth;
-		if (VIDEO_LAYOUT_ORIGIN == layout && mSurfaceWidth < windowWidth
-				&& mSurfaceHeight < windowHeight) {
-			lp.width = (int) (mSurfaceHeight * videoRatio);
-			lp.height = mSurfaceHeight;
-		} else if (layout == VIDEO_LAYOUT_ZOOM) {
-			lp.width = windowRatio > videoRatio ? windowWidth
-					: (int) (videoRatio * windowHeight);
-			lp.height = windowRatio < videoRatio ? windowHeight
-					: (int) (windowWidth / videoRatio);
-		} else if (layout == VIDEO_LAYOUT_FIT_PARENT) {
-			ViewGroup parent = (ViewGroup) getParent();
-			float parentRatio = ((float) parent.getWidth())
-					/ ((float) parent.getHeight());
-			lp.width = (parentRatio < videoRatio) ? parent.getWidth() : Math
-					.round(((float) parent.getHeight()) * videoRatio);
-			lp.height = (parentRatio > videoRatio) ? parent.getHeight() : Math
-					.round(((float) parent.getWidth()) / videoRatio);
-		} else {
-			boolean full = layout == VIDEO_LAYOUT_STRETCH;
-			lp.width = (full || windowRatio < videoRatio) ? windowWidth
-					: (int) (videoRatio * windowHeight);
-			lp.height = (full || windowRatio > videoRatio) ? windowHeight
-					: (int) (windowWidth / videoRatio);
-		}
-		setLayoutParams(lp);
-		getHolder().setFixedSize(mSurfaceWidth, mSurfaceHeight);
-		Log.d("VIDEO: %dx%dx%f, Surface: %dx%d, LP: %dx%d, Window: %dx%dx%f",
-				mVideoWidth, mVideoHeight, mVideoAspectRatio, mSurfaceWidth,
-				mSurfaceHeight, lp.width, lp.height, windowWidth, windowHeight,
-				windowRatio);
-		mVideoLayout = layout;
-		mAspectRatio = aspectRatio;
-	}
 
 	@SuppressWarnings("deprecation")
 	private void initVideoView(Context ctx) {
@@ -403,6 +327,7 @@ public class VideoView extends SurfaceView {
 		mVideoWidth = 0;
 		mVideoHeight = 0;
 		mChangeParentView = false;
+		mMeasureHelper = new MeasureHelper(this);
 		getHolder().setFormat(PixelFormat.RGBA_8888); // PixelFormat.RGB_565
 		getHolder().addCallback(mSHCallback);
 		// this value only use Hardware decoder before Android 2.3
@@ -442,14 +367,14 @@ public class VideoView extends SurfaceView {
 		}
 	}
 	public void stopPlayback() {
-	    if (mMediaPlayer != null) {
-	      mMediaPlayer.stop();
-	      mMediaPlayer.release();
-	      mMediaPlayer = null;
-	      mCurrentState = STATE_IDLE;
-	      mTargetState = STATE_IDLE;
-	    }
-	  }
+		if (mMediaPlayer != null) {
+			mMediaPlayer.stop();
+			mMediaPlayer.release();
+			mMediaPlayer = null;
+			mCurrentState = STATE_IDLE;
+			mTargetState = STATE_IDLE;
+		}
+	}
 //	public void stopPlayback() {
 //		if (mMediaPlayer != null) {
 //
@@ -461,7 +386,7 @@ public class VideoView extends SurfaceView {
 //			mDuration = -1;
 //			mCurrentState = STATE_IDLE;
 //			mTargetState = STATE_IDLE;
-//			
+//
 //		}
 //	}
 
@@ -469,13 +394,13 @@ public class VideoView extends SurfaceView {
 		if (mMediaPlayer != null) {
 			mMediaPlayer.reset();
 		}
-		
+
 		if (shownHideListener != null)
 			shownHideListener.hide();
-		
+
 	}
-	
-	
+
+
 	private void openVideo() {
 		if (mUri == null || mSurfaceHolder == null
 				|| !Vitamio.isInitialized(mContext))
@@ -501,8 +426,8 @@ public class VideoView extends SurfaceView {
 			mMediaPlayer.setOnCachingUpdateListener(mOnCachingUpdateListener);
 			HashMap<String, String> options = new HashMap<String, String>();
 			options.put("rtsp_transport", "tcp"); // udp
-		//	options.put("user-agent", "userAgent");
-		//	options.put("cookies", "cookies");
+			//	options.put("user-agent", "userAgent");
+			//	options.put("cookies", "cookies");
 			options.put("analyzeduration", "1000000");
 			mMediaPlayer.setDataSource(mContext, mUri, options);
 			mMediaPlayer.setDisplay(mSurfaceHolder);
@@ -562,7 +487,9 @@ public class VideoView extends SurfaceView {
 		// }
 		// }
 	}
-
+	public void setSizeChangedListener(OnVideoSizeChangedListener sizeChangedListener) {
+		mSizeChangedCallback = sizeChangedListener;
+	}
 	public void setOnPreparedListener(OnPreparedListener l) {
 		mOnPreparedListener = l;
 	}
@@ -606,66 +533,7 @@ public class VideoView extends SurfaceView {
 		if (mMediaPlayer!=null)
 			mMediaPlayer.releaseDisplay();
 	}
-	// @Override
-	// public boolean onTouchEvent(MotionEvent ev) {
-	// if (isInPlaybackState() && mMediaController != null)
-	// toggleMediaControlsVisiblity();
-	// return false;
-	// }
 
-	// @Override
-	// public boolean onTrackballEvent(MotionEvent ev) {
-	// if (isInPlaybackState() && mMediaController != null)
-	// toggleMediaControlsVisiblity();
-	// return false;
-	// }
-
-	// @Override
-	// public boolean onKeyDown(int keyCode, KeyEvent event) {
-	// boolean isKeyCodeSupported = keyCode != KeyEvent.KEYCODE_BACK && keyCode
-	// != KeyEvent.KEYCODE_VOLUME_UP && keyCode != KeyEvent.KEYCODE_VOLUME_DOWN
-	// && keyCode != KeyEvent.KEYCODE_MENU && keyCode != KeyEvent.KEYCODE_CALL
-	// && keyCode != KeyEvent.KEYCODE_ENDCALL;
-	// if (isInPlaybackState() && isKeyCodeSupported && mMediaController !=
-	// null) {
-	// if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK || keyCode ==
-	// KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE || keyCode == KeyEvent.KEYCODE_SPACE) {
-	// if (mMediaPlayer.isPlaying()) {
-	// pause();
-	// mMediaController.show();
-	// } else {
-	// start();
-	// mMediaController.hide();
-	// }
-	// return true;
-	// } else if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY) {
-	// if (!mMediaPlayer.isPlaying()) {
-	// start();
-	// mMediaController.hide();
-	// }
-	// return true;
-	// } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP || keyCode ==
-	// KeyEvent.KEYCODE_MEDIA_PAUSE) {
-	// if (mMediaPlayer.isPlaying()) {
-	// pause();
-	// mMediaController.show();
-	// }
-	// return true;
-	// } else {
-	// toggleMediaControlsVisiblity();
-	// }
-	// }
-	//
-	// return super.onKeyDown(keyCode, event);
-	// }
-
-	// private void toggleMediaControlsVisiblity() {
-	// if (mMediaController.isShowing()) {
-	// mMediaController.hide();
-	// } else {
-	// mMediaController.show();
-	// }
-	// }
 
 	public void start() {
 		if (isInPlaybackState()) {
@@ -756,13 +624,13 @@ public class VideoView extends SurfaceView {
 		return mVideoHeight;
 	}
 
-	public float getVideoAspectRatio() {
-		return mVideoAspectRatio;
-	}
+//	public float getVideoAspectRatio() {
+//		return mVideoAspectRatio;
+//	}
 
 	/**
 	 * Must set before {@link #setVideoURI}
-	 * 
+	 *
 	 * @param chroma
 	 */
 	public void setVideoChroma(int chroma) {
@@ -874,7 +742,7 @@ public class VideoView extends SurfaceView {
 
 	/**
 	 * 设置播放速度
-	 * 
+	 *
 	 * @param f
 	 */
 	public void setPlaybackSpeed(float f) {
@@ -896,14 +764,6 @@ public class VideoView extends SurfaceView {
 
 	public void endChangeParentView() {
 		mChangeParentView = false;
-
-	}
-
-	public void requestVideoLayout() {
-		if ((mCurrentState == -1) || (mCurrentState == 0)
-				|| (mCurrentState == 1))
-			return;
-		setVideoLayout(this.mVideoLayout, this.mAspectRatio);
 
 	}
 
@@ -929,14 +789,50 @@ public class VideoView extends SurfaceView {
 		}
 		super.onDetachedFromWindow();
 	}
-	public int getVideoLayout(){
-		return mVideoLayout;
-	}
 
-	
+//	public View getView() {
+//		return this;
+//	}
+
+//	public boolean shouldWaitForResize() {
+//		return true;
+//	}
+
 	public void setOnCachingUpdateListener(OnCachingUpdateListener l) {
 		this.mOnCachingUpdateListener = l;
 	}
 
-	
+	@Override
+	public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		mMeasureHelper.doMeasure(widthMeasureSpec, heightMeasureSpec);
+		setMeasuredDimension(mMeasureHelper.getMeasuredWidth(),
+				mMeasureHelper.getMeasuredHeight());
+	}
+
+	public void setAspectRatio(int aspectRatio) {
+		mMeasureHelper.setAspectRatio(aspectRatio);
+		requestLayout();
+
+	}
+
+	public void setVideoSize(int videoWidth, int videoHeight) {
+		if (videoWidth > 0 && videoHeight > 0) {
+			mMeasureHelper.setVideoSize(videoWidth, videoHeight);
+			getHolder().setFixedSize(videoWidth, videoHeight);
+			requestLayout();
+		}
+	}
+
+	public void setVideoSampleAspectRatio(int videoSarNum, int videoSarDen) {
+		if (videoSarNum > 0 && videoSarDen > 0) {
+			mMeasureHelper.setVideoSampleAspectRatio(videoSarNum, videoSarDen);
+			requestLayout();
+		}
+	}
+
+	public void requestVideoLayout() {
+		requestLayout();
+
+	}
+
 }
