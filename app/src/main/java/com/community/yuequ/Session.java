@@ -436,4 +436,11 @@ public class Session {
         }
         return null;
     }
+
+    public void setOrderTips(ArrayList<OrderTip> tips) {
+        if(mInitMsg!=null){
+             mInitMsg.orderTips = tips;
+        }
+
+    }
 }

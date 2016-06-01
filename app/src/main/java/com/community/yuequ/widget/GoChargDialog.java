@@ -7,17 +7,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
 
 import com.community.yuequ.R;
+import com.community.yuequ.imple.DialogConfListener;
 
-public class InputPhoneNumberDialog extends DialogFragment {
+/**
+ * Created by Administrator on 2016/6/1.
+ */
+public class GoChargDialog extends DialogFragment{
 
-
-    public static InputPhoneNumberDialog newInstance() {
-        InputPhoneNumberDialog frag = new InputPhoneNumberDialog();
+    public static GoChargDialog newInstance() {
+        GoChargDialog frag = new GoChargDialog();
         return frag;
     }
     @Override
@@ -27,18 +27,15 @@ public class InputPhoneNumberDialog extends DialogFragment {
     }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        LayoutInflater factory = LayoutInflater.from(getActivity());
-        final View textEntryView = factory.inflate(R.layout.alert_dialog_text_entry, null);
-        final EditText phonenumber_edit = ((EditText) textEntryView.findViewById(R.id.phonenumber_edit));
+
         return new AlertDialog.Builder(getActivity())
-                .setIconAttribute(android.R.attr.alertDialogIcon)
-                .setTitle(R.string.alert_dialog_text_phonenumber)
-                .setView(textEntryView)
+                .setTitle(R.string.tips)
+                .setMessage("您还没有权限观看节目，成为VIP可无限量观看！")
                 .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         FragmentActivity activity = getActivity();
-                        if(activity instanceof PhoneNumberCallBack){
-                            ((PhoneNumberCallBack)activity).phoneNumber(phonenumber_edit.getText().toString());
+                        if(activity instanceof DialogConfListener){
+                            ((DialogConfListener)activity).conf();
                         }
 
                     }
@@ -46,14 +43,12 @@ public class InputPhoneNumberDialog extends DialogFragment {
                 .setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        /* User clicked cancel so do some stuff */
+                        FragmentActivity activity = getActivity();
+                        if(activity instanceof DialogConfListener){
+                            ((DialogConfListener)activity).cancel();
+                        }
                     }
                 })
                 .create();
-    }
-
-    
-    public static interface PhoneNumberCallBack{
-    	public void phoneNumber(String phoneNumber);
     }
 }

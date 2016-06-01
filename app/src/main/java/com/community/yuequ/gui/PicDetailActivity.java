@@ -1,6 +1,5 @@
 package com.community.yuequ.gui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -21,8 +20,8 @@ import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.Session;
 import com.community.yuequ.YQApplication;
-import com.community.yuequ.modle.InitDao;
-import com.community.yuequ.modle.InitMsg;
+import com.community.yuequ.imple.DialogConfListener;
+import com.community.yuequ.modle.OrderTip;
 import com.community.yuequ.modle.OrderTipsDao;
 import com.community.yuequ.modle.RProgram;
 import com.community.yuequ.modle.RProgramDetail;
@@ -32,20 +31,20 @@ import com.community.yuequ.modle.callback.OrderTipsCallBack;
 import com.community.yuequ.modle.callback.RProgramDetailDaoCallBack;
 import com.community.yuequ.modle.callback.UpdateUserCallBack;
 import com.community.yuequ.util.AESUtil;
-import com.community.yuequ.util.Utils;
-import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.TitleBarLayout;
+import com.community.yuequ.widget.GoChargDialog;
 import com.community.yuequ.widget.InputPhoneNumberDialog;
 import com.google.gson.Gson;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import okhttp3.Call;
 import okhttp3.Request;
 
-public class PicDetailActivity extends AppCompatActivity implements View.OnClickListener ,InputPhoneNumberDialog.PhoneNumberCallBack {
+public class PicDetailActivity extends AppCompatActivity implements View.OnClickListener ,InputPhoneNumberDialog.PhoneNumberCallBack,DialogConfListener{
     public static final String TAG = VideoDetailActivity.class.getSimpleName();
 
     private TitleBarLayout mTitleBarLayout;
@@ -115,9 +114,10 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
                         programDetailDao = response;
                         programDetail = response.result;
                         if(response.errorCode==Contants.HTTP_NO_PERMISSION){
+                            GoChargDialog chargDialog = GoChargDialog.newInstance();
+                            chargDialog.show(getSupportFragmentManager(),"charg");
 
-                            Toast.makeText(YQApplication.getAppContext(), "没有权限", Toast.LENGTH_SHORT).show();
-                            toBuy();
+
                         }else if(response.errorCode==Contants.HTTP_OK){
                             if (!TextUtils.isEmpty(programDetail.contents)) {
                                 mWebView.loadData(programDetail.contents, "text/html; charset=UTF-8", null);
@@ -148,7 +148,6 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
 
     private void toBuy() {
         String phoneNumber = mSession.getPhoneNumber();
-
         if(TextUtils.isEmpty(phoneNumber)){
             InputPhoneNumberDialog phoneNumberDialog = InputPhoneNumberDialog.newInstance();
             phoneNumberDialog.show(getSupportFragmentManager(),"phoneNumber");
@@ -181,6 +180,17 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
                 .build()
                 .execute(new MyUpdateUserCallBack(this));
     }
+
+    @Override
+    public void conf() {
+        toBuy();
+    }
+
+    @Override
+    public void cancel() {
+        finish();
+    }
+
     protected static class MyUpdateUserCallBack extends UpdateUserCallBack {
         private WeakReference<PicDetailActivity> mWeakReference;
 
@@ -237,6 +247,16 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
                     .execute(new MyOrderTipsCallBack(this));
         }
     }
+    private void setOrderTips(ArrayList<OrderTip> result) {
+        if(result!=null && !result.isEmpty()){
+            mSession.setOrderTips(result);
+            Intent intent = new Intent(this,PayListActivity.class);
+            intent.putParcelableArrayListExtra("ordertips",result);
+            startActivity(intent);
+        }else{
+            Toast.makeText(YQApplication.getAppContext(), "计费信息获取失败，请重试！", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     public static class MyOrderTipsCallBack extends OrderTipsCallBack {
         private WeakReference<PicDetailActivity> mWeakReference;
@@ -256,13 +276,14 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
             PicDetailActivity activity = mWeakReference.get();
             if(activity!=null){
                 if(response.errorCode==Contants.HTTP_OK){
-
+                    activity.setOrderTips(response.result);
                 }else{
                     Toast.makeText(activity, "获取信息失败！", Toast.LENGTH_SHORT).show();
                 }
             }
         }
     }
+
 
 
     private void initView() {

@@ -39,8 +39,8 @@ public class ImageManager {
         Glide.with(context)
                 .load(path)
                 .placeholder(R.mipmap.jiazai)
-                .error(R.mipmap.qowu)
-                .crossFade()
+                .error(R.mipmap.jiazai)
+                .centerCrop()
                 .into(imageView);
     }
     // 加载网络图片

@@ -36,7 +36,7 @@ public class PayListActivity extends AppCompatActivity implements View.OnClickLi
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mListAdapter = new PayListAdapter(mOrderTips);
+        mListAdapter = new PayListAdapter(this,mOrderTips);
         mRecyclerView.setAdapter(mListAdapter);
 
     }
