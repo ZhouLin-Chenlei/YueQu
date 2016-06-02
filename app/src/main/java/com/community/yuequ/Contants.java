@@ -48,6 +48,8 @@ public class Contants {
     public static String URL_PLAYACCESS = PROTOCOL + DOMAIN +"/program/playAccess.shtml";
     //2.13	更新用户信息（系统没有用户手机号，添加用户手机号）
     public static String URL_UPDATEUSER = PROTOCOL + DOMAIN +"/system/updateUser.shtml";
+    //2.12	根据订购类型订购节目
+    public static String URL_BUY = PROTOCOL + DOMAIN +"/order/buy.shtml";
 
 
 }

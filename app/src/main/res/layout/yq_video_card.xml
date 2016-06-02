@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/ml_item_image"
-        android:layout_width="112dip"
-        android:layout_height="117dip"
+        android:layout_width="115dip"
+        android:layout_height="115dip"
         android:scaleType="centerCrop"
         />
 

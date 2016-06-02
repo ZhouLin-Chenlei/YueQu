@@ -32,6 +32,12 @@ public class OrderTip implements Parcelable {
 
 
 
+
+   /***************************************************************************************************/
+    public int programId;//计费的节目id
+    public long transactionID;//计费的时间戳
+
+    /***************************************************************************************************/
     public OrderTip(){}
 
     public OrderTip(Parcel in){

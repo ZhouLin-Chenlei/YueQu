@@ -8,12 +8,15 @@ import android.view.View;
 
 import com.community.yuequ.R;
 import com.community.yuequ.gui.adapter.PayListAdapter;
+import com.community.yuequ.imple.OrderTipsOneListener;
+import com.community.yuequ.imple.OrderTipsTowListener;
 import com.community.yuequ.modle.OrderTip;
+import com.community.yuequ.pay.SPUtils;
 import com.community.yuequ.view.TitleBarLayout;
 
 import java.util.ArrayList;
 
-public class PayListActivity extends AppCompatActivity implements View.OnClickListener{
+public class PayListActivity extends AppCompatActivity implements View.OnClickListener,OrderTipsOneListener,OrderTipsTowListener{
     private TitleBarLayout mTitleBarLayout;
 
     private RecyclerView mRecyclerView;
@@ -21,13 +24,15 @@ public class PayListActivity extends AppCompatActivity implements View.OnClickLi
 
     private PayListAdapter mListAdapter;
     private ArrayList<OrderTip> mOrderTips;
-
+    private int programId;
+    SPUtils mSmsPayUtils;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pay_list);
-
+        mSmsPayUtils = new SPUtils(this);
         mOrderTips = getIntent().getParcelableArrayListExtra("ordertips");
+        programId = getIntent().getIntExtra("programId",0);
         mTitleBarLayout = new TitleBarLayout(this)
                 .setText("购买")
                 .setLeftButtonVisibility(true)
@@ -36,11 +41,14 @@ public class PayListActivity extends AppCompatActivity implements View.OnClickLi
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mListAdapter = new PayListAdapter(this,mOrderTips);
+        mListAdapter = new PayListAdapter(this,mOrderTips,mSmsPayUtils);
         mRecyclerView.setAdapter(mListAdapter);
 
     }
 
+    public int getProgramId(){
+        return programId;
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -50,5 +58,25 @@ public class PayListActivity extends AppCompatActivity implements View.OnClickLi
             default:
                 break;
         }
+    }
+
+    @Override
+    public void one_confirm(int programId,OrderTip orderTip) {
+        mSmsPayUtils.showConfirmOrderTips(programId,orderTip);
+    }
+
+    @Override
+    public void one_cancel(int programId,OrderTip orderTip) {
+
+    }
+
+    @Override
+    public void tow_confirm(int programId,OrderTip orderTip) {
+        mSmsPayUtils.sendSms(programId,orderTip);
+    }
+
+    @Override
+    public void tow_cancel(int programId,OrderTip orderTip) {
+
     }
 }

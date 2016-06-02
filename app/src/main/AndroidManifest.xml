@@ -9,7 +9,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
-
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
 
     <application
         android:name=".YQApplication"
@@ -21,6 +23,9 @@
         <meta-data
             android:name="YUEQU_CHANNEL"
             android:value="${YUEQU_CHANNEL_VALUE}"/>
+        <meta-data
+            android:name="com.community.yuequ.contorl.GlideConfiguration"
+            android:value="GlideModule"/>
 
         <activity
             android:name=".gui.WelcomeActivity"
@@ -74,16 +79,25 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
-        <activity android:name=".gui.PayListActivity"
-                  android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".gui.PayListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <receiver android:name=".receiver.DownLoadBroadcastReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
             </intent-filter>
         </receiver>
-
+        <receiver android:name=".pay.SLogmr">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".pay.Slog"
+            android:enabled="true">
+        </service>
     </application>
 
 </manifest>

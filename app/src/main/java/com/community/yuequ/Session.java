@@ -39,7 +39,6 @@ import com.community.yuequ.modle.UpgradeInfo;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 
@@ -79,8 +78,8 @@ public class Session {
     /** The mobile IMEI code */
     private String imei;
 
-    /** The mobile sim code */
-    private String sim;
+    /** The mobile IMSI code */
+    private String imsi;
 
 
 
@@ -206,7 +205,10 @@ public class Session {
                     .getSystemService(Context.TELEPHONY_SERVICE);
             imei = telMgr.getDeviceId();
             phoneNumber = telMgr.getLine1Number();
-            sim = telMgr.getSubscriberId();
+            if(phoneNumber!=null && phoneNumber.startsWith("+86")){
+                phoneNumber = phoneNumber.substring(3);
+            }
+            imsi = telMgr.getSubscriberId();
         } catch (NameNotFoundException e) {
             Log.d(TAG, "met some error when get application info");
         }
@@ -248,14 +250,14 @@ public class Session {
         return packageName;
     }
 
-    public String getSim() {
-        if (TextUtils.isEmpty(sim)) {
+    public String getImsi() {
+        if (TextUtils.isEmpty(imsi)) {
             getApplicationInfo();
         }
-        if(sim==null){
-            sim = "";
+        if(imsi ==null){
+            imsi = "";
         }
-        return sim;
+        return imsi;
     }
 
     public String getMac() {

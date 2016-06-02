@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.community.yuequ.R;
@@ -15,6 +16,8 @@ import com.community.yuequ.contorl.ImageManager;
 import com.community.yuequ.gui.VideoOrPicGroupActivity;
 import com.community.yuequ.gui.YQVideoFragment;
 import com.community.yuequ.modle.VideoOrPicGroup;
+import com.community.yuequ.util.DisplayUtil;
+import com.community.yuequ.util.Utils;
 
 import java.util.List;
 

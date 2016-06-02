@@ -90,7 +90,7 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
 
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("mac", mSession.getMac());
-        hashMap.put("imsi", mSession.getSim());
+        hashMap.put("imsi", mSession.getImsi());
         hashMap.put("imei", mSession.getIMEI());
         hashMap.put("telnum", mSession.getPhoneNumber());
         hashMap.put("dpi", mSession.getScreenSize());

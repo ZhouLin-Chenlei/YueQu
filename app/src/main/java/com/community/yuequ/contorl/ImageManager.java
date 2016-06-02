@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.widget.GlideCircleTransform;
@@ -34,24 +35,28 @@ public class ImageManager {
     }
 
     // 加载网络图片
-    public void loadUrlImage(Fragment context, String url, ImageView imageView) {
-        String path = /*Contants.PICDOMAIN+*/url;
-        Glide.with(context)
-                .load(path)
-                .placeholder(R.mipmap.jiazai)
-                .error(R.mipmap.jiazai)
-                .centerCrop()
-                .into(imageView);
+    public void loadUrlImage(Fragment myFragment, String url, ImageView imageView) {
+
+        Glide
+            .with(myFragment)
+            .load(url)
+            .centerCrop()
+            .placeholder(R.drawable.jiazai)
+            .crossFade()
+            .into(imageView);
+
+
     }
     // 加载网络图片
     public void loadUrlImage(Context context, String url, ImageView imageView) {
-        String path =/* Contants.PICDOMAIN+*/url;
-        Glide.with(context)
-                .load(path)
-                .placeholder(R.mipmap.jiazai)
-                .error(R.mipmap.qowu)
+        Glide
+                .with(context)
+                .load(url)
+                .centerCrop()
+                .placeholder(R.drawable.jiazai)
                 .crossFade()
                 .into(imageView);
+
     }
 
     // 加载drawable图片
@@ -59,7 +64,7 @@ public class ImageManager {
         Glide.with(context)
                 .load(resourceIdToUri(context, resId))
                 .placeholder(R.mipmap.jiazai)
-                .error(R.mipmap.qowu)
+//                .error(R.mipmap.qowu)
                 .crossFade()
                 .into(imageView);
     }
@@ -69,7 +74,7 @@ public class ImageManager {
         Glide.with(context)
                 .load("file://" + path)
                 .placeholder(R.mipmap.jiazai)
-                .error(R.mipmap.qowu)
+//                .error(R.mipmap.qowu)
                 .crossFade()
                 .into(imageView);
     }
@@ -79,7 +84,7 @@ public class ImageManager {
         Glide.with(context)
                 .load(url)
                 .placeholder(R.mipmap.jiazai)
-                .error(R.mipmap.qowu)
+//                .error(R.mipmap.qowu)
                 .crossFade()
                 .transform(new GlideCircleTransform(context))
                 .into(imageView);
@@ -90,7 +95,7 @@ public class ImageManager {
         Glide.with(context)
                 .load(resourceIdToUri(context, resId))
                 .placeholder(R.mipmap.jiazai)
-                .error(R.mipmap.qowu)
+//                .error(R.mipmap.qowu)
                 .crossFade()
                 .transform(new GlideCircleTransform(context))
                 .into(imageView);
@@ -101,7 +106,7 @@ public class ImageManager {
         Glide.with(context)
                 .load("file://" + path)
                 .placeholder(R.mipmap.jiazai)
-                .error(R.mipmap.qowu)
+//                .error(R.mipmap.qowu)
                 .crossFade()
                 .transform(new GlideCircleTransform(context))
                 .into(imageView);

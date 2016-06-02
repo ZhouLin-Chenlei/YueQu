@@ -1,6 +1,5 @@
 package com.community.yuequ.gui.adapter;
 
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,8 +7,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.community.yuequ.R;
+import com.community.yuequ.gui.PayListActivity;
 import com.community.yuequ.modle.OrderTip;
-import com.community.yuequ.pay.SmsPayUtils;
+import com.community.yuequ.pay.SPUtils;
 
 import java.util.ArrayList;
 
@@ -17,11 +17,13 @@ import java.util.ArrayList;
  * Created by Administrator on 2016/5/27.
  */
 public class PayListAdapter extends RecyclerView.Adapter<PayListAdapter.ViewHolder>{
+    private PayListActivity activity;
     ArrayList<OrderTip> mOrderTips;
-    SmsPayUtils mSmsPayUtils;
-    public PayListAdapter(AppCompatActivity activity, ArrayList<OrderTip> orderTips) {
-        mOrderTips = orderTips;
-        mSmsPayUtils = new SmsPayUtils(activity);
+    SPUtils smsPayUtils;
+    public PayListAdapter(PayListActivity activity, ArrayList<OrderTip> orderTips, SPUtils smsPayUtils) {
+        this.activity = activity;
+        this.mOrderTips = orderTips;
+        this.smsPayUtils = smsPayUtils;
     }
 
     @Override
@@ -42,8 +44,7 @@ public class PayListAdapter extends RecyclerView.Adapter<PayListAdapter.ViewHold
         holder.btn_pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                mSmsPayUtils.topay(orderTip);
+                smsPayUtils.showOrderTips(activity.getProgramId(),orderTip);
             }
         });
     }

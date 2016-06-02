@@ -82,6 +82,7 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addOnScrollListener(mScrollListener);
         mRecyclerView.setAdapter(mAdapter);
         completeRefresh();

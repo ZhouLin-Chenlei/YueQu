@@ -82,7 +82,10 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void getData() {
-
+        if(mRProgram==null){
+            Toast.makeText(YQApplication.getAppContext(), R.string.load_data_fail, Toast.LENGTH_SHORT).show();
+            return;
+        }
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("program_id", mRProgram.id);
         hashMap.put("imei", mSession.getIMEI());
@@ -234,10 +237,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
     private void toBuyStep2() {
 
         if(mSession.haveOrderTips()){
-            Intent intent = new Intent(this,PayListActivity.class);
-            intent.putParcelableArrayListExtra("ordertips",mSession.getOrderTips());
-            startActivity(intent);
-
+            goPayPage(mSession.getOrderTips());
         }else{
             OkHttpUtils
                     .post()
@@ -250,14 +250,18 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
     private void setOrderTips(ArrayList<OrderTip> result) {
         if(result!=null && !result.isEmpty()){
             mSession.setOrderTips(result);
-            Intent intent = new Intent(this,PayListActivity.class);
-            intent.putParcelableArrayListExtra("ordertips",result);
-            startActivity(intent);
+            goPayPage(result);
         }else{
             Toast.makeText(YQApplication.getAppContext(), "计费信息获取失败，请重试！", Toast.LENGTH_SHORT).show();
         }
     }
 
+    private void goPayPage(ArrayList<OrderTip> result){
+        Intent intent = new Intent(this,PayListActivity.class);
+        intent.putExtra("programId",mRProgram.id);
+        intent.putParcelableArrayListExtra("ordertips",result);
+        startActivity(intent);
+    }
     public static class MyOrderTipsCallBack extends OrderTipsCallBack {
         private WeakReference<PicDetailActivity> mWeakReference;
         public MyOrderTipsCallBack(PicDetailActivity activity){
@@ -301,7 +305,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
             mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             settings.setLoadsImagesAutomatically(false);
         }
-
+        settings.setTextZoom(160);
         settings.setUseWideViewPort(true); //将图片调整到适合WebView的大小
         settings.setLoadWithOverviewMode(true); //自适应屏幕
         settings.setDomStorageEnabled(true);
