@@ -15,25 +15,36 @@ import com.community.yuequ.R;
 import com.community.yuequ.Session;
 import com.community.yuequ.YQApplication;
 import com.community.yuequ.contorl.ImageManager;
+import com.community.yuequ.imple.DialogConfListener;
+import com.community.yuequ.modle.MessageBean;
+import com.community.yuequ.modle.OrderTip;
+import com.community.yuequ.modle.OrderTipsDao;
 import com.community.yuequ.modle.PicListDao;
 import com.community.yuequ.modle.RProgram;
 import com.community.yuequ.modle.RProgramDetail;
 import com.community.yuequ.modle.RProgramDetailDao;
+import com.community.yuequ.modle.callback.OrderTipsCallBack;
 import com.community.yuequ.modle.callback.PicListDaoCallBack;
+import com.community.yuequ.modle.callback.PlayAccessCallback;
 import com.community.yuequ.modle.callback.RProgramDetailDaoCallBack;
+import com.community.yuequ.modle.callback.UpdateUserCallBack;
 import com.community.yuequ.player.VideoViewActivity;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.TitleBarLayout;
+import com.community.yuequ.widget.GoChargDialog;
+import com.community.yuequ.widget.InputPhoneNumberDialog;
 import com.google.gson.Gson;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import okhttp3.Call;
 import okhttp3.Request;
 
-public class VideoDetailActivity extends AppCompatActivity implements View.OnClickListener {
+public class VideoDetailActivity extends AppCompatActivity implements View.OnClickListener,InputPhoneNumberDialog.PhoneNumberCallBack,DialogConfListener {
     public static final String TAG = VideoDetailActivity.class.getSimpleName();
 
     private TitleBarLayout mTitleBarLayout;
@@ -43,7 +54,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
     private Button btn_play;
     private TextView tv_detail;
     private RProgram mRProgram;
-    private Session session;
+    private Session mSession;
     private RProgramDetail programDetail;
     private boolean isLoading = false;
 
@@ -51,7 +62,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_detail);
-        session = Session.get(this);
+        mSession = Session.get(this);
         Intent intent = getIntent();
         mRProgram = (RProgram) intent.getSerializableExtra("program");
         mTitleBarLayout = new TitleBarLayout(this)
@@ -91,7 +102,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("program_id", mRProgram.id);
-        hashMap.put("imei", session.getIMEI());
+        hashMap.put("imei", mSession.getIMEI());
         String content = "";
         try {
             content = AESUtil.encode(new Gson().toJson(hashMap));
@@ -169,9 +180,8 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                 if(programDetail==null){
                     Toast.makeText(VideoDetailActivity.this, "获取视频信息失败！", Toast.LENGTH_SHORT).show();
                 }else{
-                    Intent intent = new Intent(this,VideoViewActivity.class);
-                    intent.putExtra("programDetail",programDetail);
-                    startActivity(intent);
+                    //视频鉴权
+                    playAccess();
                 }
                 break;
             case R.id.ll_status:
@@ -183,6 +193,203 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                 break;
         }
     }
+
+    private void playAccess(){
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("program_id", mRProgram.id);
+        hashMap.put("imei", mSession.getIMEI());
+        String content = "";
+        try {
+            content = AESUtil.encode(new Gson().toJson(hashMap));
+        } catch (Exception e) {
+            throw new RuntimeException("加密错误！");
+        }
+        if (TextUtils.isEmpty(content)) {
+            Toast.makeText(YQApplication.getAppContext(), R.string.unknow_erro, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        OkHttpUtils
+                .postString()
+                .content(content)
+                .url(Contants.URL_PLAYACCESS)
+                .tag(TAG)
+                .build()
+                .execute(new MyPlayAccessCallback(this));
+
+    }
+    private void toBuyStep2() {
+
+        if(mSession.haveOrderTips()){
+            goPayPage(mSession.getOrderTips());
+        }else{
+            OkHttpUtils
+                    .post()
+                    .url(Contants.URL_ORDERTIPS)
+                    .tag(TAG)
+                    .build()
+                    .execute(new MyOrderTipsCallBack(this));
+        }
+    }
+    protected static class MyOrderTipsCallBack extends OrderTipsCallBack {
+        private WeakReference<VideoDetailActivity> mWeakReference;
+        public MyOrderTipsCallBack(VideoDetailActivity activity){
+            mWeakReference = new WeakReference<>(activity);
+        }
+        @Override
+        public void onError(Call call, Exception e) {
+            VideoDetailActivity activity = mWeakReference.get();
+            if(activity!=null){
+                Toast.makeText(activity, "获取信息失败！", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onResponse(OrderTipsDao response) {
+            VideoDetailActivity activity = mWeakReference.get();
+            if(activity!=null){
+                if(response.errorCode==Contants.HTTP_OK){
+                    activity.setOrderTips(response.result);
+                }else{
+                    Toast.makeText(activity, "获取信息失败！", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+    private void setOrderTips(ArrayList<OrderTip> result) {
+        if(result!=null && !result.isEmpty()){
+            mSession.setOrderTips(result);
+            goPayPage(result);
+        }else{
+            Toast.makeText(YQApplication.getAppContext(), "计费信息获取失败，请重试！", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void goPayPage(ArrayList<OrderTip> result){
+        Intent intent = new Intent(this,PayListActivity.class);
+        intent.putExtra("programId",mRProgram.id);
+        intent.putParcelableArrayListExtra("ordertips",result);
+        startActivity(intent);
+    }
+    @Override
+    public void conf() {
+        toBuy();
+    }
+
+    @Override
+    public void cancel() {
+        finish();
+    }
+    private void toBuy() {
+        String phoneNumber = mSession.getPhoneNumber();
+        if(TextUtils.isEmpty(phoneNumber)){
+            InputPhoneNumberDialog phoneNumberDialog = InputPhoneNumberDialog.newInstance();
+            phoneNumberDialog.show(getSupportFragmentManager(),"phoneNumber");
+        }else{
+            toBuyStep2();
+
+        }
+    }
+    @Override
+    public void phoneNumber(String phoneNumber) {
+        setphoneNumber(phoneNumber);
+    }
+    private void setphoneNumber(String phoneNumber) {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("tel",phoneNumber);
+        hashMap.put("imei", mSession.getIMEI());
+        String content = "";
+        try {
+            content = AESUtil.encode(new Gson().toJson(hashMap));
+        } catch (Exception e) {
+            throw new RuntimeException("加密错误！");
+        }
+        if (TextUtils.isEmpty(content)) {
+            Toast.makeText(YQApplication.getAppContext(), R.string.unknow_erro, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        OkHttpUtils
+                .postString()
+                .content(content)
+                .url(Contants.URL_UPDATEUSER)
+                .tag(TAG)
+                .build()
+                .execute(new MyUpdateUserCallBack(this));
+    }
+    private static class MyUpdateUserCallBack extends UpdateUserCallBack {
+        private WeakReference<VideoDetailActivity> mWeakReference;
+
+        public MyUpdateUserCallBack(VideoDetailActivity activity) {
+            mWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void onError(Call call, Exception e) {
+            VideoDetailActivity activity = mWeakReference.get();
+            if(activity!=null){
+                Toast.makeText(activity, "设置手机号错误！", Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+
+        @Override
+        public void onResponse(MessageBean response) {
+            if(response.errorCode==Contants.HTTP_OK){
+                VideoDetailActivity activity = mWeakReference.get();
+                if(activity!=null){
+                    activity.toBuyStep2();
+                }
+            }else{
+                Toast.makeText(YQApplication.getAppContext(), "设置手机号错误！", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }
+
+        @Override
+        public void onBefore(Request request) {
+            VideoDetailActivity activity = mWeakReference.get();
+            if(activity!=null){
+
+            }
+        }
+    }
+    public static class MyPlayAccessCallback extends PlayAccessCallback {
+        private WeakReference<VideoDetailActivity> mWeakReference;
+        public MyPlayAccessCallback(VideoDetailActivity activity){
+            mWeakReference = new WeakReference<>(activity);
+        }
+        @Override
+        public void onError(Call call, Exception e) {
+            Toast.makeText(YQApplication.getAppContext(), R.string.load_data_fail, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onResponse(MessageBean response) {
+            VideoDetailActivity activity = mWeakReference.get();
+            if(activity!=null){
+
+                activity.PlayAccess(response);
+            }
+        }
+    }
+
+    private void PlayAccess(MessageBean response) {
+        if(response.errorCode==Contants.HTTP_NO||response.errorCode==Contants.HTTP_NO_PERMISSION){
+            GoChargDialog chargDialog = GoChargDialog.newInstance();
+            chargDialog.show(getSupportFragmentManager(),"charg");
+
+        }else if(response.errorCode==Contants.HTTP_VIP||response.errorCode==Contants.HTTP_ONECE){
+            Intent intent = new Intent(this,VideoViewActivity.class);
+            intent.putExtra("programDetail",programDetail);
+            startActivity(intent);
+        }else{
+            Toast.makeText(YQApplication.getAppContext(), "数据获取异常！", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         OkHttpUtils.getInstance().cancelTag(TAG);

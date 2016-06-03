@@ -1,6 +1,6 @@
 package com.community.yuequ.modle.callback;
 
-import com.community.yuequ.modle.BuyProgramDao;
+import com.community.yuequ.modle.MessageBean;
 import com.community.yuequ.util.AESUtil;
 import com.google.gson.Gson;
 import com.zhy.http.okhttp.callback.Callback;
@@ -8,17 +8,15 @@ import com.zhy.http.okhttp.callback.Callback;
 import okhttp3.Response;
 
 /**
- * Created by Administrator on 2016/5/6.
+ * Created by Administrator on 2016/6/3.
  */
-public abstract class BuyCallBack extends Callback<BuyProgramDao>{
+public abstract class PlayAccessCallback extends Callback<MessageBean> {
     @Override
-    public BuyProgramDao parseNetworkResponse(Response response) throws Exception {
+    public MessageBean parseNetworkResponse(Response response) throws Exception {
         String string = response.body().string();
         String result = AESUtil.decrypt(string);
-        BuyProgramDao channelDao = new Gson().fromJson(result,  BuyProgramDao.class);
+        MessageBean channelDao = new Gson().fromJson(result,  MessageBean.class);
         return channelDao;
 
     }
-
-
 }

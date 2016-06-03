@@ -26,7 +26,7 @@ import com.community.yuequ.modle.OrderTipsDao;
 import com.community.yuequ.modle.RProgram;
 import com.community.yuequ.modle.RProgramDetail;
 import com.community.yuequ.modle.RProgramDetailDao;
-import com.community.yuequ.modle.UpdateUserDao;
+import com.community.yuequ.modle.MessageBean;
 import com.community.yuequ.modle.callback.OrderTipsCallBack;
 import com.community.yuequ.modle.callback.RProgramDetailDaoCallBack;
 import com.community.yuequ.modle.callback.UpdateUserCallBack;
@@ -44,7 +44,7 @@ import java.util.HashMap;
 import okhttp3.Call;
 import okhttp3.Request;
 
-public class PicDetailActivity extends AppCompatActivity implements View.OnClickListener ,InputPhoneNumberDialog.PhoneNumberCallBack,DialogConfListener{
+public class PicDetailActivity extends AppCompatActivity implements View.OnClickListener,InputPhoneNumberDialog.PhoneNumberCallBack,DialogConfListener{
     public static final String TAG = VideoDetailActivity.class.getSimpleName();
 
     private TitleBarLayout mTitleBarLayout;
@@ -196,7 +196,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         finish();
     }
 
-    protected static class MyUpdateUserCallBack extends UpdateUserCallBack {
+    private static class MyUpdateUserCallBack extends UpdateUserCallBack {
         private WeakReference<PicDetailActivity> mWeakReference;
 
         public MyUpdateUserCallBack(PicDetailActivity activity) {
@@ -214,7 +214,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         }
 
         @Override
-        public void onResponse(UpdateUserDao response) {
+        public void onResponse(MessageBean response) {
             if(response.errorCode==Contants.HTTP_OK){
                 PicDetailActivity activity = mWeakReference.get();
                 if(activity!=null){
@@ -264,7 +264,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         intent.putParcelableArrayListExtra("ordertips",result);
         startActivity(intent);
     }
-    public static class MyOrderTipsCallBack extends OrderTipsCallBack {
+    protected static class MyOrderTipsCallBack extends OrderTipsCallBack {
         private WeakReference<PicDetailActivity> mWeakReference;
         public MyOrderTipsCallBack(PicDetailActivity activity){
             mWeakReference = new WeakReference<>(activity);
