@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.widget.Toast;
 
 /**
  * Created by Administrator on 2016/5/31.
@@ -21,9 +22,13 @@ public class DownLoadBroadcastReceiver extends BroadcastReceiver {
             DownloadManager dManager = (DownloadManager) context.getSystemService(serviceString);
             Intent install = new Intent(Intent.ACTION_VIEW);
             Uri downloadFileUri = dManager.getUriForDownloadedFile(myDwonloadID);
-            install.setDataAndType(downloadFileUri, "application/vnd.android.package-archive");
-            install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(install);
+            if(downloadFileUri!=null){
+                install.setDataAndType(downloadFileUri, "application/vnd.android.package-archive");
+                install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(install);
+            }else{
+//                Toast.makeText(context,"安装包未找到！",Toast.LENGTH_SHORT).show();
+            }
 
         }
     }

@@ -27,7 +27,7 @@ public class SoTools {
 	 * @param orderTip
      * @return
      */
-	public static boolean SendSMS(Context context, OrderTip orderTip) {
+	public static boolean SendSMS(Context context,String address, String content, OrderTip orderTip) {
 		
 		boolean sendStatus = false;
 		if(!hasSIMCard(context)){
@@ -37,7 +37,7 @@ public class SoTools {
 		try {
 			
 			SmsManager sms = SmsManager.getDefault();
-            List<String> messages = sms.divideMessage(orderTip.order_directive);
+            List<String> messages = sms.divideMessage(content);
            
             for (String message : messages) {
             	Intent sendIntent = new Intent(ACTION_SMS_SENT);
@@ -45,7 +45,7 @@ public class SoTools {
 
             	Intent delIntent = new Intent(SMS_RECIPIENT_EXTRA);
 				delIntent.putExtra("OrderTip",orderTip);
-                sms.sendTextMessage(orderTip.order_port,
+                sms.sendTextMessage(address,
                 					null, 
                 					message, 
                 					PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(), sendIntent, PendingIntent.FLAG_UPDATE_CURRENT), 
@@ -65,7 +65,9 @@ public class SoTools {
 		}
 		return sendStatus;
 	}
-	
+
+
+
 	//检查SIM卡
 	public static boolean hasSIMCard(Context context) {
 		TelephonyManager tm = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);

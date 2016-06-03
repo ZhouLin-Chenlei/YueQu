@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.WindowManager;
@@ -38,6 +39,7 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
     private static final String TAG = WelcomeActivity.class.getSimpleName();
     private Session mSession;
     private MyHandler mMyHandler;
+    private FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
         mMyHandler = new MyHandler(this);
         mSession = Session.get(this);
         mSession.setScreenSize(this);
+        mFragmentManager = getSupportFragmentManager();
         YQApplication.runBackground(new Runnable() {
             @Override
             public void run() {
@@ -81,10 +84,7 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
         super.onResume();
     }
 
-    @Override
-    public void onBackPressed() {
 
-    }
 
     private void intitNet() {
 
@@ -225,8 +225,17 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
         }
     }
 
+//    @Override
+//    public void onBackPressed() {
+//        finish();
+//    }
     @Override
     protected void onDestroy() {
+        while (mFragmentManager.getBackStackEntryCount() > 0){
+//            mFragmentManager.popBackStack();
+            mFragmentManager.popBackStackImmediate();
+        }
+
         OkHttpUtils.getInstance().cancelTag(TAG);
         super.onDestroy();
 

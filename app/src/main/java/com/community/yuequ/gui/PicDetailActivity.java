@@ -122,6 +122,8 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
 
 
                         }else if(response.errorCode==Contants.HTTP_OK){
+//                            GoChargDialog chargDialog = GoChargDialog.newInstance();
+//                            chargDialog.show(getSupportFragmentManager(),"charg");
                             if (!TextUtils.isEmpty(programDetail.contents)) {
                                 mWebView.loadData(programDetail.contents, "text/html; charset=UTF-8", null);
 
