@@ -181,7 +181,13 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                     Toast.makeText(VideoDetailActivity.this, "获取视频信息失败！", Toast.LENGTH_SHORT).show();
                 }else{
                     //视频鉴权
-                    playAccess();
+                    if("1".equals(programDetail.is_cost)){
+                        playAccess();
+                    }else{
+                        Intent intent = new Intent(this,VideoViewActivity.class);
+                        intent.putExtra("programDetail",programDetail);
+                        startActivity(intent);
+                    }
                 }
                 break;
             case R.id.ll_status:
