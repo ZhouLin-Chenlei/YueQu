@@ -5,9 +5,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.community.yuequ.Contants;
 import com.community.yuequ.R;
+import com.community.yuequ.YQApplication;
 import com.community.yuequ.gui.adapter.ChannelListAdapter;
 import com.community.yuequ.modle.Channel;
 import com.community.yuequ.modle.ChannelDao;
@@ -85,9 +87,29 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addOnScrollListener(mScrollListener);
         mRecyclerView.setAdapter(mAdapter);
-        completeRefresh();
-    }
 
+    }
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(mChannelDao!=null){
+            if(mChannelDao.result!=null&&!mChannelDao.result.isEmpty()){
+                mChannels.clear();
+                mChannels.addAll(mChannelDao.result);
+                mAdapter.notifyDataSetChanged();
+                if (mStatuLayout != null) {
+                    mStatuLayout.setProgressBarVisibility(false).setText(null).hide();
+                }
+
+            }else{
+                mStatuLayout.setProgressBarVisibility(false)
+                        .setText(YQApplication.getAppResources().getString(R.string.no_data))
+                        .show();
+            }
+        }
+
+
+    }
     @Override
     protected void initData() {
         OkHttpUtils

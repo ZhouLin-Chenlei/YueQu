@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Toast;
 
 import com.community.yuequ.Contants;
@@ -61,10 +62,7 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Override
     protected void initView() {
-        mStatuLayout = new PageStatuLayout(convertView)
-                .setProgressBarVisibility(true)
-                .setText(null)
-                .show();
+        mStatuLayout = new PageStatuLayout(convertView);
         mRecyclerView = findView(android.R.id.list);
         mSwipeRefreshLayout = findView(R.id.swipeLayout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.pink900);
@@ -75,10 +73,10 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
 
         mRecyclerView.addOnScrollListener(mScrollListener);
         mRecyclerView.setAdapter(mVideoAdapter);
-        completeRefresh();
+
     }
 
-    String testUrl = "http://image.baidu.com/channel/listjson?fr=channel&tag1=美女&tag2=泳装&sorttype=0&pn=1&rn=100&ie=utf8&oe=utf-8&8339397110145592";
+//    String testUrl = "http://image.baidu.com/channel/listjson?fr=channel&tag1=美女&tag2=泳装&sorttype=0&pn=1&rn=100&ie=utf8&oe=utf-8&8339397110145592";
     @Override
     protected void initData() {
         HashMap<String,Integer> hashMap  =new HashMap<>();
@@ -160,9 +158,9 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
         if (mStatuLayout != null) {
             mStatuLayout.setProgressBarVisibility(false);
             if(mVideoPrograma==null && mVideoAdapter.getItemCount()==0){
-                mStatuLayout.show().setText(getString(R.string.load_data_fail));
+                mStatuLayout.show().setText(YQApplication.getAppResources().getString(R.string.load_data_fail));
             }else if(mVideoPrograma!=null && mVideoAdapter.getItemCount()==0){
-                mStatuLayout.show().setText(getString(R.string.no_data));
+                mStatuLayout.show().setText(YQApplication.getAppResources().getString(R.string.no_data));
             }else {
                 mStatuLayout.hide();
             }
@@ -205,7 +203,27 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
 
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(mVideoPrograma!=null){
+            if(mVideoPrograma.result!=null&&!mVideoPrograma.result.isEmpty()){
+                mProgramas.clear();
+                mProgramas.addAll(mVideoPrograma.result);
+                mVideoAdapter.notifyDataSetChanged();
+                if (mStatuLayout != null) {
+                    mStatuLayout.setProgressBarVisibility(false).setText(null).hide();
+                }
 
+            }else{
+                mStatuLayout.setProgressBarVisibility(false)
+                        .setText(YQApplication.getAppResources().getString(R.string.no_data))
+                        .show();
+            }
+        }
+
+
+    }
 
     @Override
     public void onRefresh() {

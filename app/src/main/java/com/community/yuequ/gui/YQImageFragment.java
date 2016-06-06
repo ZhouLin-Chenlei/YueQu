@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -91,7 +92,28 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
 
         mRecyclerView.addOnScrollListener(mScrollListener);
         mRecyclerView.setAdapter(mListAdapter);
-        completeRefresh();
+
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(imageDao!=null){
+            if(imageDao.result!=null&&!imageDao.result.isEmpty()){
+                rTextImages.clear();
+                rTextImages.addAll(imageDao.result);
+                mListAdapter.notifyDataSetChanged();
+                if (mStatuLayout != null) {
+                    mStatuLayout.setProgressBarVisibility(false).setText(null).hide();
+                }
+            }else{
+                mStatuLayout.setProgressBarVisibility(false)
+                        .setText(YQApplication.getAppResources().getString(R.string.no_data))
+                        .show();
+            }
+
+        }
+
     }
 
     @Override

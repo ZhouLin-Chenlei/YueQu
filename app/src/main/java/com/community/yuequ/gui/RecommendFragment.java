@@ -76,8 +76,8 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
         mRecyclerView.setAdapter(mRecommendAdapter);
         mRecyclerView.setHasFixedSize(true);
 
-        display();
     }
+
 
     private void display() {
         if(mRecommendDao!=null && mRecommendDao.result!=null) {
@@ -217,7 +217,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        display();
     }
 
 
