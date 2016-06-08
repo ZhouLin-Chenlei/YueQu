@@ -31,6 +31,7 @@ import com.community.yuequ.modle.callback.OrderTipsCallBack;
 import com.community.yuequ.modle.callback.RProgramDetailDaoCallBack;
 import com.community.yuequ.modle.callback.UpdateUserCallBack;
 import com.community.yuequ.util.AESUtil;
+import com.community.yuequ.util.HtmlUtil;
 import com.community.yuequ.view.TitleBarLayout;
 import com.community.yuequ.widget.GoChargDialog;
 import com.community.yuequ.widget.InputPhoneNumberDialog;
@@ -70,7 +71,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         mTitleBarLayout = new TitleBarLayout(this)
                 .setLeftButtonVisibility(true)
                 .setLeftButtonClickListener(this);
-        mWebView = (WebView) findViewById(R.id.webView);
+        mWebView = (WebView) findViewById(R.id.detail_web_view);
         tvErrorMsg = (TextView) findViewById(R.id.tv_error_msg);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         tv_second_title = (TextView) findViewById(R.id.tv_second_title);
@@ -125,8 +126,11 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
 //                            GoChargDialog chargDialog = GoChargDialog.newInstance();
 //                            chargDialog.show(getSupportFragmentManager(),"charg");
                             if (!TextUtils.isEmpty(programDetail.contents)) {
-                                mWebView.loadData(programDetail.contents, "text/html; charset=UTF-8", null);
+//                                mWebView.loadData(body, "text/html; charset=UTF-8", null);
 
+                                //设置web内容加载
+                                String htmlData = HtmlUtil.createHtmlData(programDetail);
+                                mWebView.loadData(htmlData, HtmlUtil.MIME_TYPE, HtmlUtil.ENCODING);
                             }
                         }else if(!TextUtils.isEmpty(programDetailDao.errorMessage)){
                             Toast.makeText(YQApplication.getAppContext(),programDetailDao.errorMessage, Toast.LENGTH_SHORT).show();
@@ -307,7 +311,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
             mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             settings.setLoadsImagesAutomatically(false);
         }
-        settings.setTextZoom(160);
+        settings.setTextZoom(200);
         settings.setUseWideViewPort(true); //将图片调整到适合WebView的大小
         settings.setLoadWithOverviewMode(true); //自适应屏幕
         settings.setDomStorageEnabled(true);
