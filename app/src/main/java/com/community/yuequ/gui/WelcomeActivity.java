@@ -181,7 +181,7 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
             editor.putInt("version",versionCode);
             editor.apply();
         }else{
-            Intent intent = new Intent(this, GuideActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
