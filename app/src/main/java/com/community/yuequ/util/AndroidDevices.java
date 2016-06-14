@@ -31,15 +31,29 @@ import android.telephony.TelephonyManager;
 import com.community.yuequ.R;
 import com.community.yuequ.YQApplication;
 
+import java.util.HashSet;
+
 public class AndroidDevices {
     public final static String TAG = "AndroidDevices";
     public final static String EXTERNAL_PUBLIC_DIRECTORY = Environment.getExternalStorageDirectory().getPath();
+    final static boolean hasNavBar;
+    static {
+        HashSet<String> devicesWithoutNavBar = new HashSet<String>();
+        devicesWithoutNavBar.add("HTC One V");
+        devicesWithoutNavBar.add("HTC One S");
+        devicesWithoutNavBar.add("HTC One X");
+        devicesWithoutNavBar.add("HTC One XL");
+        hasNavBar = AndroidUtil.isICSOrLater()
+                && !devicesWithoutNavBar.contains(android.os.Build.MODEL);
 
+    }
 
     public static boolean hasExternalStorage() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
-
+    public static boolean hasNavBar() {
+        return hasNavBar;
+    }
     /**
      * hasCombBar test if device has Combined Bar : only for tablet with Honeycomb or ICS
      */

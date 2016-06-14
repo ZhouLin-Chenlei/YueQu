@@ -41,7 +41,7 @@ public class ImageManager {
             .with(myFragment)
             .load(url)
             .centerCrop()
-            .placeholder(R.drawable.jiazai)
+            .placeholder(R.mipmap.jiazai)
             .crossFade()
             .into(imageView);
 
@@ -53,7 +53,7 @@ public class ImageManager {
                 .with(context)
                 .load(url)
                 .centerCrop()
-                .placeholder(R.drawable.jiazai)
+                .placeholder(R.mipmap.jiazai)
                 .crossFade()
                 .into(imageView);
 

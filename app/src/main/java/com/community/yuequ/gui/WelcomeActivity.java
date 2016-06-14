@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -166,9 +167,25 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
 
 
     protected void startMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int localVersion = preferences.getInt("version", 0);
+        int versionCode = mSession.getVersionCode();
+
+        if(localVersion != versionCode){
+            Intent intent = new Intent(this, GuideActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putInt("version",versionCode);
+            editor.apply();
+        }else{
+            Intent intent = new Intent(this, GuideActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+
         finish();
     }
 

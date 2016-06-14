@@ -21,8 +21,10 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
-
-
+    <style name="Theme.Fullscreen" parent="Theme.Fullscreen.7"/>
+    <style name="Theme.Fullscreen.7" parent="AppTheme.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+    </style>
 
     <style name="MediaController_SeekBar">
         <item name="android:minHeight">4dip</item>
