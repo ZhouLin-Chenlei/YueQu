@@ -7,6 +7,7 @@ import java.util.ArrayList;
  */
 public class InitMsg {
    public UpgradeInfo upgrade;
+   public StartUpImg startupImages;
    public ArrayList<OrderTip> orderTips;
 
 

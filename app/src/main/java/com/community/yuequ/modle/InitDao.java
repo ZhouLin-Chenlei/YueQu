@@ -8,4 +8,5 @@ public class InitDao {
     public String errorMessage;
     public InitMsg result;
 
+
 }

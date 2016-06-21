@@ -4,6 +4,7 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,21 +14,29 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.Session;
 import com.community.yuequ.YQApplication;
+import com.community.yuequ.contorl.ImageManager;
 import com.community.yuequ.modle.InitDao;
 import com.community.yuequ.modle.UpgradeInfo;
 import com.community.yuequ.modle.callback.InitDaoCallBack;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.util.AndroidDevices;
+import com.community.yuequ.util.FileTools;
 import com.community.yuequ.widget.UpgradeDialog;
 import com.google.gson.Gson;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
@@ -41,12 +50,15 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
     private Session mSession;
     private MyHandler mMyHandler;
     private FragmentManager mFragmentManager;
+    private ImageView imge;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_welcome);
+        imge = (ImageView) findViewById(R.id.imge);
         mMyHandler = new MyHandler(this);
         mSession = Session.get(this);
         mSession.setScreenSize(this);
@@ -59,7 +71,41 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
 
             }
         });
-//    AESUtil.main(new String[]{});
+
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String img_path = preferences.getString("img_path",null);
+        long begin_time = preferences.getLong("begin_time",0);
+        long end_time = preferences.getLong("end_time",0);
+        long currentTimeMillis = System.currentTimeMillis();
+
+        if(!TextUtils.isEmpty(img_path) && currentTimeMillis >= begin_time && currentTimeMillis < end_time){
+            final File localPath = FileTools.getImageLocalPath(img_path);
+            if(localPath!=null && localPath.exists() && localPath.canRead()){
+                Glide.with(this)
+                        .load("file://" + localPath.getAbsolutePath())
+                        .crossFade()
+                        .error(R.mipmap.index)
+                        .into(new SimpleTarget<GlideDrawable>() {
+                            @Override
+                            public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                                imge.setImageDrawable(resource);
+                            }
+
+                            @Override
+                            public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                                super.onLoadFailed(e, errorDrawable);
+                                imge.setImageDrawable(errorDrawable);
+                                localPath.delete();
+                            }
+                        });
+
+            }else{
+                imge.setImageResource(R.mipmap.index);
+            }
+        }
+
+
     }
 
 
@@ -67,7 +113,7 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
         private WeakReference<WelcomeActivity> activityWeakReference;
 
         public MyHandler(WelcomeActivity activity) {
-            activityWeakReference = new WeakReference<WelcomeActivity>(activity);
+            activityWeakReference = new WeakReference<>(activity);
         }
 
         @Override

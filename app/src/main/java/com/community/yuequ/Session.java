@@ -32,13 +32,21 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.bumptech.glide.request.Request;
 import com.community.yuequ.modle.InitMsg;
 import com.community.yuequ.modle.OrderTip;
+import com.community.yuequ.modle.StartUpImg;
 import com.community.yuequ.modle.UpgradeInfo;
+import com.community.yuequ.util.FileTools;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.FileCallBack;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+
+import okhttp3.Call;
 
 /**
  * 
@@ -412,6 +420,10 @@ public class Session {
 
     public void setInitMsg(InitMsg msg) {
        this.mInitMsg = msg;
+        if(mInitMsg!=null && mInitMsg.startupImages!=null){
+            saveStartUpImg(mInitMsg.startupImages);
+
+        }
     }
     public InitMsg getInitMsg() {
         return mInitMsg;
@@ -444,5 +456,45 @@ public class Session {
              mInitMsg.orderTips = tips;
         }
 
+    }
+
+    public void saveStartUpImg(final StartUpImg upImg) {
+        if(upImg != null){
+            long currentTimeMillis = System.currentTimeMillis();
+            if(!TextUtils.isEmpty(upImg.img_path) && currentTimeMillis >= upImg.begin_time && currentTimeMillis < upImg.end_time) {
+
+                final File localPath = FileTools.getImageLocalPath(upImg.img_path);
+                if(localPath==null || !localPath.exists()){
+                    OkHttpUtils
+                            .get()
+                            .url(upImg.img_path)
+                            .build()//
+                            .execute(new FileCallBack(FileTools.getImageFileDir(),String.valueOf(upImg.img_path.hashCode()))
+                            {
+                                @Override
+                                public void onError(Call call, Exception e) {
+
+                                }
+
+                                @Override
+                                public void onResponse(File response) {
+
+                                }
+
+                                @Override
+                                public void inProgress(float progress, long total) {
+
+                                }
+                            });
+                }
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+                SharedPreferences.Editor edit = preferences.edit();
+                edit.putString("img_path", upImg.img_path);
+                edit.putLong("begin_time", upImg.begin_time);
+                edit.putLong("end_time", upImg.end_time);
+                edit.apply();
+            }
+        }
     }
 }
