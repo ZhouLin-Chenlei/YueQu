@@ -20,7 +20,7 @@ import com.community.yuequ.Session;
 import com.community.yuequ.YQApplication;
 import com.community.yuequ.modle.BuyProgramDao;
 import com.community.yuequ.modle.OrderTip;
-import com.community.yuequ.modle.callback.BuyCallBack;
+import com.community.yuequ.modle.callback.JsonCallBack;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.util.Log;
 import com.google.gson.Gson;
@@ -212,7 +212,7 @@ public class Slog extends Service {
 
     }
 
-    public static class MyBuyCallBack extends BuyCallBack {
+    public static class MyBuyCallBack extends JsonCallBack<BuyProgramDao> {
         private WeakReference<Slog> serviceWeakReference;
 
         public MyBuyCallBack(Slog service) {
@@ -220,7 +220,7 @@ public class Slog extends Service {
         }
 
         @Override
-        public void onError(Call call, Exception e) {
+        public void onError(Call call, Exception e,int id) {
             Slog service = serviceWeakReference.get();
             if (service != null) {
                 service.onError();
@@ -228,7 +228,7 @@ public class Slog extends Service {
         }
 
         @Override
-        public void onResponse(BuyProgramDao response) {
+        public void onResponse(BuyProgramDao response,int id) {
             Slog service = serviceWeakReference.get();
             if (service != null) {
                 service.onResponse(response);

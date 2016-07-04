@@ -28,7 +28,9 @@
         <meta-data
             android:name="com.community.yuequ.contorl.GlideConfiguration"
             android:value="GlideModule"/>
-
+        <meta-data
+            android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
+            android:value="GlideModule" />
         <activity
             android:name=".gui.WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

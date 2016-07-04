@@ -25,10 +25,9 @@ import com.community.yuequ.Contants;
 import com.community.yuequ.R;
 import com.community.yuequ.Session;
 import com.community.yuequ.YQApplication;
-import com.community.yuequ.contorl.ImageManager;
 import com.community.yuequ.modle.InitDao;
 import com.community.yuequ.modle.UpgradeInfo;
-import com.community.yuequ.modle.callback.InitDaoCallBack;
+import com.community.yuequ.modle.callback.JsonCallBack;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.util.AndroidDevices;
 import com.community.yuequ.util.FileTools;
@@ -169,7 +168,7 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
                 .execute(new MyInitDaoCallBack(this));
     }
 
-    public static class MyInitDaoCallBack extends InitDaoCallBack {
+    public static class MyInitDaoCallBack extends JsonCallBack<InitDao> {
         private WeakReference<WelcomeActivity> mWeakReference;
 
         public MyInitDaoCallBack(WelcomeActivity activity) {
@@ -177,7 +176,7 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
         }
 
         @Override
-        public void onError(Call call, Exception e) {
+        public void onError(Call call, Exception e,int id) {
             WelcomeActivity welcomeActivity = mWeakReference.get();
             if (welcomeActivity != null) {
                 welcomeActivity.onError();
@@ -185,7 +184,7 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
         }
 
         @Override
-        public void onResponse(InitDao response) {
+        public void onResponse(InitDao response,int id) {
             WelcomeActivity welcomeActivity = mWeakReference.get();
             if (welcomeActivity != null) {
                 welcomeActivity.onResponse(response);

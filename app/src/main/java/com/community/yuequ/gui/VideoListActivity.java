@@ -15,7 +15,7 @@ import com.community.yuequ.R;
 import com.community.yuequ.YQApplication;
 import com.community.yuequ.gui.adapter.VideoListAdapter;
 import com.community.yuequ.modle.PicListDao;
-import com.community.yuequ.modle.callback.PicListDaoCallBack;
+import com.community.yuequ.modle.callback.JsonCallBack;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.view.DividerItemDecoration;
 import com.community.yuequ.view.PageStatuLayout;
@@ -112,9 +112,9 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
                 .url(url)
                 .tag(TAG)
                 .build()
-                .execute(new PicListDaoCallBack() {
+                .execute(new JsonCallBack<PicListDao>() {
                     @Override
-                    public void onError(Call call, Exception e) {
+                    public void onError(Call call, Exception e,int id) {
                         if (mSwipeRefreshLayout != null) {
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -134,7 +134,7 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
                     }
 
                     @Override
-                    public void onResponse(PicListDao response) {
+                    public void onResponse(PicListDao response,int id) {
                         if (mSwipeRefreshLayout != null) {
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -173,7 +173,7 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
                     }
 
                     @Override
-                    public void onBefore(Request request) {
+                    public void onBefore(Request request,int id) {
                         isLoading = true;
                         if(mListAdapter.getItemCount()==0){
                             mStatuLayout.show()
@@ -187,8 +187,8 @@ public class VideoListActivity extends AppCompatActivity implements View.OnClick
                     }
 
                     @Override
-                    public void onAfter() {
-                        super.onAfter();
+                    public void onAfter(int id) {
+                        super.onAfter(id);
                         isLoading = false;
                     }
                 });

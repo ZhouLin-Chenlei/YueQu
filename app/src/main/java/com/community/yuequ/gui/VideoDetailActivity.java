@@ -19,15 +19,10 @@ import com.community.yuequ.imple.DialogConfListener;
 import com.community.yuequ.modle.MessageBean;
 import com.community.yuequ.modle.OrderTip;
 import com.community.yuequ.modle.OrderTipsDao;
-import com.community.yuequ.modle.PicListDao;
 import com.community.yuequ.modle.RProgram;
 import com.community.yuequ.modle.RProgramDetail;
 import com.community.yuequ.modle.RProgramDetailDao;
-import com.community.yuequ.modle.callback.OrderTipsCallBack;
-import com.community.yuequ.modle.callback.PicListDaoCallBack;
-import com.community.yuequ.modle.callback.PlayAccessCallback;
-import com.community.yuequ.modle.callback.RProgramDetailDaoCallBack;
-import com.community.yuequ.modle.callback.UpdateUserCallBack;
+import com.community.yuequ.modle.callback.JsonCallBack;
 import com.community.yuequ.player.VideoViewActivity;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.view.PageStatuLayout;
@@ -120,9 +115,9 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                 .url(Contants.URL_PROGRAMDETAIL)
                 .tag(TAG)
                 .build()
-                .execute(new RProgramDetailDaoCallBack() {
+                .execute(new JsonCallBack<RProgramDetailDao>() {
                     @Override
-                    public void onError(Call call, Exception e) {
+                    public void onError(Call call, Exception e,int id) {
                         isLoading = false;
 
                         if (mStatuLayout != null) {
@@ -133,7 +128,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                     }
 
                     @Override
-                    public void onResponse(RProgramDetailDao response) {
+                    public void onResponse(RProgramDetailDao response,int id) {
                         isLoading = false;
                         programDetail = response.result;
                         display();
@@ -153,7 +148,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                     }
 
                     @Override
-                    public void onBefore(Request request) {
+                    public void onBefore(Request request,int id) {
                         isLoading = true;
                         mStatuLayout.show()
                                 .setProgressBarVisibility(true)
@@ -161,8 +156,8 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                     }
 
                     @Override
-                    public void onAfter() {
-                        super.onAfter();
+                    public void onAfter(int id) {
+                        super.onAfter(id);
                         isLoading = false;
                     }
                 });
@@ -238,13 +233,13 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                     .execute(new MyOrderTipsCallBack(this));
         }
     }
-    protected static class MyOrderTipsCallBack extends OrderTipsCallBack {
+    protected static class MyOrderTipsCallBack extends JsonCallBack<OrderTipsDao> {
         private WeakReference<VideoDetailActivity> mWeakReference;
         public MyOrderTipsCallBack(VideoDetailActivity activity){
             mWeakReference = new WeakReference<>(activity);
         }
         @Override
-        public void onError(Call call, Exception e) {
+        public void onError(Call call, Exception e,int id) {
             VideoDetailActivity activity = mWeakReference.get();
             if(activity!=null){
                 Toast.makeText(activity, "获取信息失败！", Toast.LENGTH_SHORT).show();
@@ -252,7 +247,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
         }
 
         @Override
-        public void onResponse(OrderTipsDao response) {
+        public void onResponse(OrderTipsDao response,int id) {
             VideoDetailActivity activity = mWeakReference.get();
             if(activity!=null){
                 if(response.errorCode==Contants.HTTP_OK){
@@ -323,7 +318,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
                 .build()
                 .execute(new MyUpdateUserCallBack(this));
     }
-    private static class MyUpdateUserCallBack extends UpdateUserCallBack {
+    private static class MyUpdateUserCallBack extends JsonCallBack<MessageBean> {
         private WeakReference<VideoDetailActivity> mWeakReference;
 
         public MyUpdateUserCallBack(VideoDetailActivity activity) {
@@ -331,7 +326,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
         }
 
         @Override
-        public void onError(Call call, Exception e) {
+        public void onError(Call call, Exception e,int id) {
             VideoDetailActivity activity = mWeakReference.get();
             if(activity!=null){
                 Toast.makeText(activity, "设置手机号错误！", Toast.LENGTH_SHORT).show();
@@ -341,7 +336,7 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
         }
 
         @Override
-        public void onResponse(MessageBean response) {
+        public void onResponse(MessageBean response,int id) {
             if(response.errorCode==Contants.HTTP_OK){
                 VideoDetailActivity activity = mWeakReference.get();
                 if(activity!=null){
@@ -355,25 +350,25 @@ public class VideoDetailActivity extends AppCompatActivity implements View.OnCli
         }
 
         @Override
-        public void onBefore(Request request) {
+        public void onBefore(Request request,int id) {
             VideoDetailActivity activity = mWeakReference.get();
             if(activity!=null){
 
             }
         }
     }
-    public static class MyPlayAccessCallback extends PlayAccessCallback {
+    public static class MyPlayAccessCallback extends JsonCallBack<MessageBean> {
         private WeakReference<VideoDetailActivity> mWeakReference;
         public MyPlayAccessCallback(VideoDetailActivity activity){
             mWeakReference = new WeakReference<>(activity);
         }
         @Override
-        public void onError(Call call, Exception e) {
+        public void onError(Call call, Exception e,int id) {
             Toast.makeText(YQApplication.getAppContext(), R.string.load_data_fail, Toast.LENGTH_SHORT).show();
         }
 
         @Override
-        public void onResponse(MessageBean response) {
+        public void onResponse(MessageBean response,int id) {
             VideoDetailActivity activity = mWeakReference.get();
             if(activity!=null){
 

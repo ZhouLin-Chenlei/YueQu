@@ -17,7 +17,7 @@ import com.community.yuequ.R;
 import com.community.yuequ.gui.adapter.RecommendAdapter;
 import com.community.yuequ.modle.Advert;
 import com.community.yuequ.modle.RecommendDao;
-import com.community.yuequ.modle.callback.RecommendDaoCallBack;
+import com.community.yuequ.modle.callback.JsonCallBack;
 import com.community.yuequ.view.NetworkImageHolderView;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.SwipeRefreshLayout;
@@ -126,9 +126,10 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
                 .url(Contants.URL_RECOMMEND)
                 .tag(TAG)
                 .build()
-                .execute(new RecommendDaoCallBack() {
+                .execute(new JsonCallBack<RecommendDao>() {
+
                     @Override
-                    public void onError(Call call, Exception e) {
+                    public void onError(Call call, Exception e,int id) {
                         if(isAdded()){
                             getDataFail();
                         }
@@ -136,7 +137,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
                     }
 
                     @Override
-                    public void onResponse(RecommendDao response) {
+                    public void onResponse(RecommendDao response,int id) {
                         mRecommendDao = response;
                         if(isAdded()){
                             display();
@@ -147,12 +148,12 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
 
 
                     @Override
-                    public void onBefore(Request request) {
+                    public void onBefore(Request request,int id) {
                         getDataBefore();
                     }
 
                     @Override
-                    public void onAfter() {
+                    public void onAfter(int id) {
                         if(isAdded()){
                             getDataAfter();
                         }

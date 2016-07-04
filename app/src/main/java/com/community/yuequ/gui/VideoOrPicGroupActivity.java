@@ -14,7 +14,7 @@ import com.community.yuequ.R;
 import com.community.yuequ.YQApplication;
 import com.community.yuequ.gui.adapter.VideoOrPicGroupAdapter;
 import com.community.yuequ.modle.YQVideoOrPicGroupDao;
-import com.community.yuequ.modle.callback.YQVideoDaoCallBack;
+import com.community.yuequ.modle.callback.JsonCallBack;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.view.DividerGridItemDecoration;
 import com.community.yuequ.view.PageStatuLayout;
@@ -108,9 +108,9 @@ public class VideoOrPicGroupActivity extends AppCompatActivity implements View.O
                 .url(url)
                 .tag(TAG)
                 .build()
-                .execute(new YQVideoDaoCallBack() {
+                .execute(new JsonCallBack<YQVideoOrPicGroupDao>() {
                     @Override
-                    public void onError(Call call, Exception e) {
+                    public void onError(Call call, Exception e,int id) {
                         if (mSwipeRefreshLayout != null) {
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -128,7 +128,7 @@ public class VideoOrPicGroupActivity extends AppCompatActivity implements View.O
                     }
 
                     @Override
-                    public void onResponse(YQVideoOrPicGroupDao response) {
+                    public void onResponse(YQVideoOrPicGroupDao response,int id) {
                         if (mSwipeRefreshLayout != null) {
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -152,7 +152,7 @@ public class VideoOrPicGroupActivity extends AppCompatActivity implements View.O
                     }
 
                     @Override
-                    public void onBefore(Request request) {
+                    public void onBefore(Request request,int id) {
                         if(mGroupAdapter.getItemCount()==0){
                             mStatuLayout.show()
                                     .setProgressBarVisibility(true)

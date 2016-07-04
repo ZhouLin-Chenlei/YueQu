@@ -472,17 +472,17 @@ public class Session {
                             .execute(new FileCallBack(FileTools.getImageFileDir(),String.valueOf(upImg.img_path.hashCode()))
                             {
                                 @Override
-                                public void onError(Call call, Exception e) {
+                                public void onError(Call call, Exception e,int id) {
 
                                 }
 
                                 @Override
-                                public void onResponse(File response) {
+                                public void onResponse(File response,int id) {
 
                                 }
 
                                 @Override
-                                public void inProgress(float progress, long total) {
+                                public void inProgress(float progress, long total,int id) {
 
                                 }
                             });

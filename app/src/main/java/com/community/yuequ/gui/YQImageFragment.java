@@ -16,7 +16,7 @@ import com.community.yuequ.YQApplication;
 import com.community.yuequ.gui.adapter.YQImageAdapter;
 import com.community.yuequ.modle.RTextImage;
 import com.community.yuequ.modle.YQImageDao;
-import com.community.yuequ.modle.callback.YQImageDaoCallBack;
+import com.community.yuequ.modle.callback.JsonCallBack;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.view.DividerItemDecoration;
 import com.community.yuequ.view.PageStatuLayout;
@@ -138,9 +138,9 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
                 .content(content)
                 .tag(TAG)
                 .build()
-                .execute(new YQImageDaoCallBack() {
+                .execute(new JsonCallBack<YQImageDao>() {
                     @Override
-                    public void onError(Call call, Exception e) {
+                    public void onError(Call call, Exception e,int id) {
                         if(isAdded()){
                             getDataFail();
                         }
@@ -148,7 +148,7 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
                     }
 
                     @Override
-                    public void onResponse(YQImageDao response) {
+                    public void onResponse(YQImageDao response,int id) {
                         imageDao  = response;
                         if(isAdded()){
                             if(imageDao.result==null||imageDao.result.isEmpty()){
@@ -163,11 +163,11 @@ public class YQImageFragment extends BaseFragment implements SwipeRefreshLayout.
                     }
 
                     @Override
-                    public void onBefore(Request request) {
+                    public void onBefore(Request request,int id) {
                         getDataBefore();
                     }
                     @Override
-                    public void onAfter() {
+                    public void onAfter(int id) {
                         if(isAdded()){
                             getDataAfter();
                         }

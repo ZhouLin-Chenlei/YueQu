@@ -13,7 +13,7 @@ import com.community.yuequ.YQApplication;
 import com.community.yuequ.gui.adapter.YQVideoAdapter;
 import com.community.yuequ.modle.VideoOrPicGroup;
 import com.community.yuequ.modle.YQVideoOrPicGroupDao;
-import com.community.yuequ.modle.callback.YQVideoDaoCallBack;
+import com.community.yuequ.modle.callback.JsonCallBack;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.util.Log;
 import com.community.yuequ.view.DividerItemDecoration;
@@ -98,16 +98,16 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
                 .url(Contants.URL_VIDEOLIST)
                 .tag(TAG)
                 .build()
-                .execute(new YQVideoDaoCallBack() {
+                .execute(new JsonCallBack<YQVideoOrPicGroupDao>() {
                     @Override
-                    public void onError(Call call, Exception e) {
+                    public void onError(Call call, Exception e,int id) {
                         if(isAdded()){
                             getDataFail();
                         }
                     }
 
                     @Override
-                    public void onResponse(YQVideoOrPicGroupDao response) {
+                    public void onResponse(YQVideoOrPicGroupDao response,int id) {
                         mVideoPrograma = response;
                         if(isAdded()){
                             if(mVideoPrograma.result==null||mVideoPrograma.result.isEmpty()){
@@ -121,11 +121,11 @@ public class YQVideoFragment extends BaseFragment implements SwipeRefreshLayout.
                     }
 
                     @Override
-                    public void onBefore(Request request) {
+                    public void onBefore(Request request,int id) {
                         getDataBefore();
                     }
                     @Override
-                    public void onAfter() {
+                    public void onAfter(int id) {
                         if(isAdded()){
                             getDataAfter();
                         }

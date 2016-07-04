@@ -27,9 +27,7 @@ import com.community.yuequ.modle.RProgram;
 import com.community.yuequ.modle.RProgramDetail;
 import com.community.yuequ.modle.RProgramDetailDao;
 import com.community.yuequ.modle.MessageBean;
-import com.community.yuequ.modle.callback.OrderTipsCallBack;
-import com.community.yuequ.modle.callback.RProgramDetailDaoCallBack;
-import com.community.yuequ.modle.callback.UpdateUserCallBack;
+import com.community.yuequ.modle.callback.JsonCallBack;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.util.HtmlUtil;
 import com.community.yuequ.view.TitleBarLayout;
@@ -107,14 +105,14 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
                 .url(Contants.URL_PROGRAMDETAIL)
                 .tag(TAG)
                 .build()
-                .execute(new RProgramDetailDaoCallBack() {
+                .execute(new JsonCallBack<RProgramDetailDao>() {
                     @Override
-                    public void onError(Call call, Exception e) {
+                    public void onError(Call call, Exception e,int id) {
 
                     }
 
                     @Override
-                    public void onResponse(RProgramDetailDao response) {
+                    public void onResponse(RProgramDetailDao response,int id) {
                         programDetailDao = response;
                         programDetail = response.result;
                         if(response.errorCode==Contants.HTTP_NO_PERMISSION){
@@ -143,13 +141,13 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
                     }
 
                     @Override
-                    public void onBefore(Request request) {
+                    public void onBefore(Request request,int id) {
                         progressBar.setVisibility(View.VISIBLE);
                     }
 
                     @Override
-                    public void onAfter() {
-                        super.onAfter();
+                    public void onAfter(int id) {
+                        super.onAfter(id);
                         progressBar.setVisibility(View.GONE);
                     }
                 });
@@ -200,7 +198,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         finish();
     }
 
-    private static class MyUpdateUserCallBack extends UpdateUserCallBack {
+    private static class MyUpdateUserCallBack extends JsonCallBack<MessageBean> {
         private WeakReference<PicDetailActivity> mWeakReference;
 
         public MyUpdateUserCallBack(PicDetailActivity activity) {
@@ -208,7 +206,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         }
 
         @Override
-        public void onError(Call call, Exception e) {
+        public void onError(Call call, Exception e,int id) {
             PicDetailActivity activity = mWeakReference.get();
             if(activity!=null){
                 Toast.makeText(activity, "设置手机号错误！", Toast.LENGTH_SHORT).show();
@@ -218,7 +216,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         }
 
         @Override
-        public void onResponse(MessageBean response) {
+        public void onResponse(MessageBean response,int id) {
             if(response.errorCode==Contants.HTTP_OK){
                 PicDetailActivity activity = mWeakReference.get();
                 if(activity!=null){
@@ -232,7 +230,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         }
 
         @Override
-        public void onBefore(Request request) {
+        public void onBefore(Request request,int id) {
             PicDetailActivity activity = mWeakReference.get();
             if(activity!=null){
 
@@ -268,13 +266,13 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         intent.putParcelableArrayListExtra("ordertips",result);
         startActivity(intent);
     }
-    protected static class MyOrderTipsCallBack extends OrderTipsCallBack {
+    protected static class MyOrderTipsCallBack extends JsonCallBack<OrderTipsDao> {
         private WeakReference<PicDetailActivity> mWeakReference;
         public MyOrderTipsCallBack(PicDetailActivity activity){
             mWeakReference = new WeakReference<>(activity);
         }
         @Override
-        public void onError(Call call, Exception e) {
+        public void onError(Call call, Exception e,int id) {
             PicDetailActivity activity = mWeakReference.get();
             if(activity!=null){
                 Toast.makeText(activity, "获取信息失败！", Toast.LENGTH_SHORT).show();
@@ -282,7 +280,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         }
 
         @Override
-        public void onResponse(OrderTipsDao response) {
+        public void onResponse(OrderTipsDao response,int id) {
             PicDetailActivity activity = mWeakReference.get();
             if(activity!=null){
                 if(response.errorCode==Contants.HTTP_OK){
@@ -300,30 +298,30 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true); //如果访问的页面中有Javascript，则WebView必须设置支持Javascript
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        settings.setSupportZoom(true); //支持缩放
-        settings.setBuiltInZoomControls(true); //支持手势缩放
+        settings.setSupportZoom(false); //支持缩放
+        settings.setBuiltInZoomControls(false); //支持手势缩放
         settings.setDisplayZoomControls(false); //是否显示缩放按钮
         // >= 19(SDK4.4)启动硬件加速，否则启动软件加速
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            settings.setLoadsImagesAutomatically(true); //支持自动加载图片
-        } else {
-            mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            settings.setLoadsImagesAutomatically(false);
-        }
-        settings.setTextZoom(200);
-        settings.setUseWideViewPort(true); //将图片调整到适合WebView的大小
-        settings.setLoadWithOverviewMode(true); //自适应屏幕
-        settings.setDomStorageEnabled(true);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            mWebView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+//            settings.setLoadsImagesAutomatically(true); //支持自动加载图片
+//        } else {
+//            mWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+//            settings.setLoadsImagesAutomatically(true);
+//        }
+//        settings.setTextZoom(200);
+//        settings.setUseWideViewPort(true); //将图片调整到适合WebView的大小
+//        settings.setLoadWithOverviewMode(true); //自适应屏幕
+//        settings.setDomStorageEnabled(true);
         settings.setAppCacheEnabled(true);
         settings.setSaveFormData(true);
-        settings.setSupportMultipleWindows(true);
+//        settings.setSupportMultipleWindows(true);
         settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //优先使用缓存
-        settings.setDefaultTextEncodingName("utf-8");
+//        settings.setDefaultTextEncodingName("utf-8");
 
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY); //可使滚动条不占位
-        mWebView.setHorizontalScrollbarOverlay(true);
-        mWebView.setHorizontalScrollBarEnabled(true);
+//        mWebView.setHorizontalScrollbarOverlay(true);
+//        mWebView.setHorizontalScrollBarEnabled(true);
         mWebView.requestFocus();
 
         mWebView.setWebViewClient(new WebViewClient() {
@@ -343,11 +341,10 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                mWebView.setLayerType(View.LAYER_TYPE_NONE, null);
-//                progressBar.setVisibility(View.GONE);
-                if (!settings.getLoadsImagesAutomatically()) {
-                    settings.setLoadsImagesAutomatically(true);
-                }
+//                mWebView.setLayerType(View.LAYER_TYPE_NONE, null);
+//                if (!settings.getLoadsImagesAutomatically()) {
+//                    settings.setLoadsImagesAutomatically(true);
+//                }
             }
 
             @Override

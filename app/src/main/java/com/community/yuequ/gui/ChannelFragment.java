@@ -13,7 +13,7 @@ import com.community.yuequ.YQApplication;
 import com.community.yuequ.gui.adapter.ChannelListAdapter;
 import com.community.yuequ.modle.Channel;
 import com.community.yuequ.modle.ChannelDao;
-import com.community.yuequ.modle.callback.ChannelDaoBack;
+import com.community.yuequ.modle.callback.JsonCallBack;
 import com.community.yuequ.view.DividerItemDecoration;
 import com.community.yuequ.view.PageStatuLayout;
 import com.community.yuequ.view.SwipeRefreshLayout;
@@ -117,17 +117,15 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
                 .url(Contants.URL_SPECIALSUBJECTLIST)
                 .tag(TAG)
                 .build()
-                .execute(new ChannelDaoBack() {
+                .execute(new JsonCallBack<ChannelDao>() {
                     @Override
-                    public void onError(Call call, Exception e) {
+                    public void onError(Call call, Exception e, int id) {
                         if(isAdded()){
                             getDataFail();
                         }
-
                     }
-
                     @Override
-                    public void onResponse(ChannelDao response) {
+                    public void onResponse(ChannelDao response, int id) {
                         mChannelDao = response;
                         if(isAdded()){
                             if(mChannelDao.result==null||mChannelDao.result.isEmpty()){
@@ -139,16 +137,19 @@ public class ChannelFragment extends BaseFragment implements SwipeRefreshLayout.
                     }
 
                     @Override
-                    public void onBefore(Request request) {
+                    public void onBefore(Request request, int id) {
+                        super.onBefore(request, id);
                         getDataBefore();
                     }
+
                     @Override
-                    public void onAfter() {
+                    public void onAfter(int id) {
+                        super.onAfter(id);
                         if(isAdded()){
                             getDataAfter();
                         }
-
                     }
+
                 });
     }
 
