@@ -2,9 +2,8 @@ package com.community.yuequ.gui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -21,12 +20,12 @@ import com.community.yuequ.R;
 import com.community.yuequ.Session;
 import com.community.yuequ.YQApplication;
 import com.community.yuequ.imple.DialogConfListener;
+import com.community.yuequ.modle.MessageBean;
 import com.community.yuequ.modle.OrderTip;
 import com.community.yuequ.modle.OrderTipsDao;
 import com.community.yuequ.modle.RProgram;
 import com.community.yuequ.modle.RProgramDetail;
 import com.community.yuequ.modle.RProgramDetailDao;
-import com.community.yuequ.modle.MessageBean;
 import com.community.yuequ.modle.callback.JsonCallBack;
 import com.community.yuequ.util.AESUtil;
 import com.community.yuequ.util.HtmlUtil;
@@ -43,7 +42,7 @@ import java.util.HashMap;
 import okhttp3.Call;
 import okhttp3.Request;
 
-public class PicDetailActivity extends AppCompatActivity implements View.OnClickListener,InputPhoneNumberDialog.PhoneNumberCallBack,DialogConfListener{
+public class PicDetailActivity extends AppCompatActivity implements View.OnClickListener, InputPhoneNumberDialog.PhoneNumberCallBack, DialogConfListener {
     public static final String TAG = VideoDetailActivity.class.getSimpleName();
 
     private TitleBarLayout mTitleBarLayout;
@@ -54,6 +53,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
     private RProgramDetail programDetail;
 
     WebView mWebView;
+//    private TextView tv_content;
     TextView tvErrorMsg;
     ProgressBar progressBar;
     private WebSettings settings;
@@ -70,18 +70,19 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
                 .setLeftButtonVisibility(true)
                 .setLeftButtonClickListener(this);
         mWebView = (WebView) findViewById(R.id.detail_web_view);
+//        tv_content = (TextView) findViewById(R.id.tv_content);
         tvErrorMsg = (TextView) findViewById(R.id.tv_error_msg);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         tv_second_title = (TextView) findViewById(R.id.tv_second_title);
 
         mTitleBarLayout.setText(getString(R.string.detail));
         tv_second_title.setText(mRProgram.name);
-        initView();
+//        initView();
         getData();
     }
 
     private void getData() {
-        if(mRProgram==null){
+        if (mRProgram == null) {
             Toast.makeText(YQApplication.getAppContext(), R.string.load_data_fail, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -107,20 +108,20 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
                 .build()
                 .execute(new JsonCallBack<RProgramDetailDao>() {
                     @Override
-                    public void onError(Call call, Exception e,int id) {
+                    public void onError(Call call, Exception e, int id) {
 
                     }
 
                     @Override
-                    public void onResponse(RProgramDetailDao response,int id) {
+                    public void onResponse(RProgramDetailDao response, int id) {
                         programDetailDao = response;
                         programDetail = response.result;
-                        if(response.errorCode==Contants.HTTP_NO_PERMISSION){
+                        if (response.errorCode == Contants.HTTP_NO_PERMISSION) {
                             GoChargDialog chargDialog = GoChargDialog.newInstance();
-                            chargDialog.show(getSupportFragmentManager(),"charg");
+                            chargDialog.show(getSupportFragmentManager(), "charg");
 
 
-                        }else if(response.errorCode==Contants.HTTP_OK){
+                        } else if (response.errorCode == Contants.HTTP_OK) {
 //                            GoChargDialog chargDialog = GoChargDialog.newInstance();
 //                            chargDialog.show(getSupportFragmentManager(),"charg");
                             if (!TextUtils.isEmpty(programDetail.contents)) {
@@ -128,20 +129,22 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
 
                                 //设置web内容加载
                                 String htmlData = HtmlUtil.createHtmlData(programDetail);
+//                                Spanned spanned = Html.fromHtml(programDetail.getBody(), new URLImageParser(PicDetailActivity.this, tv_content), null);
+//                                tv_content.setText(spanned);
+
                                 mWebView.loadData(htmlData, HtmlUtil.MIME_TYPE, HtmlUtil.ENCODING);
                             }
-                        }else if(!TextUtils.isEmpty(programDetailDao.errorMessage)){
-                            Toast.makeText(YQApplication.getAppContext(),programDetailDao.errorMessage, Toast.LENGTH_SHORT).show();
-                        }else{
+                        } else if (!TextUtils.isEmpty(programDetailDao.errorMessage)) {
+                            Toast.makeText(YQApplication.getAppContext(), programDetailDao.errorMessage, Toast.LENGTH_SHORT).show();
+                        } else {
                             Toast.makeText(YQApplication.getAppContext(), R.string.unknow_erro, Toast.LENGTH_SHORT).show();
                         }
-
 
 
                     }
 
                     @Override
-                    public void onBefore(Request request,int id) {
+                    public void onBefore(Request request, int id) {
                         progressBar.setVisibility(View.VISIBLE);
                     }
 
@@ -155,10 +158,10 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
 
     private void toBuy() {
         String phoneNumber = mSession.getPhoneNumber();
-        if(TextUtils.isEmpty(phoneNumber)){
+        if (TextUtils.isEmpty(phoneNumber)) {
             InputPhoneNumberDialog phoneNumberDialog = InputPhoneNumberDialog.newInstance();
-            phoneNumberDialog.show(getSupportFragmentManager(),"phoneNumber");
-        }else{
+            phoneNumberDialog.show(getSupportFragmentManager(), "phoneNumber");
+        } else {
             toBuyStep2();
 
         }
@@ -166,7 +169,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
 
     private void setphoneNumber(String phoneNumber) {
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("tel",phoneNumber);
+        hashMap.put("tel", phoneNumber);
         hashMap.put("imei", mSession.getIMEI());
         String content = "";
         try {
@@ -188,6 +191,8 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
                 .execute(new MyUpdateUserCallBack(this));
     }
 
+
+
     @Override
     public void conf() {
         toBuy();
@@ -198,6 +203,22 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         finish();
     }
 
+//    @Override
+//    public Drawable getDrawable(String source) {
+//        InputStream is = null;
+//
+//        try {
+//            is = (InputStream) new URL(source).openStream();
+//            Drawable d = Drawable.createFromStream(is, "");
+//            d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
+//            is.close();
+//            return d;
+//        } catch (Exception e) {
+//            return null;
+//        }
+//
+//    }
+
     private static class MyUpdateUserCallBack extends JsonCallBack<MessageBean> {
         private WeakReference<PicDetailActivity> mWeakReference;
 
@@ -206,9 +227,9 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         }
 
         @Override
-        public void onError(Call call, Exception e,int id) {
+        public void onError(Call call, Exception e, int id) {
             PicDetailActivity activity = mWeakReference.get();
-            if(activity!=null){
+            if (activity != null) {
                 Toast.makeText(activity, "设置手机号错误！", Toast.LENGTH_SHORT).show();
             }
 
@@ -216,13 +237,13 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         }
 
         @Override
-        public void onResponse(MessageBean response,int id) {
-            if(response.errorCode==Contants.HTTP_OK){
+        public void onResponse(MessageBean response, int id) {
+            if (response.errorCode == Contants.HTTP_OK) {
                 PicDetailActivity activity = mWeakReference.get();
-                if(activity!=null){
+                if (activity != null) {
                     activity.toBuyStep2();
                 }
-            }else{
+            } else {
                 Toast.makeText(YQApplication.getAppContext(), "设置手机号错误！", Toast.LENGTH_SHORT).show();
 
             }
@@ -230,9 +251,9 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
         }
 
         @Override
-        public void onBefore(Request request,int id) {
+        public void onBefore(Request request, int id) {
             PicDetailActivity activity = mWeakReference.get();
-            if(activity!=null){
+            if (activity != null) {
 
             }
         }
@@ -240,9 +261,9 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
 
     private void toBuyStep2() {
 
-        if(mSession.haveOrderTips()){
+        if (mSession.haveOrderTips()) {
             goPayPage(mSession.getOrderTips());
-        }else{
+        } else {
             OkHttpUtils
                     .post()
                     .url(Contants.URL_ORDERTIPS)
@@ -251,41 +272,45 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
                     .execute(new MyOrderTipsCallBack(this));
         }
     }
+
     private void setOrderTips(ArrayList<OrderTip> result) {
-        if(result!=null && !result.isEmpty()){
+        if (result != null && !result.isEmpty()) {
             mSession.setOrderTips(result);
             goPayPage(result);
-        }else{
+        } else {
             Toast.makeText(YQApplication.getAppContext(), "计费信息获取失败，请重试！", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void goPayPage(ArrayList<OrderTip> result){
-        Intent intent = new Intent(this,PayListActivity.class);
-        intent.putExtra("programId",mRProgram.id);
-        intent.putParcelableArrayListExtra("ordertips",result);
+    private void goPayPage(ArrayList<OrderTip> result) {
+        Intent intent = new Intent(this, PayListActivity.class);
+        intent.putExtra("programId", mRProgram.id);
+        intent.putParcelableArrayListExtra("ordertips", result);
         startActivity(intent);
     }
+
     protected static class MyOrderTipsCallBack extends JsonCallBack<OrderTipsDao> {
         private WeakReference<PicDetailActivity> mWeakReference;
-        public MyOrderTipsCallBack(PicDetailActivity activity){
+
+        public MyOrderTipsCallBack(PicDetailActivity activity) {
             mWeakReference = new WeakReference<>(activity);
         }
+
         @Override
-        public void onError(Call call, Exception e,int id) {
+        public void onError(Call call, Exception e, int id) {
             PicDetailActivity activity = mWeakReference.get();
-            if(activity!=null){
+            if (activity != null) {
                 Toast.makeText(activity, "获取信息失败！", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
-        public void onResponse(OrderTipsDao response,int id) {
+        public void onResponse(OrderTipsDao response, int id) {
             PicDetailActivity activity = mWeakReference.get();
-            if(activity!=null){
-                if(response.errorCode==Contants.HTTP_OK){
+            if (activity != null) {
+                if (response.errorCode == Contants.HTTP_OK) {
                     activity.setOrderTips(response.result);
-                }else{
+                } else {
                     Toast.makeText(activity, "获取信息失败！", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -293,8 +318,7 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
     }
 
 
-
-    private void initView() {
+  private void initView() {
         settings = mWebView.getSettings();
         settings.setJavaScriptEnabled(true); //如果访问的页面中有Javascript，则WebView必须设置支持Javascript
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
@@ -385,10 +409,10 @@ public class PicDetailActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && mWebView.canGoBack()) {
-            mWebView.goBack();//返回上一页面
-            return true;
-        }
+//        if (keyCode == KeyEvent.KEYCODE_BACK && mWebView.canGoBack()) {
+//            mWebView.goBack();//返回上一页面
+//            return true;
+//        }
         return super.onKeyDown(keyCode, event);
     }
 

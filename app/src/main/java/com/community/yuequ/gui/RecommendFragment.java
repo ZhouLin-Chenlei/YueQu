@@ -59,9 +59,7 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
 
     @Override
     protected void initView() {
-        mStatuLayout = new PageStatuLayout(convertView)
-                .setText(null)
-                .show();
+        mStatuLayout = new PageStatuLayout(convertView);
         mRecyclerView = findView(android.R.id.list);
         mSwipeRefreshLayout = findView(R.id.swipeLayout);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.pink900);
@@ -218,7 +216,39 @@ public class RecommendFragment extends BaseFragment implements SwipeRefreshLayou
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        display();
+        if(mRecommendDao!=null && mRecommendDao.result!=null) {
+            if (mRecommendDao.result.advert != null) {
+                //本地图片例子
+                mConvenientBanner.setPages(
+                        new CBViewHolderCreator<NetworkImageHolderView>() {
+                            @Override
+                            public NetworkImageHolderView createHolder() {
+                                return new NetworkImageHolderView();
+                            }
+                        }, mRecommendDao.result.advert)
+                        //设置两个点图片作为翻页指示器，不设置则没有指示器，可以根据自己需求自行配合自己的指示器,不需要圆点指示器可用不设
+                        .setPageIndicator(new int[]{R.drawable.circular_indicator_white, R.drawable.circular_indicator_red})
+                        //设置指示器的方向
+//                .setPageIndicatorAlign(ConvenientBanner.PageIndicatorAlign.ALIGN_PARENT_RIGHT)
+//                .setOnPageChangeListener(this)//监听翻页事件
+                        .setOnItemClickListener(this);
+                mRecommendAdapter.addHeadView(headView);
+            }
+
+            if (mRecommendDao.result.program != null) {
+                mRecommendAdapter.setData(mRecommendDao.result.program);
+            }
+
+            mStatuLayout.setProgressBarVisibility(false)
+                    .setText(null)
+                    .hide();
+
+        }else{
+//            mStatuLayout .setProgressBarVisibility(false)
+//                    .setText(getString(R.string.no_data))
+//                    .show();
+        }
+
     }
 
 

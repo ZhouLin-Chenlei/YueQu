@@ -28,14 +28,22 @@
             android:textColor="@color/grey900"
             android:textSize="17sp" />
     </LinearLayout>
+
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <WebView
+       <WebView
             android:id="@+id/detail_web_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
+       <!-- <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey900"
+            android:textSize="16sp"
+            android:id="@+id/tv_content"/>-->
 
         <ProgressBar
             android:id="@+id/progressBar"

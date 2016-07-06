@@ -67,6 +67,8 @@ public class RProgramDetail implements Serializable{
         if(js==null){
             return Collections.EMPTY_LIST;
         }
+//        js.clear();
+//        js.add("http://news-at.zhihu.com/css/news_qa.auto.css?v=4b3e3");
         return js;
     }
 
