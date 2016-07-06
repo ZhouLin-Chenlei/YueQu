@@ -5,8 +5,11 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bigkoo.convenientbanner.holder.Holder;
+import com.bumptech.glide.Glide;
 import com.community.yuequ.Contants;
 import com.community.yuequ.R;
+import com.community.yuequ.Session;
+import com.community.yuequ.YQApplication;
 import com.community.yuequ.contorl.ImageManager;
 import com.community.yuequ.modle.Advert;
 
@@ -27,8 +30,18 @@ public class NetworkImageHolderView implements Holder<Advert> {
 
     @Override
     public void UpdateUI(Context context, int position, Advert data) {
+        int banner_height = (int) YQApplication.getAppResources().getDimension(R.dimen.banner_height);
+//        ImageManager.getInstance().loadUrlImage(context,data.img_path,imageView);
+        int screenWidth = Session.get(YQApplication.getAppContext()).getScreenWidth();
 
-        ImageManager.getInstance().loadUrlImage(context,data.img_path,imageView);
-
+        Glide
+                .with(context)
+                .load(data.img_path)
+                .centerCrop()
+                .placeholder(R.mipmap.jiazai)
+                .error(R.mipmap.jiazai)
+                .override(screenWidth,banner_height)
+                .dontAnimate()
+                .into(imageView);
     }
 }

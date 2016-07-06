@@ -36,26 +36,7 @@ public class YQApplication extends Application{
     public void onCreate() {
         super.onCreate();
         instance = this;
-        CookieJarImpl cookieJar = new CookieJarImpl(new PersistentCookieStore(getApplicationContext())){
-            @Override
-            public synchronized void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                super.saveFromResponse(url, cookies);
-            }
-
-            @Override
-            public synchronized List<Cookie> loadForRequest(HttpUrl url) {
-                List<Cookie> cookies = super.loadForRequest(url);
-                for(Cookie cookie:cookies){
-                    Log.i("TAG","cookie:"+cookie.name()+"*"+cookie.value());
-                }
-                return cookies;
-            }
-
-            @Override
-            public CookieStore getCookieStore() {
-                return super.getCookieStore();
-            }
-        };
+        CookieJarImpl cookieJar = new CookieJarImpl(new PersistentCookieStore(getApplicationContext()));
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
 //                .addInterceptor(new LoggerInterceptor("TAG"))
                 .connectTimeout(15000L, TimeUnit.MILLISECONDS)

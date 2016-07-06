@@ -42,7 +42,7 @@ public class ImageManager {
             .load(url)
             .centerCrop()
             .placeholder(R.mipmap.jiazai)
-            .crossFade()
+            .dontAnimate()
             .into(imageView);
 
 
@@ -54,7 +54,7 @@ public class ImageManager {
                 .load(url)
                 .centerCrop()
                 .placeholder(R.mipmap.jiazai)
-                .crossFade()
+                .dontAnimate()
                 .into(imageView);
 
     }
