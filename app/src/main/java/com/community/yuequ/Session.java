@@ -38,6 +38,7 @@ import com.community.yuequ.modle.OrderTip;
 import com.community.yuequ.modle.StartUpImg;
 import com.community.yuequ.modle.UpgradeInfo;
 import com.community.yuequ.util.FileTools;
+import com.community.yuequ.util.Utils;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
 
@@ -437,7 +438,8 @@ public class Session {
         boolean show = false;
         if(mInitMsg!=null){
             UpgradeInfo upgradeInfo = mInitMsg.upgrade;
-            if(upgradeInfo != null && versionCode < upgradeInfo.version && !TextUtils.isEmpty(upgradeInfo.app_path)){
+            float v = Utils.StringToFloat(versionName,0f);
+            if(upgradeInfo != null &&  v < upgradeInfo.version && !TextUtils.isEmpty(upgradeInfo.app_path)){
                 show = true;
             }
         }
