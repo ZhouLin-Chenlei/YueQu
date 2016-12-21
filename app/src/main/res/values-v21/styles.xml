@@ -12,6 +12,6 @@
     <style name="Theme.Fullscreen.21" parent="Theme.Fullscreen.19">
         <item name="android:windowTranslucentStatus">false</item>">
         <item name="android:windowTranslucentNavigation">false</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/blacktransparent</item>
     </style>
 </resources>

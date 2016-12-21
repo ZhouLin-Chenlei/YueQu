@@ -11,8 +11,6 @@ import android.widget.RelativeLayout;
 import com.community.yuequ.R;
 
 /**
- * 远程会诊item 的layout 根据屏幕大小和图片尺寸比例自适应item大小
- * @author zhoulin
  *
  */
 public class CustomRatioImageView extends ImageView {

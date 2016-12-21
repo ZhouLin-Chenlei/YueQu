@@ -1,5 +1,6 @@
 package com.community.yuequ.gui;
 
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +12,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -50,7 +53,7 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
     private MyHandler mMyHandler;
     private FragmentManager mFragmentManager;
     private ImageView imge;
-
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,9 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
         mMyHandler = new MyHandler(this);
         mSession = Session.get(this);
         mSession.setScreenSize(this);
+
+        preferences = this.getSharedPreferences("yuequ",MODE_PRIVATE);
+        hide();
         mFragmentManager = getSupportFragmentManager();
         YQApplication.runBackground(new Runnable() {
             @Override
@@ -71,8 +77,6 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
             }
         });
 
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String img_path = preferences.getString("img_path",null);
         long begin_time = preferences.getLong("begin_time",0);
         long end_time = preferences.getLong("end_time",0);
@@ -106,7 +110,31 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
 
 
     }
+    private final Runnable mHidePart2Runnable = new Runnable() {
+        @SuppressLint("InlinedApi")
+        @Override
+        public void run() {
+            // Delayed removal of status and navigation bar
 
+            // Note that some of these constants are new as of API 16 (Jelly Bean)
+            // and API 19 (KitKat). It is safe to use them, as they are inlined
+            // at compile-time and do nothing on earlier devices.
+            imge.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+        }
+    };
+    private void hide() {
+        // Hide UI first
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+        mMyHandler.post(mHidePart2Runnable);
+    }
 
     private static class MyHandler extends Handler {
         private WeakReference<WelcomeActivity> activityWeakReference;
@@ -166,6 +194,7 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
                 .tag(TAG)
                 .build()
                 .execute(new MyInitDaoCallBack(this));
+
     }
 
     public static class MyInitDaoCallBack extends JsonCallBack<InitDao> {
@@ -213,18 +242,27 @@ public class WelcomeActivity extends AppCompatActivity implements UpgradeDialog.
 
     protected void startMainActivity() {
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         int localVersion = preferences.getInt("version", 0);
-        int versionCode = mSession.getVersionCode();
+        final int versionCode = mSession.getVersionCode();
 
         if(localVersion != versionCode){
+            YQApplication.runBackground(new Runnable() {
+                @Override
+                public void run() {
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putInt("version",versionCode);
+                    editor.apply();
+
+                }
+            });
+
+
             Intent intent = new Intent(this, GuideActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
 
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putInt("version",versionCode);
-            editor.apply();
+
         }else{
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
