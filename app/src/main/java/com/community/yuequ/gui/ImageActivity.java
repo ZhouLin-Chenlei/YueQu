@@ -2,7 +2,6 @@ package com.community.yuequ.gui;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -13,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.community.yuequ.R;
 import com.community.yuequ.contorl.ImageManager;
 import com.community.yuequ.view.ViewPagerFixed;
@@ -113,8 +113,15 @@ public class ImageActivity extends AppCompatActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             PhotoView photoView = new PhotoView(container.getContext());
-            imageManager.loadUrlImage(activity, picUrls[position], photoView);
-            container.addView(photoView);
+
+            Glide
+                    .with(activity)
+                    .load(picUrls[position])
+                    .placeholder(R.mipmap.jiazai)
+                    .dontAnimate()
+                    .into(photoView);
+
+            container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             return photoView;
         }
 
